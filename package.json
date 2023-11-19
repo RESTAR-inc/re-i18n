@@ -1,0 +1,41 @@
+{
+    "name": "vue-re-i18n",
+    "version": "1.0.0",
+    "description": "TODO",
+    "main": "lib/index.js",
+    "typings": "lib/index.d.ts",
+    "bin": {},
+    "files": [
+        "lib"
+    ],
+    "scripts": {
+        "build": "npm run clean && npm run compile",
+        "watch": "tsc -w",
+        "clean": "rm -rf lib",
+        "compile": "tsc",
+        "prepare": "npm run build",
+        "prepublishOnly": "npm run test",
+        "ci:build": "npm run build"
+    },
+    "dependencies": {
+        "@babel/core": "7.23.3",
+        "@babel/plugin-proposal-decorators": "7.23.3",
+        "@babel/preset-env": "7.23.3",
+        "@babel/preset-typescript": "7.23.3",
+        "@babel/types": "7.23.3",
+        "@vue/compiler-sfc": "^3.3.8",
+        "commander": "11.1.0",
+        "csv-parse": "5.5.2",
+        "csv-stringify": "6.4.4",
+        "ejs": "3.1.9",
+        "glob": "10.3.10",
+        "tslib": "2.6.2"
+    },
+    "devDependencies": {
+        "@types/babel__core": "7.20.4",
+        "@types/ejs": "3.1.5",
+        "@types/glob": "8.1.0",
+        "@types/node": "20.9.0",
+        "typescript": "5.2.2"
+    }
+}
