@@ -19,7 +19,7 @@ type NodeEnterHandler = (
   keyNode: StringLiteral
 ) => void;
 
-const precompliers: Array<Precompiler> = [new VuePrecompiler()];
+const precompilers: Array<Precompiler> = [new VuePrecompiler()];
 
 const isFuncCall = (node: CallExpression, target: string) => {
   return isIdentifier(node.callee) && node.callee.name === target;
@@ -52,7 +52,7 @@ export function traverseFile(
   const fileExt = path.extname(filename);
   const codeRaw = fs.readFileSync(file, { encoding: "utf8" });
 
-  const code = precompliers.reduce((code, precompiler) => {
+  const code = precompilers.reduce((code, precompiler) => {
     if (precompiler.match(fileExt)) {
       return precompiler.compile(code);
     }

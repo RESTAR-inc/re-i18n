@@ -14,15 +14,9 @@ export type I18nFormatterRaw = <T>(
   options: Record<string, string | number | null | T>
 ) => I18nRaw<T>;
 
-/**
- * Форматтер для обработки сообщений
- */
 export type I18nFormatter = {
   raw: I18nFormatterRaw;
   str: I18nFormatterStr;
 };
 
-/**
- * Функция для получения значения локали
- */
 export type I18nGetLang<T extends string> = () => T;

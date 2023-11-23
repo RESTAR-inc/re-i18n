@@ -24,19 +24,18 @@ function sortObjectKeys(target: Record<string, string>) {
 }
 
 export function getFilesList(dir: string, exts: Array<string>): Array<string> {
-  const files = fs.readdirSync(dir, { withFileTypes: true });
-  const filesList: string[] = [];
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .reduce<string[]>((acc, file) => {
+      const ext = path.extname(file.name);
 
-  for (const file of files) {
-    const ext = path.extname(file.name);
+      if (exts.includes(ext)) {
+        const filePath = path.join(dir, file.name);
+        acc.push(filePath);
+      }
 
-    if (exts.includes(ext)) {
-      const filePath = path.join(dir, file.name);
-      filesList.push(filePath);
-    }
-  }
-
-  return filesList;
+      return acc;
+    }, []);
 }
 
 export function getDirectories(
@@ -66,27 +65,21 @@ export function readDirectory(
   root: I18nDirectory,
   langs: string[],
   sort = false
-) {
-  const translations: I18nKeysets = {};
-
-  langs.forEach((lang) => {
-    translations[lang] = {};
-  });
-
-  const rootI18nDir = root.parentDir;
-
-  if (fs.existsSync(rootI18nDir)) {
-    langs.forEach((lang) => {
-      const langFilePath = path.join(rootI18nDir, `${lang}.json`);
-      if (fs.existsSync(langFilePath)) {
-        const json: Record<string, string> = JSON.parse(
-          fs.readFileSync(langFilePath, { encoding: "utf8" })
-        );
-
-        translations[lang] = sort ? sortObjectKeys(json) : json;
-      }
-    });
+): I18nKeysets {
+  if (!fs.existsSync(root.parentDir)) {
+    return {};
   }
 
-  return translations;
+  return langs.reduce<I18nKeysets>((acc, lang) => {
+    const langFilePath = path.join(root.parentDir, `${lang}.json`);
+
+    if (fs.existsSync(langFilePath)) {
+      const json: Record<string, string> = JSON.parse(
+        fs.readFileSync(langFilePath, { encoding: "utf8" })
+      );
+      acc[lang] = sort ? sortObjectKeys(json) : json;
+    }
+
+    return acc;
+  }, {});
 }
