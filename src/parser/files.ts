@@ -1,18 +1,7 @@
 import fs from "fs";
 import path from "path";
 import * as glob from "glob";
-
-interface I18nDirectory {
-  root: string;
-  name: string;
-  parentDir: string;
-}
-
-interface I18nKeysets {
-  [lang: string]: {
-    [key: string]: string;
-  };
-}
+import { I18nDirectory, I18nKeysets } from "../types";
 
 function sortObjectKeys(target: Record<string, string>) {
   return Object.keys(target)
@@ -40,21 +29,25 @@ export function getFilesList(dir: string, exts: Array<string>): Array<string> {
 
 export function getDirectories(
   searchStr: string,
-  dirExt = ".i18n"
+  dirExt: string
 ): Array<I18nDirectory> {
   const pathMap = new Map<string, I18nDirectory>();
 
   for (const filePath of glob.sync(searchStr)) {
-    const root = path.dirname(filePath);
-    const info = fs.lstatSync(root);
+    const dirPath = path.dirname(filePath);
+    const info = fs.lstatSync(dirPath);
 
-    if (!pathMap.has(root) && info.isDirectory() && !root.endsWith(dirExt)) {
-      console.log(`Searching in \x1b[33m${root}\x1b[0m`);
+    if (
+      !pathMap.has(dirPath) &&
+      info.isDirectory() &&
+      !dirPath.endsWith(dirExt)
+    ) {
+      console.log(`Searching in \x1b[33m${dirPath}\x1b[0m`);
 
-      const name = path.basename(root);
-      const parentDir = path.join(root, `${name}${dirExt}`);
+      const name = path.basename(dirPath);
+      const i18nDir = path.join(dirPath, `${name}${dirExt}`);
 
-      pathMap.set(root, { root, name, parentDir });
+      pathMap.set(dirPath, { path: dirPath, name, i18nDir });
     }
   }
 
@@ -62,16 +55,16 @@ export function getDirectories(
 }
 
 export function readDirectory(
-  root: I18nDirectory,
-  langs: string[],
-  sort = false
+  dir: I18nDirectory,
+  langs: Array<string>,
+  sort: boolean
 ): I18nKeysets {
-  if (!fs.existsSync(root.parentDir)) {
+  if (!fs.existsSync(dir.i18nDir)) {
     return {};
   }
 
   return langs.reduce<I18nKeysets>((acc, lang) => {
-    const langFilePath = path.join(root.parentDir, `${lang}.json`);
+    const langFilePath = path.join(dir.i18nDir, `${lang}.json`);
 
     if (fs.existsSync(langFilePath)) {
       const json: Record<string, string> = JSON.parse(
@@ -82,4 +75,29 @@ export function readDirectory(
 
     return acc;
   }, {});
+}
+
+export function writeDirectory(
+  dir: I18nDirectory,
+  langs: Array<string>,
+  keysets: I18nKeysets,
+  template: string,
+  sort: boolean
+) {
+  if (!fs.existsSync(dir.i18nDir)) {
+    fs.mkdirSync(dir.i18nDir);
+  }
+
+  for (const lang of langs) {
+    const langFilePath = path.join(dir.i18nDir, `${lang}.json`);
+    const data = sort ? sortObjectKeys(keysets[lang]) : keysets[lang];
+
+    fs.writeFileSync(langFilePath, `${JSON.stringify(data, null, 2)}\n`, {
+      encoding: "utf8",
+    });
+  }
+
+  fs.writeFileSync(path.join(dir.i18nDir, "index.ts"), template, {
+    encoding: "utf8",
+  });
 }

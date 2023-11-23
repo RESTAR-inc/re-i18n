@@ -20,3 +20,15 @@ export type I18nFormatter = {
 };
 
 export type I18nGetLang<T extends string> = () => T;
+
+export interface I18nDirectory {
+  i18nDir: string;
+  path: string;
+  name: string;
+}
+
+export interface I18nKeysets {
+  [lang: string]: {
+    [key: string]: string;
+  };
+}
