@@ -27,7 +27,7 @@ export function main() {
   }>();
 
   const config = loadConfig(path.resolve(opts.config));
-  const directories = getDirectories(config.path, config.dirExt);
+  const directories = getDirectories(config.pattern, config.dirExt);
 
   let hasChanges = false;
 
@@ -40,7 +40,7 @@ export function main() {
     const i18nKeys: string[] = [];
 
     for (const file of files) {
-      traverseFile(file, config.func, (key) => {
+      traverseFile(file, config.funcName, (key) => {
         if (!i18nKeysHash.has(key)) {
           i18nKeysHash.set(key, true);
           i18nKeys.push(key);
@@ -49,51 +49,46 @@ export function main() {
     }
 
     const translations = readDirectory(dir, config.langs, config.sort);
-    if (i18nKeys.length > 0) {
-      writeDirectory(dir, config.langs, translations, template, config.sort);
-    }
 
     const addedKeys: string[] = [];
     const addedKeysHash = new Map<string, true>();
     const unusedKeys: Array<string> = [];
 
     for (const lang of config.langs) {
-      const targetLang = translations[lang];
-      const targetLangKeys = Object.keys(targetLang);
+      const targetLangKeys = Object.keys(translations[lang]);
 
       for (const key of i18nKeys) {
         if (targetLangKeys.includes(key)) {
           continue;
         }
-
-        targetLang[key] = "";
-
+        translations[lang][key] = "";
         if (!addedKeysHash.has(key)) {
           addedKeysHash.set(key, true);
           addedKeys.push(key);
         }
       }
-
-      for (const key of Object.keys(targetLang)) {
+      for (const key of Object.keys(translations[lang])) {
         if (!i18nKeysHash.has(key)) {
           unusedKeys.push(`${lang}.json: ${key}`);
         }
       }
     }
 
-    if (addedKeys.length || unusedKeys.length) {
+    if (addedKeys.length > 0 || unusedKeys.length > 0) {
       console.log(`Folder: \x1b[33m${dir.i18nDir}\x1b[0m`);
-
       for (const key of addedKeys) {
         console.log(`Added key: ${key}`);
       }
-
       for (const key of unusedKeys) {
         console.log(`\x1b[31mUnused key\x1b[0m: ${key}`);
       }
     }
 
-    if (addedKeys.length) {
+    if (i18nKeys.length > 0) {
+      writeDirectory(dir, config.langs, translations, template, config.sort);
+    }
+
+    if (addedKeys.length > 0 || unusedKeys.length > 0) {
       hasChanges = true;
     }
   }

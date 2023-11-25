@@ -59,8 +59,13 @@ export function readDirectory(
   langs: Array<string>,
   sort: boolean
 ): I18nKeysets {
+  const translations = langs.reduce<I18nKeysets>((acc, lang) => {
+    acc[lang] = {};
+    return acc;
+  }, {});
+
   if (!fs.existsSync(dir.i18nDir)) {
-    return {};
+    return translations;
   }
 
   return langs.reduce<I18nKeysets>((acc, lang) => {
@@ -70,6 +75,7 @@ export function readDirectory(
       const json: Record<string, string> = JSON.parse(
         fs.readFileSync(langFilePath, { encoding: "utf8" })
       );
+
       acc[lang] = sort ? sortObjectKeys(json) : json;
     }
 

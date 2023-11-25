@@ -4,26 +4,28 @@
     "description": "TODO",
     "main": "lib/index.js",
     "typings": "lib/index.d.ts",
-    "bin": {},
+    "bin": {
+        "i18n-generate": "bin/generate.js"
+    },
     "files": [
-        "lib"
+        "lib",
+        "bin"
     ],
     "scripts": {
-        "build": "npm run clean && npm run compile",
+        "build": "npm run clean && npm run compile && npm run template:copy",
         "watch": "tsc -w",
         "clean": "rm -rf lib",
         "compile": "tsc",
-        "prepare": "npm run build",
-        "prepublishOnly": "npm run test",
-        "ci:build": "npm run build"
+        "template:copy": "cp -r src/template/i18n.ejs lib/template/i18n.ejs"
     },
     "dependencies": {
         "@babel/core": "7.23.3",
         "@babel/plugin-proposal-decorators": "7.23.3",
+        "@babel/plugin-transform-typescript": "7.23.4",
         "@babel/preset-env": "7.23.3",
         "@babel/preset-typescript": "7.23.3",
         "@babel/types": "7.23.3",
-        "@vue/compiler-sfc": "^3.3.8",
+        "@vue/compiler-sfc": "3.3.8",
         "commander": "11.1.0",
         "csv-parse": "5.5.2",
         "csv-stringify": "6.4.4",

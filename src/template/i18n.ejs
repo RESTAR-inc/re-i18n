@@ -1,14 +1,11 @@
 /* eslint-disable */
 // Do not edit, use generator to update
 <%_ if (formatterPath) { _%>
-import { i18n } from "vue-re-i18n/lib/i18n";
-import type { I18nLangSet } from "vue-re-i18n/lib/types";
+import { createI18n, type I18nLangSet } from "vue-re-i18n";
 
-import fmt from "<%- formatterPath %>";
+import formatter from "<%- formatterPath %>";
 <%_ } else { _%>
-import { i18n } from "vue-re-i18n/lib/i18n";
-import { fmt } from "vue-re-i18n/lib/fmt";
-import type { I18nLangSet } from "vue-re-i18n/lib/types";
+import { createI18n, formatter, type I18nLangSet } from "vue-re-i18n";
 <% } _%>
 <%_ if (getLangPath) { _%>
 import getLang from "<%- getLangPath %>";
@@ -18,11 +15,10 @@ import getLang from "<%- getLangPath %>";
 import <%- lang %> from "./<%- lang %>.json";
 <%_ } _%>
 
-export type I18nKey = <%- langs.map((lang) => `keyof typeof ${lang}`).join(" & ") %>;
-type I18nLang = <%- langs.map(l => `"${l}"`).join(" | ") %>;
+type I18nKey = <%- langs.map((lang) => `keyof typeof ${lang}`).join(" & ") %>;
 
 const keyset: I18nLangSet<I18nKey> = {};
-<%_ if (splitLangs) { %>
+<%_ if (multiple) { %>
 <%_ for (const lang of langs) { _%>
 if (process.env.<%- envVarName %> === "<%- lang %>") keyset["<%- lang %>"] = <%- lang %>;
 <%_ } _%>
@@ -32,4 +28,4 @@ keyset["<%- lang %>"] = <%- lang %>;
 <%_ } _%>
 <% } _%>
 
-export const <%- funcName %> = i18n<I18nLang, I18nKey>(keyset, fmt, getLang);
+export const <%- funcName %> = createI18n<<%- langs.map(l => `"${l}"`).join(" | ") %>, I18nKey>(keyset, formatter, getLang);

@@ -1,4 +1,3 @@
-import fs from "fs";
 import z from "zod";
 
 const configSchema = z.object({
@@ -6,25 +5,21 @@ const configSchema = z.object({
   /**
    * Path or pattern to i18n root, for example "src/{components/*\\,utils\\,somepath}"
    */
-  path: z.string(),
+  pattern: z.string(),
+  dirExt: z.string().default(".i18n"),
+  fileExts: z.array(z.string()).default([".js", ".ts", ".vue"]),
   /**
    * Function namea
    */
-  func: z.string().default("$t"),
-  out: z.string().optional(),
+  funcName: z.string().default("$t"),
   /**
    * Getlang path
    */
-  getLang: z.string().optional(),
+  getLangPath: z.string().nullable(),
   /**
    * Formatter path
    */
-  fmt: z.string().optional(),
-  stats: z.boolean().default(false),
-  hash: z.string().optional(),
-  prefix: z.string().optional(),
-  repo: z.string().optional(),
-  delimiter: z.string().default(","),
+  formatterPath: z.string().nullable().default(null),
   /**
    * Env var name
    */
@@ -36,18 +31,20 @@ const configSchema = z.object({
   /**
    * Split languages
    */
-  split: z.boolean().default(false),
-  dirExt: z.string().default(".i18n"),
-  fileExts: z.array(z.string()).default([".js", ".ts", ".vue"]),
+  multiple: z.boolean().default(false),
 });
 
 export type I18nConfig = z.infer<typeof configSchema>;
 
 export function loadConfig(path: string) {
+  let configJSON;
   try {
-    const configStr = fs.readFileSync(path, { encoding: "utf8" });
-    return configSchema.parse(configStr);
+    configJSON = require(path);
   } catch (err) {
     throw new Error(`Failed to load config from ${path}`);
   }
+
+  const config = configSchema.parse(configJSON);
+
+  return config;
 }

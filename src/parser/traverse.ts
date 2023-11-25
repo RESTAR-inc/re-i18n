@@ -52,17 +52,25 @@ export function traverseFile(
   const fileExt = path.extname(filename);
   const codeRaw = fs.readFileSync(file, { encoding: "utf8" });
 
-  const code = precompilers.reduce((code, precompiler) => {
+  // let code = codeRaw;
+
+  // for (const precompiler of precompilers) {
+  //   if (precompiler.match(fileExt)) {
+  //     code = precompiler.compile(code);
+  //   }
+  // }
+
+  const code = precompilers.reduce((result, precompiler) => {
     if (precompiler.match(fileExt)) {
-      return precompiler.compile(code);
+      return precompiler.compile(result);
     }
-    return code;
+    return result;
   }, codeRaw);
 
   const ast = parse(code, {
     presets: ["@babel/typescript"],
     filename,
-    plugins: [],
+    plugins: ["@babel/plugin-transform-typescript"],
   });
 
   if (ast === null) {
