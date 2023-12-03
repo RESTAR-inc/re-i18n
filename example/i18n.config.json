@@ -4,10 +4,7 @@
         "ja",
         "en"
     ],
-    "path": "src/{components}/**/*",
-    "getLang": "./src/i18n/getLang",
-    "fmt": "./src/i18n/fmt",
-    "prefix": "",
-    "delimiter": ",",
-    "env": "NEXT_PUBLIC_LANG"
+    "pattern": "src/{app,lib}/**/*",
+    "getLangPath": "./src/i18n/getLang",
+    "formatterPath": "./src/i18n/fmt"
 }

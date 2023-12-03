@@ -1,6 +1,7 @@
 import z from "zod";
 
 const configSchema = z.object({
+  defaultLang: z.string(),
   langs: z.array(z.string()),
   /**
    * Path or pattern to i18n root, for example "src/{components/*\\,utils\\,somepath}"
@@ -11,7 +12,7 @@ const configSchema = z.object({
   /**
    * Function namea
    */
-  funcName: z.string().default("$t"),
+  funcName: z.string().default("t"),
   /**
    * Getlang path
    */
