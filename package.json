@@ -2,21 +2,21 @@
     "name": "vue-re-i18n",
     "version": "1.0.0",
     "description": "TODO",
+    "type": "module",
     "main": "lib/index.js",
     "typings": "lib/index.d.ts",
     "bin": {
-        "i18n-generate": "bin/generate.js"
+        "i18n-generate": "./lib/cli/generate.js"
     },
     "files": [
         "lib",
         "bin"
     ],
     "scripts": {
-        "build": "npm run clean && npm run compile && npm run template:copy",
+        "build": "npm run clean && npm run compile && chmod 0755 ./lib/cli/generate.js",
         "watch": "tsc -w",
         "clean": "rm -rf lib",
-        "compile": "tsc",
-        "template:copy": "cp -r src/template/i18n.ejs lib/template/i18n.ejs"
+        "compile": "tsc"
     },
     "dependencies": {
         "@babel/core": "7.23.3",

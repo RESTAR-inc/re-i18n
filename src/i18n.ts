@@ -1,4 +1,9 @@
-import { I18nFormatter, I18nGetLang, I18nLangSet } from "./types";
+import type {
+  I18nScalar,
+  I18nFormatter,
+  I18nGetLang,
+  I18nLangSet,
+} from "./types";
 
 export function createI18n<L extends string, T extends string>(
   langSet: I18nLangSet<T>,
@@ -22,15 +27,13 @@ export function createI18n<L extends string, T extends string>(
     return keyset[key] || key;
   };
 
-  function wrapper<P>(key: T, params?: P): string {
+  function wrapper<P extends Record<string, I18nScalar>>(
+    key: T,
+    params?: P
+  ): string {
     const message = resolve(key);
     return formatter.str(message, params);
   }
-
-  wrapper.raw = <P>(key: T, params?: P): P[] => {
-    const message = resolve(key);
-    return formatter.raw(message, params);
-  };
 
   return wrapper;
 }

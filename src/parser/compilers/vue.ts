@@ -1,7 +1,7 @@
 import * as compiler from "@vue/compiler-sfc";
-import { Precompiler } from "./base";
+import type { I18nPrecompiler } from "../../types";
 
-export default class VueCompiler implements Precompiler {
+export default class VueCompiler implements I18nPrecompiler {
   match(ext: string): boolean {
     return ext === ".vue";
   }

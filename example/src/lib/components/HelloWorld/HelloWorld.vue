@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { t } from "./HelloWorld.i18n";
+
 defineProps<{ title: string }>();
 </script>
 
 <template>
   <h1>{{ title }}</h1>
   <p>
-    {{ t("Welcome to the i18n example application") }}
+    {{ t("i18n サンプル アプリケーションへようこそ") }}
   </p>
 </template>

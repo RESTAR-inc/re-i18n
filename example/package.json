@@ -10,6 +10,7 @@
     "i18n:generate": "i18n-generate"
   },
   "dependencies": {
+    "intl-messageformat": "10.5.8",
     "vue": "^3.3.8",
     "vue-re-i18n": "file:.."
   },

@@ -2,9 +2,10 @@ export type I18nKeyset<T extends string> = Record<T, string>;
 
 export type I18nLangSet<T extends string> = Record<string, I18nKeyset<T>>;
 
+export type I18nScalar = string | number | boolean | null | undefined;
+
 export interface I18nFormatter {
-  raw<T, U>(msg: string, options: T): U;
-  str<T>(msg: string, options: T): string;
+  str<T extends Record<string, I18nScalar>>(msg: string, options?: T): string;
 }
 
 export type I18nGetLang<T extends string> = () => T;
@@ -19,4 +20,9 @@ export interface I18nKeysets {
   [lang: string]: {
     [key: string]: string;
   };
+}
+
+export interface I18nPrecompiler {
+  match(ext: string): boolean;
+  compile(code: string): string;
 }

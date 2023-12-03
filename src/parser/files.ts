@@ -1,7 +1,8 @@
 import fs from "fs";
 import path from "path";
 import * as glob from "glob";
-import { I18nDirectory, I18nKeysets } from "../types";
+
+import type { I18nDirectory, I18nKeysets } from "../types";
 
 function sortObjectKeys(target: Record<string, string>) {
   return Object.keys(target)

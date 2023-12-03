@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { traverse, parse } from "@babel/core";
-
 import {
   CallExpression,
   isCallExpression,
@@ -10,8 +9,9 @@ import {
   StringLiteral,
   isMemberExpression,
 } from "@babel/types";
-import { Precompiler } from "./compilers/base";
-import VuePrecompiler from "./compilers/vue";
+
+import VuePrecompiler from "./compilers/vue.js";
+import type { I18nPrecompiler } from "../types";
 
 type NodeEnterHandler = (
   key: string,
@@ -19,7 +19,7 @@ type NodeEnterHandler = (
   keyNode: StringLiteral
 ) => void;
 
-const precompilers: Array<Precompiler> = [new VuePrecompiler()];
+const precompilers: Array<I18nPrecompiler> = [new VuePrecompiler()];
 
 const isFuncCall = (node: CallExpression, target: string) => {
   return isIdentifier(node.callee) && node.callee.name === target;
