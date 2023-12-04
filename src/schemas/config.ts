@@ -26,6 +26,7 @@ export const configSchema = z.object({
    * Sort keys
    */
   sort: z.boolean().default(false),
+  outDir: z.string(),
 });
 
 export type I18nConfig = z.infer<typeof configSchema>;

@@ -41,3 +41,20 @@ export interface I18nCompiler {
   match(ext: string): boolean;
   compile(code: string): string;
 }
+
+export interface I18nExportDataEntries {
+  [i18nModule: string]: {
+    [i18nKey: string]: {
+      translations: Record<string, string>;
+      file: string;
+      comment?: string;
+    };
+  };
+}
+
+export interface I18nExportData {
+  meta: {
+    datetime: string;
+  };
+  entries: I18nExportDataEntries;
+}

@@ -14,8 +14,8 @@ import type { I18nCompiler } from "../types";
 
 type NodeEnterHandler = (
   key: string,
-  node: CallExpression,
-  keyNode: StringLiteral
+  target: StringLiteral,
+  node: CallExpression
 ) => void;
 
 const isFuncCall = (node: CallExpression, target: string) => {
@@ -84,11 +84,11 @@ export function traverseFile(
         isFuncRawCall(node, funcName) ||
         isFuncMemberCall(node, funcName)
       ) {
-        const firstArgument = node.arguments[0];
+        const target = node.arguments[0];
 
-        if (isStringLiteral(firstArgument)) {
-          const key = firstArgument.value;
-          onNodeEnter(key, node, firstArgument);
+        if (isStringLiteral(target)) {
+          const key = target.value;
+          onNodeEnter(key, target, node);
         }
       }
     },
