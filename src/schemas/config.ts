@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const configSchema = z.object({
+  appType: z.enum(["vanilla", "vue"]),
   defaultLang: z.string(),
   langs: z.array(z.string()),
   /**
@@ -16,23 +17,15 @@ export const configSchema = z.object({
   /**
    * Getlang path
    */
-  getLangPath: z.string().nullable(),
+  getLangPath: z.string(),
   /**
    * Formatter path
    */
   formatterPath: z.string().nullable().default(null),
   /**
-   * Env var name
-   */
-  env: z.string().default("I18N_LOCALE_NAME"),
-  /**
    * Sort keys
    */
   sort: z.boolean().default(false),
-  /**
-   * Split languages
-   */
-  multiple: z.boolean().default(false),
 });
 
 export type I18nConfig = z.infer<typeof configSchema>;

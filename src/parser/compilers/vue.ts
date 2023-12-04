@@ -1,7 +1,7 @@
 import * as compiler from "@vue/compiler-sfc";
-import type { I18nPrecompiler } from "../../types";
+import type { I18nCompiler } from "../../types";
 
-export default class VueCompiler implements I18nPrecompiler {
+export class VueCompiler implements I18nCompiler {
   match(ext: string): boolean {
     return ext === ".vue";
   }
@@ -19,8 +19,6 @@ export default class VueCompiler implements I18nPrecompiler {
       id: "script",
     });
 
-    return `
-    ${templateResult.code};
-    ${scriptResult.content};`;
+    return `${templateResult.code};${scriptResult.content};`;
   }
 }

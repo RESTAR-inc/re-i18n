@@ -1,11 +1,26 @@
+export type { I18nTemplateData } from "./schemas/template";
+export type { I18nConfig } from "./schemas/config";
+
 export type I18nKeyset<T extends string> = Record<T, string>;
 
-export type I18nLangSet<T extends string> = Record<string, I18nKeyset<T>>;
+export type I18nLangSet<L extends string, T extends string> = Record<
+  L,
+  I18nKeyset<T>
+>;
 
-export type I18nScalar = string | number | boolean | null | undefined;
+export interface I18nParams {
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | null
+    | undefined
+    | Date
+    | I18nParams;
+}
 
 export interface I18nFormatter {
-  str<T extends Record<string, I18nScalar>>(msg: string, options?: T): string;
+  str<T extends I18nParams>(msg: string, options?: T): string;
 }
 
 export type I18nGetLang<T extends string> = () => T;
@@ -22,7 +37,7 @@ export interface I18nKeysets {
   };
 }
 
-export interface I18nPrecompiler {
+export interface I18nCompiler {
   match(ext: string): boolean;
   compile(code: string): string;
 }

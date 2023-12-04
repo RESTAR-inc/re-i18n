@@ -10,16 +10,13 @@ import {
   isMemberExpression,
 } from "@babel/types";
 
-import VuePrecompiler from "./compilers/vue.js";
-import type { I18nPrecompiler } from "../types";
+import type { I18nCompiler } from "../types";
 
 type NodeEnterHandler = (
   key: string,
   node: CallExpression,
   keyNode: StringLiteral
 ) => void;
-
-const precompilers: Array<I18nPrecompiler> = [new VuePrecompiler()];
 
 const isFuncCall = (node: CallExpression, target: string) => {
   return isIdentifier(node.callee) && node.callee.name === target;
@@ -46,23 +43,16 @@ const isFuncRawCall = (node: CallExpression, target: string) => {
 export function traverseFile(
   file: string,
   funcName: string,
+  compilers: Array<I18nCompiler>,
   onNodeEnter: NodeEnterHandler
 ) {
   const filename = path.basename(file);
   const fileExt = path.extname(filename);
   const codeRaw = fs.readFileSync(file, { encoding: "utf8" });
 
-  // let code = codeRaw;
-
-  // for (const precompiler of precompilers) {
-  //   if (precompiler.match(fileExt)) {
-  //     code = precompiler.compile(code);
-  //   }
-  // }
-
-  const code = precompilers.reduce((result, precompiler) => {
-    if (precompiler.match(fileExt)) {
-      return precompiler.compile(result);
+  const code = compilers.reduce((result, compiler) => {
+    if (compiler.match(fileExt)) {
+      return compiler.compile(result);
     }
     return result;
   }, codeRaw);

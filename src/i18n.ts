@@ -1,12 +1,12 @@
 import type {
-  I18nScalar,
+  I18nParams,
   I18nFormatter,
   I18nGetLang,
   I18nLangSet,
 } from "./types";
 
 export function createI18n<L extends string, T extends string>(
-  langSet: I18nLangSet<T>,
+  langSet: I18nLangSet<L, T>,
   formatter: I18nFormatter,
   getLang: I18nGetLang<L>
 ) {
@@ -27,7 +27,7 @@ export function createI18n<L extends string, T extends string>(
     return keyset[key] || key;
   };
 
-  function wrapper<P extends Record<string, I18nScalar>>(
+  function wrapper<P extends Record<string, I18nParams>>(
     key: T,
     params?: P
   ): string {

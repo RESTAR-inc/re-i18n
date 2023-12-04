@@ -1,4 +1,5 @@
 {
+    "appType": "vue",
     "defaultLang": "ja",
     "langs": [
         "ja",

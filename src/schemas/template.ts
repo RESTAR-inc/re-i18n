@@ -1,11 +1,11 @@
 import z from "zod";
 
 export const templateDataSchema = z.object({
+  appType: z.enum(["vanilla", "vue"]),
   funcName: z.string(),
   langs: z.array(z.string()),
-  getLangPath: z.string().nullable(),
+  getLangPath: z.string(),
   formatterPath: z.string().nullable(),
-  multiple: z.boolean().default(false),
 });
 
 export type I18nTemplateData = z.infer<typeof templateDataSchema>;
