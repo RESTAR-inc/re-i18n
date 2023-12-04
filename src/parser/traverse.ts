@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { traverse, parse } from "@babel/core";
-
 import {
   CallExpression,
   isCallExpression,
@@ -10,16 +9,14 @@ import {
   StringLiteral,
   isMemberExpression,
 } from "@babel/types";
-import { Precompiler } from "./compilers/base";
-import VuePrecompiler from "./compilers/vue";
+
+import type { I18nCompiler } from "../types";
 
 type NodeEnterHandler = (
   key: string,
   node: CallExpression,
   keyNode: StringLiteral
 ) => void;
-
-const precompliers: Array<Precompiler> = [new VuePrecompiler()];
 
 const isFuncCall = (node: CallExpression, target: string) => {
   return isIdentifier(node.callee) && node.callee.name === target;
@@ -46,23 +43,24 @@ const isFuncRawCall = (node: CallExpression, target: string) => {
 export function traverseFile(
   file: string,
   funcName: string,
+  compilers: Array<I18nCompiler>,
   onNodeEnter: NodeEnterHandler
 ) {
   const filename = path.basename(file);
   const fileExt = path.extname(filename);
   const codeRaw = fs.readFileSync(file, { encoding: "utf8" });
 
-  const code = precompliers.reduce((code, precompiler) => {
-    if (precompiler.match(fileExt)) {
-      return precompiler.compile(code);
+  const code = compilers.reduce((result, compiler) => {
+    if (compiler.match(fileExt)) {
+      return compiler.compile(result);
     }
-    return code;
+    return result;
   }, codeRaw);
 
   const ast = parse(code, {
     presets: ["@babel/typescript"],
     filename,
-    plugins: [],
+    plugins: ["@babel/plugin-transform-typescript"],
   });
 
   if (ast === null) {

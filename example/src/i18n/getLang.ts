@@ -1,4 +1,4 @@
-type Lang = "jp" | "en";
+type Lang = "ja" | "en";
 
 export default function getLang(): Lang {
   const lang = navigator.language.split(/-|_/)[0];
@@ -7,5 +7,5 @@ export default function getLang(): Lang {
     return lang as Lang;
   }
 
-  return "jp";
+  return "ja";
 }

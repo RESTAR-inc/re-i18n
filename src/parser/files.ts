@@ -2,17 +2,7 @@ import fs from "fs";
 import path from "path";
 import * as glob from "glob";
 
-interface I18nDirectory {
-  root: string;
-  name: string;
-  parentDir: string;
-}
-
-interface I18nKeysets {
-  [lang: string]: {
-    [key: string]: string;
-  };
-}
+import type { I18nDirectory, I18nKeysets } from "../types";
 
 function sortObjectKeys(target: Record<string, string>) {
   return Object.keys(target)
@@ -24,38 +14,41 @@ function sortObjectKeys(target: Record<string, string>) {
 }
 
 export function getFilesList(dir: string, exts: Array<string>): Array<string> {
-  const files = fs.readdirSync(dir, { withFileTypes: true });
-  const filesList: string[] = [];
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .reduce<string[]>((acc, file) => {
+      const ext = path.extname(file.name);
 
-  for (const file of files) {
-    const ext = path.extname(file.name);
+      if (exts.includes(ext)) {
+        const filePath = path.join(dir, file.name);
+        acc.push(filePath);
+      }
 
-    if (exts.includes(ext)) {
-      const filePath = path.join(dir, file.name);
-      filesList.push(filePath);
-    }
-  }
-
-  return filesList;
+      return acc;
+    }, []);
 }
 
 export function getDirectories(
   searchStr: string,
-  dirExt = ".i18n"
+  dirExt: string
 ): Array<I18nDirectory> {
   const pathMap = new Map<string, I18nDirectory>();
 
   for (const filePath of glob.sync(searchStr)) {
-    const root = path.dirname(filePath);
-    const info = fs.lstatSync(root);
+    const dirPath = path.dirname(filePath);
+    const info = fs.lstatSync(dirPath);
 
-    if (!pathMap.has(root) && info.isDirectory() && !root.endsWith(dirExt)) {
-      console.log(`Searching in \x1b[33m${root}\x1b[0m`);
+    if (
+      !pathMap.has(dirPath) &&
+      info.isDirectory() &&
+      !dirPath.endsWith(dirExt)
+    ) {
+      console.log(`Searching in \x1b[33m${dirPath}\x1b[0m`);
 
-      const name = path.basename(root);
-      const parentDir = path.join(root, `${name}${dirExt}`);
+      const name = path.basename(dirPath);
+      const i18nDir = path.join(dirPath, `${name}${dirExt}`);
 
-      pathMap.set(root, { root, name, parentDir });
+      pathMap.set(dirPath, { path: dirPath, name, i18nDir });
     }
   }
 
@@ -63,30 +56,55 @@ export function getDirectories(
 }
 
 export function readDirectory(
-  root: I18nDirectory,
-  langs: string[],
-  sort = false
+  dir: I18nDirectory,
+  langs: Array<string>,
+  sort: boolean
+): I18nKeysets {
+  const translations = langs.reduce<I18nKeysets>((acc, lang) => {
+    acc[lang] = {};
+    return acc;
+  }, {});
+
+  if (!fs.existsSync(dir.i18nDir)) {
+    return translations;
+  }
+
+  return langs.reduce<I18nKeysets>((acc, lang) => {
+    const langFilePath = path.join(dir.i18nDir, `${lang}.json`);
+
+    if (fs.existsSync(langFilePath)) {
+      const json: Record<string, string> = JSON.parse(
+        fs.readFileSync(langFilePath, { encoding: "utf8" })
+      );
+
+      acc[lang] = sort ? sortObjectKeys(json) : json;
+    }
+
+    return acc;
+  }, {});
+}
+
+export function writeDirectory(
+  dir: I18nDirectory,
+  langs: Array<string>,
+  keysets: I18nKeysets,
+  template: string,
+  sort: boolean
 ) {
-  const translations: I18nKeysets = {};
+  if (!fs.existsSync(dir.i18nDir)) {
+    fs.mkdirSync(dir.i18nDir);
+  }
 
-  langs.forEach((lang) => {
-    translations[lang] = {};
-  });
+  for (const lang of langs) {
+    const langFilePath = path.join(dir.i18nDir, `${lang}.json`);
+    const data = sort ? sortObjectKeys(keysets[lang]) : keysets[lang];
 
-  const rootI18nDir = root.parentDir;
-
-  if (fs.existsSync(rootI18nDir)) {
-    langs.forEach((lang) => {
-      const langFilePath = path.join(rootI18nDir, `${lang}.json`);
-      if (fs.existsSync(langFilePath)) {
-        const json: Record<string, string> = JSON.parse(
-          fs.readFileSync(langFilePath, { encoding: "utf8" })
-        );
-
-        translations[lang] = sort ? sortObjectKeys(json) : json;
-      }
+    fs.writeFileSync(langFilePath, `${JSON.stringify(data, null, 2)}\n`, {
+      encoding: "utf8",
     });
   }
 
-  return translations;
+  fs.writeFileSync(path.join(dir.i18nDir, "index.ts"), template, {
+    encoding: "utf8",
+  });
 }
