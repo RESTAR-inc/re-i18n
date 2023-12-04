@@ -4,6 +4,6 @@ import { t } from "./Main.i18n";
 </script>
 
 <template>
-  <h1>{{ t("vue-re-i18n") }}</h1>
+  <h1>{{ t("re-i18n") }}</h1>
   <HelloWorld :title="t('i18N アプリケーションの例')" />
 </template>

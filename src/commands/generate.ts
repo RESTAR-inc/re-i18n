@@ -10,7 +10,7 @@ import { I18nConfig } from "../schemas/config.js";
 import { traverseFile } from "../parser/traverse.js";
 import { render } from "../template/index.js";
 import { I18nDirectory, I18nCompiler, I18nTemplateData } from "../types.js";
-import { VueCompiler } from "../parser/compilers/vue.js";
+import { VueCompiler } from "../compilers/vue.js";
 
 function createTemplateData(
   config: I18nConfig,

@@ -1,5 +1,5 @@
 import { IntlMessageFormat } from "intl-messageformat";
-import type { I18nFormatter } from "vue-re-i18n";
+import type { I18nFormatter } from "re-i18n";
 
 import getLang from "./getLang";
 

@@ -1,5 +1,5 @@
 import * as compiler from "@vue/compiler-sfc";
-import type { I18nCompiler } from "../../types";
+import type { I18nCompiler } from "../types";
 
 export class VueCompiler implements I18nCompiler {
   match(ext: string): boolean {

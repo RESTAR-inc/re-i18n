@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "intl-messageformat": "10.5.8",
-    "vue": "^3.3.8",
-    "vue-re-i18n": "file:.."
+    "re-i18n": "file:..",
+    "vue": "^3.3.8"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.0",
