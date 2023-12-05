@@ -1,4 +1,4 @@
-import { parse, traverse } from "@babel/core";
+import { parse as babelParse, traverse as babelTraverse } from "@babel/core";
 import type { CallExpression } from "@babel/types";
 import {
   isCallExpression,
@@ -7,8 +7,18 @@ import {
   isStringLiteral,
 } from "@babel/types";
 import fs from "fs";
+import * as glob from "glob";
 import path from "path";
-import type { I18nCompiler, I18nFileTraverseHandler } from "../types";
+import { getLocaleFilePath } from "./common.js";
+import { VueCompiler } from "./compilers/vue.js";
+import type {
+  I18nCompiler,
+  I18nConfig,
+  I18nFileTraverseHandler,
+  I18nKeyset,
+  I18nLocales,
+  I18nRawData,
+} from "./types";
 
 const isFuncCall = (node: CallExpression, target: string) => {
   return isIdentifier(node.callee) && node.callee.name === target;
@@ -32,7 +42,7 @@ const isFuncRawCall = (node: CallExpression, target: string) => {
   );
 };
 
-export function traverseFile(
+function traverseFile(
   file: string,
   funcName: string,
   compilers: Array<I18nCompiler>,
@@ -49,7 +59,7 @@ export function traverseFile(
     return result;
   }, codeRaw);
 
-  const ast = parse(code, {
+  const ast = babelParse(code, {
     presets: ["@babel/typescript"],
     filename,
     plugins: ["@babel/plugin-transform-typescript"],
@@ -59,7 +69,7 @@ export function traverseFile(
     throw new Error("Failed to parse file");
   }
 
-  traverse(ast, {
+  babelTraverse(ast, {
     enter(p) {
       const { node } = p;
 
@@ -85,4 +95,66 @@ export function traverseFile(
       }
     },
   });
+}
+
+function readLocaleFile(file: string): I18nKeyset<string> {
+  if (!fs.existsSync(file)) {
+    return {};
+  }
+
+  const data = fs.readFileSync(file, { encoding: "utf-8" });
+  return JSON.parse(data);
+}
+
+export function parse(
+  config: I18nConfig,
+  onEach?: (file: string) => void
+): I18nRawData {
+  // TODO: refactor com
+  const compilers: Array<I18nCompiler> = [];
+  if (config.appType === "vue") {
+    compilers.push(new VueCompiler());
+  }
+
+  const rawData: I18nRawData = {};
+
+  for (const file of glob.sync(config.pattern)) {
+    const dirName = path.dirname(file);
+
+    // TODO: add extra check for dirName
+    if (path.basename(dirName) === config.dirName) {
+      continue;
+    }
+
+    const existingLocales: I18nLocales<string, string> = {};
+    for (const lang of config.langs) {
+      const targetFile = getLocaleFilePath(lang, file, config.dirName);
+      existingLocales[lang] = readLocaleFile(targetFile);
+    }
+
+    traverseFile(file, config.funcName, compilers, (key, target) => {
+      const comment = (target.leadingComments || target.trailingComments || [])
+        .map((block) => block.value.trim())
+        .join("\n");
+
+      const locales: Record<string, string> = {};
+      for (const lang of config.langs) {
+        locales[lang] = existingLocales[lang][key] || "";
+      }
+
+      rawData[file] = {
+        ...rawData[file],
+        [key]: {
+          locales,
+          comment,
+        },
+      };
+    });
+
+    if (onEach) {
+      onEach(file);
+    }
+  }
+
+  return rawData;
 }
