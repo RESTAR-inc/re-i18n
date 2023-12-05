@@ -1,6 +1,6 @@
 import path from "path";
-import type { I18nConfig, I18nDirectory } from "../types";
 import type { I18nTemplateData } from "../schemas/template";
+import type { I18nConfig, I18nDirectory } from "../types";
 import { render as renderVanilla } from "./vanilla.js";
 import { render as renderVue } from "./vue.js";
 

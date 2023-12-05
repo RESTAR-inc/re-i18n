@@ -1,15 +1,13 @@
-import fs from "fs";
-import path from "path";
-import { traverse, parse } from "@babel/core";
+import { parse, traverse } from "@babel/core";
+import type { CallExpression } from "@babel/types";
 import {
-  CallExpression,
   isCallExpression,
   isIdentifier,
-  isStringLiteral,
-  StringLiteral,
   isMemberExpression,
+  isStringLiteral,
 } from "@babel/types";
-
+import fs from "fs";
+import path from "path";
 import type { I18nCompiler, I18nFileTraverseHandler } from "../types";
 
 const isFuncCall = (node: CallExpression, target: string) => {

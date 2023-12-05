@@ -1,0 +1,6 @@
+/node_modules
+/lib
+/tmp
+/example
+package-lock.json
+babel.config.js

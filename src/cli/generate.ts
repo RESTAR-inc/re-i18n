@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-import path from "path";
-
 import { Command } from "commander";
-import { loadConfig } from "../config.js";
+import path from "path";
 import { generate } from "../commands/generate.js";
+import { loadConfig } from "../config.js";
 
 const program = new Command();
 

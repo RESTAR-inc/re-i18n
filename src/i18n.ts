@@ -1,8 +1,8 @@
 import type {
-  I18nParams,
   I18nFormatter,
   I18nGetLang,
   I18nLangSet,
+  I18nParams,
 } from "./types";
 
 export function createI18n<L extends string, T extends string>(
