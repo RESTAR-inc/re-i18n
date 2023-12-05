@@ -1,3 +1,4 @@
+import * as csv from "csv";
 import path from "path";
 import fs from "fs";
 import { VueCompiler } from "../compilers/vue.js";
@@ -64,6 +65,28 @@ export function extract(config: I18nConfig) {
       datetime: new Date().toUTCString(),
     },
   };
+
+  for (const lang of config.langs) {
+    const csvData: string[][] = [["key", "translation", "comment"]];
+
+    for (const [_, entryData] of Object.entries(exportData.entries)) {
+      for (const [key, meta] of Object.entries(entryData)) {
+        csvData.push([key, meta.translations[lang], meta.comment || ""]);
+      }
+    }
+
+    const output = csv.stringify(
+      csvData,
+      {
+        delimiter: ";",
+      },
+      (err, output) => {
+        fs.writeFileSync(path.resolve(config.outDir, `${lang}.csv`), output, {
+          encoding: "utf8",
+        });
+      }
+    );
+  }
 
   const payload = JSON.stringify(exportData, null, 2);
   const outDirPath = path.resolve(config.outDir);
