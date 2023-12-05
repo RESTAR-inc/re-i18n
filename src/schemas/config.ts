@@ -2,7 +2,6 @@ import z from "zod";
 
 export const configSchema = z.object({
   appType: z.enum(["vanilla", "vue"]),
-  defaultLang: z.string(),
   langs: z.array(z.string()),
   /**
    * Path or pattern to i18n root, for example "src/{components/*\\,utils\\,somepath}"
@@ -26,6 +25,7 @@ export const configSchema = z.object({
    * Sort keys
    */
   sort: z.boolean().default(false),
+  outDir: z.string(),
 });
 
 export type I18nConfig = z.infer<typeof configSchema>;

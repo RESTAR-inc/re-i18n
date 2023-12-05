@@ -13,60 +13,70 @@ function sortObjectKeys(target: Record<string, string>) {
     }, {});
 }
 
-export function getFilesList(dir: string, exts: Array<string>): Array<string> {
-  return fs
-    .readdirSync(dir, { withFileTypes: true })
-    .reduce<string[]>((acc, file) => {
-      const ext = path.extname(file.name);
+export function walkFiles(
+  dir: string,
+  exts: Array<string>,
+  handler: (fileName: string) => void
+) {
+  const files = fs.readdirSync(dir, { withFileTypes: true });
 
-      if (exts.includes(ext)) {
-        const filePath = path.join(dir, file.name);
-        acc.push(filePath);
-      }
+  for (const file of files) {
+    const ext = path.extname(file.name);
 
-      return acc;
-    }, []);
+    if (exts.includes(ext)) {
+      handler(path.join(dir, file.name));
+    }
+  }
 }
 
-export function getDirectories(
+export function walkDirs(
   searchStr: string,
-  dirExt: string
-): Array<I18nDirectory> {
-  const pathMap = new Map<string, I18nDirectory>();
+  dirExt: string,
+  handler: (dir: I18nDirectory) => void
+) {
+  const visited = new Set<string>();
 
   for (const filePath of glob.sync(searchStr)) {
     const dirPath = path.dirname(filePath);
     const info = fs.lstatSync(dirPath);
 
-    if (
-      !pathMap.has(dirPath) &&
-      info.isDirectory() &&
-      !dirPath.endsWith(dirExt)
-    ) {
-      console.log(`Searching in \x1b[33m${dirPath}\x1b[0m`);
-
-      const name = path.basename(dirPath);
-      const i18nDir = path.join(dirPath, `${name}${dirExt}`);
-
-      pathMap.set(dirPath, { path: dirPath, name, i18nDir });
+    if (!info.isDirectory()) {
+      continue;
     }
-  }
 
-  return Array.from(pathMap.values());
+    if (dirPath.endsWith(dirExt)) {
+      continue;
+    }
+
+    if (visited.has(dirPath)) {
+      continue;
+    }
+
+    const name = path.basename(dirPath);
+    const i18nDir = path.join(dirPath, `${name}${dirExt}`);
+
+    const directory = {
+      name,
+      i18nDir,
+      path: dirPath,
+    };
+
+    handler(directory);
+
+    visited.add(dirPath);
+  }
 }
 
-export function readDirectory(
+export function getTranslationsFor(
   dir: I18nDirectory,
   langs: Array<string>,
   sort: boolean
 ): I18nKeysets {
-  const translations = langs.reduce<I18nKeysets>((acc, lang) => {
-    acc[lang] = {};
-    return acc;
-  }, {});
-
   if (!fs.existsSync(dir.i18nDir)) {
-    return translations;
+    return langs.reduce<I18nKeysets>((acc, lang) => {
+      acc[lang] = {};
+      return acc;
+    }, {});
   }
 
   return langs.reduce<I18nKeysets>((acc, lang) => {
@@ -84,7 +94,7 @@ export function readDirectory(
   }, {});
 }
 
-export function writeDirectory(
+export function writeI8nDirectory(
   dir: I18nDirectory,
   langs: Array<string>,
   keysets: I18nKeysets,

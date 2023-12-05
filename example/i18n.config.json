@@ -7,5 +7,6 @@
     ],
     "pattern": "src/{app,lib}/**/*",
     "getLangPath": "./src/i18n/getLang",
-    "formatterPath": "./src/i18n/formatter"
+    "formatterPath": "./src/i18n/formatter",
+    "outDir": "./out"
 }
