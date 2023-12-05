@@ -17,28 +17,37 @@
         "build": "npm run clean && npm run compile && chmod -R 755 ./lib/cli/**/*.js",
         "watch": "tsc -w",
         "clean": "rm -rf lib",
-        "compile": "tsc"
+        "compile": "tsc",
+        "lint": "eslint . --max-warnings 0",
+        "format": "eslint --fix ."
     },
     "dependencies": {
-        "@babel/core": "7.23.3",
-        "@babel/plugin-proposal-decorators": "7.23.3",
-        "@babel/plugin-transform-typescript": "7.23.4",
-        "@babel/preset-env": "7.23.3",
-        "@babel/preset-typescript": "7.23.3",
-        "@babel/types": "7.23.3",
-        "@vue/compiler-sfc": "3.3.8",
-        "commander": "11.1.0",
+        "@babel/core": "^7.23.3",
+        "@babel/plugin-proposal-decorators": "^7.23.3",
+        "@babel/plugin-transform-typescript": "^7.23.4",
+        "@babel/preset-env": "^7.23.3",
+        "@babel/preset-typescript": "^7.23.3",
+        "@babel/types": "^7.23.3",
+        "@vue/compiler-sfc": "^3.3.8",
+        "commander": "^11.1.0",
         "csv": "^6.3.5",
-        "glob": "10.3.10",
-        "nunjucks": "3.2.4",
-        "tslib": "2.6.2",
-        "zod": "3.22.4"
+        "glob": "^10.3.10",
+        "nunjucks": "^3.2.4",
+        "tslib": "^2.6.2",
+        "zod": "^3.22.4"
     },
     "devDependencies": {
-        "@types/babel__core": "7.20.4",
-        "@types/glob": "8.1.0",
-        "@types/node": "20.9.0",
-        "@types/nunjucks": "3.2.6",
-        "typescript": "5.2.2"
+        "@types/babel__core": "^7.20.4",
+        "@types/glob": "^8.1.0",
+        "@types/node": "^20.9.0",
+        "@types/nunjucks": "^3.2.6",
+        "@typescript-eslint/eslint-plugin": "^6.13.2",
+        "@typescript-eslint/parser": "^6.13.2",
+        "eslint": "^8.55.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.0.1",
+        "eslint-plugin-simple-import-sort": "^10.0.0",
+        "prettier": "^3.1.0",
+        "typescript": "^5.2.2"
     }
 }

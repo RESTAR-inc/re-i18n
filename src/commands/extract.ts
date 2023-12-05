@@ -1,6 +1,6 @@
 import * as csv from "csv";
-import path from "path";
 import fs from "fs";
+import path from "path";
 import { VueCompiler } from "../compilers/vue.js";
 import { getTranslationsFor, walkDirs, walkFiles } from "../parser/files.js";
 import { traverseFile } from "../parser/traverse.js";
@@ -23,7 +23,7 @@ export function extract(config: I18nConfig) {
     console.log(`Searching in \x1b[33m${dir.path}\x1b[0m`);
 
     walkFiles(dir.path, config.fileExts, (file) => {
-      traverseFile(file, config.funcName, precompilers, (key, target, node) => {
+      traverseFile(file, config.funcName, precompilers, (key, target) => {
         const comments = target.leadingComments || target.trailingComments;
         if (!entries[dir.i18nDir]) {
           entries[dir.i18nDir] = {};
@@ -61,7 +61,7 @@ export function extract(config: I18nConfig) {
 
   for (const lang of config.langs) {
     const csvData: string[][] = [["key", "translation", "comment"]];
-    for (const [_, entryData] of Object.entries(exportData.entries)) {
+    for (const entryData of Object.values(exportData.entries)) {
       for (const [key, meta] of Object.entries(entryData)) {
         csvData.push([key, meta.translations[lang], meta.comment || ""]);
       }

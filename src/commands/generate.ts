@@ -1,14 +1,14 @@
+import { VueCompiler } from "../compilers/vue.js";
 import {
+  getTranslationsFor,
   walkDirs,
   walkFiles,
-  getTranslationsFor,
   writeI8nDirectory,
 } from "../parser/files.js";
-import { I18nConfig } from "../schemas/config.js";
 import { traverseFile } from "../parser/traverse.js";
+import type { I18nConfig } from "../schemas/config.js";
 import { createTemplateData, render } from "../template/index.js";
-import { I18nCompiler } from "../types.js";
-import { VueCompiler } from "../compilers/vue.js";
+import type { I18nCompiler } from "../types.js";
 
 export function generate(config: I18nConfig) {
   const precompilers: Array<I18nCompiler> = [];

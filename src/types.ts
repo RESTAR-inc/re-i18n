@@ -1,7 +1,7 @@
 import type { CallExpression, StringLiteral } from "@babel/types";
 
-export type { I18nTemplateData } from "./schemas/template";
 export type { I18nConfig } from "./schemas/config";
+export type { I18nTemplateData } from "./schemas/template";
 
 export type I18nKeyset<T extends string> = Record<T, string>;
 

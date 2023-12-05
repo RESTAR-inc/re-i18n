@@ -1,5 +1,4 @@
 import nunjucks from "nunjucks";
-
 import type { I18nTemplateData } from "../schemas/template";
 
 const template = `/* eslint-disable */
