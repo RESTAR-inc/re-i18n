@@ -1,67 +1,42 @@
-import path from "path";
-
 import {
-  getDirectories,
-  getFilesList,
-  readDirectory,
-  writeDirectory,
+  walkDirs,
+  walkFiles,
+  getTranslationsFor,
+  writeI8nDirectory,
 } from "../parser/files.js";
 import { I18nConfig } from "../schemas/config.js";
 import { traverseFile } from "../parser/traverse.js";
-import { render } from "../template/index.js";
-import { I18nDirectory, I18nCompiler, I18nTemplateData } from "../types.js";
+import { createTemplateData, render } from "../template/index.js";
+import { I18nCompiler } from "../types.js";
 import { VueCompiler } from "../compilers/vue.js";
 
-function createTemplateData(
-  config: I18nConfig,
-  dir: I18nDirectory
-): I18nTemplateData {
-  return {
-    appType: config.appType,
-    formatterPath: config.formatterPath
-      ? path.relative(dir.i18nDir, config.formatterPath)
-      : null,
-    getLangPath: path.relative(dir.i18nDir, config.getLangPath),
-    funcName: config.funcName,
-    langs: config.langs,
-  };
-}
-
 export function generate(config: I18nConfig) {
-  const directories = getDirectories(config.pattern, config.dirExt);
-
-  let hasChanges = false;
-
   const precompilers: Array<I18nCompiler> = [];
   if (config.appType === "vue") {
     precompilers.push(new VueCompiler());
   }
 
-  for (const dir of directories) {
-    const files = getFilesList(dir.path, config.fileExts);
+  walkDirs(config.pattern, config.dirExt, (dir) => {
+    console.log(`Searching in \x1b[33m${dir.path}\x1b[0m`);
 
-    const i18nKeysHash = new Map<string, true>();
-    const i18nKeys: string[] = [];
+    const translationKeys = new Set<string>();
 
-    for (const file of files) {
+    walkFiles(dir.path, config.fileExts, (file) => {
       traverseFile(file, config.funcName, precompilers, (key) => {
-        if (!i18nKeysHash.has(key)) {
-          i18nKeysHash.set(key, true);
-          i18nKeys.push(key);
-        }
+        translationKeys.add(key);
       });
-    }
-
-    const translations = readDirectory(dir, config.langs, config.sort);
+    });
 
     const addedKeys: string[] = [];
     const addedKeysHash = new Map<string, true>();
     const unusedKeys: Array<string> = [];
 
+    const translations = getTranslationsFor(dir, config.langs, config.sort);
+
     for (const lang of config.langs) {
       const targetLangKeys = Object.keys(translations[lang]);
 
-      for (const key of i18nKeys) {
+      for (const key of translationKeys) {
         if (targetLangKeys.includes(key)) {
           continue;
         }
@@ -72,8 +47,9 @@ export function generate(config: I18nConfig) {
           addedKeys.push(key);
         }
       }
+
       for (const key of Object.keys(translations[lang])) {
-        if (!i18nKeysHash.has(key)) {
+        if (!translationKeys.has(key)) {
           unusedKeys.push(`${lang}.json: ${key}`);
         }
       }
@@ -89,17 +65,9 @@ export function generate(config: I18nConfig) {
       }
     }
 
-    if (i18nKeys.length > 0) {
+    if (translationKeys.size > 0) {
       const tpl = render(createTemplateData(config, dir));
-      writeDirectory(dir, config.langs, translations, tpl, config.sort);
+      writeI8nDirectory(dir, config.langs, translations, tpl, config.sort);
     }
-
-    if (addedKeys.length > 0 || unusedKeys.length > 0) {
-      hasChanges = true;
-    }
-  }
-
-  if (!hasChanges) {
-    console.log("Nothing changed");
-  }
+  });
 }

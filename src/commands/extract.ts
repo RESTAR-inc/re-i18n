@@ -2,11 +2,7 @@ import * as csv from "csv";
 import path from "path";
 import fs from "fs";
 import { VueCompiler } from "../compilers/vue.js";
-import {
-  getDirectories,
-  getFilesList,
-  readDirectory,
-} from "../parser/files.js";
+import { getTranslationsFor, walkDirs, walkFiles } from "../parser/files.js";
 import { traverseFile } from "../parser/traverse.js";
 import type {
   I18nCompiler,
@@ -16,8 +12,6 @@ import type {
 } from "../types";
 
 export function extract(config: I18nConfig) {
-  const directories = getDirectories(config.pattern, config.dirExt);
-
   const precompilers: Array<I18nCompiler> = [];
   if (config.appType === "vue") {
     precompilers.push(new VueCompiler());
@@ -25,39 +19,33 @@ export function extract(config: I18nConfig) {
 
   const entries: I18nExportDataEntries = {};
 
-  for (const dir of directories) {
-    const files = getFilesList(dir.path, config.fileExts);
+  walkDirs(config.pattern, config.dirExt, (dir) => {
+    console.log(`Searching in \x1b[33m${dir.path}\x1b[0m`);
 
-    for (const file of files) {
+    walkFiles(dir.path, config.fileExts, (file) => {
       traverseFile(file, config.funcName, precompilers, (key, target, node) => {
         const comments = target.leadingComments || target.trailingComments;
-
         if (!entries[dir.i18nDir]) {
           entries[dir.i18nDir] = {};
         }
-
-        const translations = readDirectory(dir, config.langs, config.sort);
-
+        const translations = getTranslationsFor(dir, config.langs, config.sort);
         const nodeTranslations: Record<string, string> = {};
         for (const lang of config.langs) {
           nodeTranslations[lang] = translations[lang][key];
         }
-
         entries[dir.i18nDir][key] = {
           translations: nodeTranslations,
           file,
         };
-
         if (comments) {
           const i18nComment = comments
             .map((block) => block.value.trim())
             .join("\n");
-
           entries[dir.i18nDir][key].comment = i18nComment;
         }
       });
-    }
-  }
+    });
+  });
 
   const exportData: I18nExportData = {
     entries,
@@ -66,16 +54,19 @@ export function extract(config: I18nConfig) {
     },
   };
 
+  const outDirPath = path.resolve(config.outDir);
+  if (!fs.existsSync(config.outDir)) {
+    fs.mkdirSync(outDirPath);
+  }
+
   for (const lang of config.langs) {
     const csvData: string[][] = [["key", "translation", "comment"]];
-
     for (const [_, entryData] of Object.entries(exportData.entries)) {
       for (const [key, meta] of Object.entries(entryData)) {
         csvData.push([key, meta.translations[lang], meta.comment || ""]);
       }
     }
-
-    const output = csv.stringify(
+    csv.stringify(
       csvData,
       {
         delimiter: ";",
@@ -88,13 +79,11 @@ export function extract(config: I18nConfig) {
     );
   }
 
-  const payload = JSON.stringify(exportData, null, 2);
-  const outDirPath = path.resolve(config.outDir);
-
-  if (!fs.existsSync(config.outDir)) {
-    fs.mkdirSync(outDirPath);
-  }
-
-  const outFilePath = path.resolve(config.outDir, "i18n.json");
-  fs.writeFileSync(outFilePath, payload, { encoding: "utf8" });
+  fs.writeFileSync(
+    path.resolve(config.outDir, "i18n.json"),
+    JSON.stringify(exportData, null, 2),
+    {
+      encoding: "utf8",
+    }
+  );
 }

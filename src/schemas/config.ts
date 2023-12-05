@@ -2,7 +2,6 @@ import z from "zod";
 
 export const configSchema = z.object({
   appType: z.enum(["vanilla", "vue"]),
-  defaultLang: z.string(),
   langs: z.array(z.string()),
   /**
    * Path or pattern to i18n root, for example "src/{components/*\\,utils\\,somepath}"

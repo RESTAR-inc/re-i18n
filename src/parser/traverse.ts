@@ -10,13 +10,7 @@ import {
   isMemberExpression,
 } from "@babel/types";
 
-import type { I18nCompiler } from "../types";
-
-type NodeEnterHandler = (
-  key: string,
-  target: StringLiteral,
-  node: CallExpression
-) => void;
+import type { I18nCompiler, I18nFileTraverseHandler } from "../types";
 
 const isFuncCall = (node: CallExpression, target: string) => {
   return isIdentifier(node.callee) && node.callee.name === target;
@@ -44,7 +38,7 @@ export function traverseFile(
   file: string,
   funcName: string,
   compilers: Array<I18nCompiler>,
-  onNodeEnter: NodeEnterHandler
+  onNodeEnter: I18nFileTraverseHandler
 ) {
   const filename = path.basename(file);
   const fileExt = path.extname(filename);

@@ -1,3 +1,5 @@
+import type { CallExpression, StringLiteral } from "@babel/types";
+
 export type { I18nTemplateData } from "./schemas/template";
 export type { I18nConfig } from "./schemas/config";
 
@@ -58,3 +60,9 @@ export interface I18nExportData {
   };
   entries: I18nExportDataEntries;
 }
+
+export type I18nFileTraverseHandler = (
+  key: string,
+  target: StringLiteral,
+  node: CallExpression
+) => void;
