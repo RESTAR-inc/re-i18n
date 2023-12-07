@@ -4,15 +4,6 @@ import { render as renderVanilla } from "./vanilla.js";
 import { render as renderVue } from "./vue.js";
 
 export function createTemplateData(config: I18nConfig): I18nTemplateData {
-  // return {
-  //   appType: config.appType,
-  //   formatterPath: config.generate.formatterPath
-  //     ? path.relative(dir.i18nDir, config.generate.formatterPath)
-  //     : null,
-  //   getLangPath: path.relative(dir.i18nDir, config.generate.getLangPath),
-  //   funcName: config.funcName,
-  //   langs: config.langs,
-  // };
   return {
     appType: config.appType,
     formatterPath: config.generate.formatterPath,
