@@ -1,12 +1,19 @@
 {
     "appType": "vue",
-    "defaultLang": "ja",
+    "pattern": "src/{app,lib}/**/*.{ts,vue}",
     "langs": [
         "ja",
         "en"
     ],
-    "pattern": "src/{app,lib}/**/*",
-    "getLangPath": "./src/i18n/getLang",
-    "formatterPath": "./src/i18n/formatter",
-    "outDir": "./out"
+    "json": {
+        "outDir": "./out/json"
+    },
+    "csv": {
+        "outDir": "./out/csv",
+        "delimiter": ";"
+    },
+    "generate": {
+        "getLangPath": "./src/i18n/getLang",
+        "formatterPath": "./src/i18n/formatter"
+    }
 }

@@ -1,12 +1,12 @@
 import type {
   I18nFormatter,
   I18nGetLang,
-  I18nLangSet,
+  I18nLocales,
   I18nParams,
 } from "./types";
 
 export function createI18n<L extends string, T extends string>(
-  langSet: I18nLangSet<L, T>,
+  locales: I18nLocales<L, T>,
   formatter: I18nFormatter,
   getLang: I18nGetLang<L>
 ) {
@@ -16,7 +16,7 @@ export function createI18n<L extends string, T extends string>(
       throw new Error("Invalid locale");
     }
 
-    const keyset = langSet[lang];
+    const keyset = locales[lang];
     if (!keyset) {
       throw new Error("Invalid keyset");
     }
