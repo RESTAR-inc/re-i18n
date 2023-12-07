@@ -1,44 +1,46 @@
 import * as compiler from "@vue/compiler-sfc";
-import chalk from "chalk";
+import { CompilerError } from "../error.js";
 import type { I18nCompiler } from "../types";
 
 export class VueCompiler implements I18nCompiler {
+  constructor(public fileName: string) {}
+
   match(ext: string): boolean {
     return ext === ".vue";
   }
 
   compile(code: string): string {
     const parsed = compiler.parse(code, {});
-
-    let scriptResult = "";
-    let templateResult = "";
+    const result = [];
 
     try {
-      scriptResult = compiler.compileScript(parsed.descriptor, {
+      const { content } = compiler.compileScript(parsed.descriptor, {
         id: "script",
-      }).content;
+      });
+      result.push(content);
     } catch (error) {
-      if (error instanceof Error) {
-        console.log(
-          chalk.red(`Error parsing vue file script: ${error.message}`)
-        );
-      }
+      throw new CompilerError(
+        `unable to parse "${this.fileName}" script: ${
+          error instanceof Error ? error.message : error
+        }`
+      );
     }
 
     try {
-      templateResult = compiler.compileTemplate({
+      const { code } = compiler.compileTemplate({
         id: "template",
         source: parsed.descriptor.template?.content || "",
         filename: "template",
-      }).code;
+      });
+      result.push(code);
     } catch (error) {
-      if (error instanceof Error) {
-        console.log(
-          chalk.red(`Error parsing vue file template: ${error.message}`)
-        );
-      }
+      throw new CompilerError(
+        `unable to parse "${this.fileName}" template: ${
+          error instanceof Error ? error.message : error
+        }`
+      );
     }
 
-    return `${templateResult};${scriptResult};`;
+    return result.join(";");
   }
 }

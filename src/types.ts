@@ -1,5 +1,3 @@
-import type { CallExpression, StringLiteral } from "@babel/types";
-
 export type { I18nConfig } from "./schemas/config";
 export type { I18nTemplateData } from "./schemas/template";
 
@@ -28,21 +26,18 @@ export interface I18nFormatter {
 export type I18nGetLang<T extends string> = () => T;
 
 export interface I18nCompiler {
+  fileName: string;
   match(ext: string): boolean;
   compile(code: string): string;
 }
 
 export interface I18nRawData {
-  [fileName: string]: {
+  newKeys: Array<string>;
+  unusedKeys: Array<string>;
+  keys: {
     [key: string]: {
       locales: I18nKeyset<string>;
       comment: string;
     };
   };
 }
-
-export type I18nFileTraverseHandler = (
-  key: string,
-  target: StringLiteral,
-  node: CallExpression
-) => void;

@@ -12,7 +12,7 @@
     "i18n:json-export": "i18n-json-export"
   },
   "dependencies": {
-    "intl-messageformat": "10.5.8",
+    "intl-messageformat": "^10.5.8",
     "re-i18n": "file:..",
     "vue": "^3.3.8"
   },

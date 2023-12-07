@@ -1,5 +1,5 @@
 import { parse as babelParse, traverse as babelTraverse } from "@babel/core";
-import type { CallExpression } from "@babel/types";
+import type { CallExpression, StringLiteral } from "@babel/types";
 import {
   isCallExpression,
   isIdentifier,
@@ -11,12 +11,11 @@ import * as glob from "glob";
 import path from "path";
 import { getLocaleFilePath } from "./common.js";
 import { VueCompiler } from "./compilers/vue.js";
+import { ParseError } from "./error.js";
 import type {
   I18nCompiler,
   I18nConfig,
-  I18nFileTraverseHandler,
   I18nKeyset,
-  I18nLocales,
   I18nRawData,
 } from "./types";
 
@@ -42,31 +41,40 @@ const isFuncRawCall = (node: CallExpression, target: string) => {
   );
 };
 
-function traverseFile(
-  file: string,
-  funcName: string,
-  compilers: Array<I18nCompiler>,
-  onNodeEnter: I18nFileTraverseHandler
-) {
-  const filename = path.basename(file);
-  const fileExt = path.extname(filename);
-  const codeRaw = fs.readFileSync(file, { encoding: "utf8" });
+interface TraverseFileParams {
+  file: string;
+  funcName: string;
+  compilers: Array<I18nCompiler>;
+  onEnter(key: string, target: StringLiteral, node: CallExpression): void;
+  onError(error: unknown): void;
+}
 
-  const code = compilers.reduce((result, compiler) => {
+function traverseFile(params: TraverseFileParams) {
+  const filename = path.basename(params.file);
+  const fileExt = path.extname(filename);
+  const codeRaw = fs.readFileSync(params.file, { encoding: "utf8" });
+
+  const code = params.compilers.reduce((result, compiler) => {
     if (compiler.match(fileExt)) {
-      return compiler.compile(result);
+      try {
+        return compiler.compile(result);
+      } catch (error) {
+        params.onError(error);
+        return "";
+      }
     }
     return result;
   }, codeRaw);
 
   const ast = babelParse(code, {
-    presets: ["@babel/typescript"],
     filename,
+    presets: ["@babel/typescript"],
     plugins: ["@babel/plugin-transform-typescript"],
   });
 
   if (ast === null) {
-    throw new Error("Failed to parse file");
+    params.onError(new ParseError("Failed to parse file"));
+    return;
   }
 
   babelTraverse(ast, {
@@ -82,15 +90,15 @@ function traverseFile(
       }
 
       if (
-        isFuncCall(node, funcName) ||
-        isFuncRawCall(node, funcName) ||
-        isFuncMemberCall(node, funcName)
+        isFuncCall(node, params.funcName) ||
+        isFuncRawCall(node, params.funcName) ||
+        isFuncMemberCall(node, params.funcName)
       ) {
         const target = node.arguments[0];
 
         if (isStringLiteral(target)) {
           const key = target.value;
-          onNodeEnter(key, target, node);
+          params.onEnter(key, target, node);
         }
       }
     },
@@ -106,55 +114,105 @@ function readLocaleFile(file: string): I18nKeyset<string> {
   return JSON.parse(data);
 }
 
-export function parse(
-  config: I18nConfig,
-  onEach?: (file: string) => void
-): I18nRawData {
-  // TODO: refactor com
-  const compilers: Array<I18nCompiler> = [];
-  if (config.appType === "vue") {
-    compilers.push(new VueCompiler());
-  }
+interface ParseParams {
+  config: I18nConfig;
+  onEnter?(file: string): void;
+  onData(file: string, data: I18nRawData): Promise<void>;
+  onError?(file: string, error: unknown): void;
+}
 
-  const rawData: I18nRawData = {};
+export async function parse(params: ParseParams) {
+  for (const file of glob.sync(params.config.pattern)) {
+    if (params.onEnter) {
+      params.onEnter(file);
+    }
 
-  for (const file of glob.sync(config.pattern)) {
+    // TODO: refactor compilers
+    const compilers: Array<I18nCompiler> = [];
+    if (params.config.appType === "vue") {
+      compilers.push(new VueCompiler(file));
+    }
+
     const dirName = path.dirname(file);
 
+    const rawData: I18nRawData = {
+      keys: {},
+      newKeys: [],
+      unusedKeys: [],
+    };
+
+    const oldKeys = new Set<string>();
+    const newKeys = new Set<string>();
+    const allKeys = new Set<string>();
+
     // TODO: add extra check for dirName
-    if (path.basename(dirName) === config.dirName) {
+    if (path.basename(dirName) === params.config.dirName) {
       continue;
     }
 
-    const existingLocales: I18nLocales<string, string> = {};
-    for (const lang of config.langs) {
-      const targetFile = getLocaleFilePath(lang, file, config.dirName);
-      existingLocales[lang] = readLocaleFile(targetFile);
+    for (const lang of params.config.langs) {
+      const targetFile = getLocaleFilePath(lang, file, params.config.dirName);
+      const currentLocale = readLocaleFile(targetFile);
+
+      for (const oldKey of Object.keys(currentLocale)) {
+        rawData.keys[oldKey] = {
+          ...rawData.keys[oldKey],
+          comment: "",
+          locales: {
+            ...rawData.keys[oldKey]?.locales,
+            [lang]: currentLocale[oldKey],
+          },
+        };
+        oldKeys.add(oldKey);
+      }
     }
 
-    traverseFile(file, config.funcName, compilers, (key, target) => {
-      const comment = (target.leadingComments || target.trailingComments || [])
-        .map((block) => block.value.trim())
-        .join("\n");
+    traverseFile({
+      file,
+      compilers,
+      funcName: params.config.funcName,
+      onError(error) {
+        if (params.onError) {
+          params.onError(file, error);
+        }
+      },
+      onEnter(key, target) {
+        allKeys.add(key);
 
-      const locales: Record<string, string> = {};
-      for (const lang of config.langs) {
-        locales[lang] = existingLocales[lang][key] || "";
-      }
+        const comment = (
+          target.leadingComments ||
+          target.trailingComments ||
+          []
+        )
+          .map((block) => block.value.trim())
+          .join("\n");
 
-      rawData[file] = {
-        ...rawData[file],
-        [key]: {
-          locales,
+        rawData.keys[key] = {
           comment,
-        },
-      };
+          locales: {
+            ...rawData.keys[key]?.locales,
+          },
+        };
+
+        for (const lang of params.config.langs) {
+          const translation = rawData.keys[key].locales[lang];
+          if (typeof translation === "undefined") {
+            newKeys.add(key);
+          }
+          rawData.keys[key].locales[lang] = translation || "";
+        }
+      },
     });
 
-    if (onEach) {
-      onEach(file);
+    for (const key of allKeys) {
+      if (oldKeys.has(key)) {
+        oldKeys.delete(key);
+      }
     }
-  }
 
-  return rawData;
+    rawData.newKeys = Array.from(newKeys);
+    rawData.unusedKeys = Array.from(oldKeys);
+
+    await params.onData(file, rawData);
+  }
 }

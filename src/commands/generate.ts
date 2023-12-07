@@ -1,63 +1,101 @@
 import chalk from "chalk";
 import fs from "fs";
 import path from "path";
+import prompts from "prompts";
 import { parse } from "../parser.js";
 import type { I18nConfig } from "../schemas/config.js";
 import type { I18nKeyset } from "../types.js";
 
+function formatKeyList(list: Array<string>) {
+  return list.map((key) => `\t- ${key}`).join("\n");
+}
+
 export function generate(config: I18nConfig) {
-  const rawData = parse(config, (file) => {
-    console.log(`${chalk.blue("File parsed:")} ${file}`);
-  });
+  parse({
+    config,
+    onEnter(file) {
+      console.log(`${chalk.blue("File parsed:")} ${file}`);
+    },
+    onError(file, error) {
+      console.log(
+        chalk.red(error instanceof Error ? error.message : `${error}`)
+      );
+    },
+    async onData(file, rawFileData) {
+      let addNewKeys = false;
+      let removeUnusedKeys = false;
 
-  // console.log(JSON.stringify(rawData, null, 2));
-
-  for (const [file, i18nKeys] of Object.entries(rawData)) {
-    const dirName = path.dirname(file);
-    const targetDir = path.resolve(path.join(dirName, config.dirName));
-    const fileName = path.basename(file, path.extname(file));
-
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir, { recursive: true });
-    }
-
-    for (const lang of config.langs) {
-      const fileData: I18nKeyset<string> = {};
-      for (const [key, keyData] of Object.entries(i18nKeys)) {
-        fileData[key] = keyData.locales[lang];
+      if (rawFileData.newKeys.length > 0) {
+        const { proceed } = await prompts({
+          type: "confirm",
+          name: "proceed",
+          initial: true,
+          message: [
+            chalk.yellow("New keys have been found"),
+            formatKeyList(rawFileData.newKeys),
+            "Would you like to add them?`",
+          ].join("\n\n"),
+        });
+        addNewKeys = Boolean(proceed);
       }
 
-      const targetFile = path.join(targetDir, `${lang}.${fileName}.json`);
+      if (rawFileData.unusedKeys.length > 0) {
+        const { proceed } = await prompts({
+          type: "confirm",
+          name: "proceed",
+          initial: true,
+          message: [
+            chalk.red("Unused keys have been found"),
+            formatKeyList(rawFileData.unusedKeys),
+            "Do you want to delete them?`",
+          ].join("\n\n"),
+        });
+        removeUnusedKeys = Boolean(proceed);
+      }
 
-      fs.writeFileSync(targetFile, `${JSON.stringify(fileData, null, 2)}\n`, {
-        encoding: "utf8",
-      });
-    }
-  }
+      const dirName = path.dirname(file);
+      const targetDir = path.resolve(path.join(dirName, config.dirName));
+      const fileName = path.basename(file, path.extname(file));
 
-  // console.log(data);
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+      }
 
-  // for (const [dir, files] of Object.entries(rawData)) {
-  //   const translations: LangData = {};
-  //   const i18nDirName = path.join(dir, `${path.basename(dir)}${config.dirExt}`);
+      for (const lang of config.langs) {
+        const fileData: I18nKeyset<string> = {};
+        for (const [key, keyData] of Object.entries(rawFileData.keys)) {
+          if (rawFileData.newKeys.includes(key)) {
+            if (addNewKeys) {
+              fileData[key] = keyData.locales[lang];
+            }
+          } else if (rawFileData.unusedKeys.includes(key)) {
+            if (!removeUnusedKeys) {
+              fileData[key] = keyData.locales[lang];
+            }
+          } else {
+            fileData[key] = keyData.locales[lang];
+          }
+        }
 
-  //   for (const translationKeys of Object.values(files)) {
-  //     if (!translations[i18nDirName]) {
-  //       translations[i18nDirName] = {};
-  //     }
+        const targetFile = path.join(targetDir, `${lang}.${fileName}.json`);
+        fs.writeFileSync(targetFile, `${JSON.stringify(fileData, null, 2)}\n`, {
+          encoding: "utf8",
+        });
+      }
 
-  //     for (const [key, values] of Object.entries(translationKeys)) {
-  //       for (const [lang, value] of Object.entries(values.translations)) {
-  //         if (!translations[i18nDirName][lang]) {
-  //           translations[i18nDirName][lang] = {};
-  //         }
-  //         translations[i18nDirName][lang][key] = value;
-  //       }
-  //     }
-  //   }
+      if (addNewKeys) {
+        const formattedList = formatKeyList(rawFileData.newKeys);
+        const message = `\nKeys where added\n\n${formattedList}\n`;
+        console.log(chalk.green(message));
+      }
 
-  //   console.log(translations);
-  // }
+      if (removeUnusedKeys) {
+        const formattedList = formatKeyList(rawFileData.unusedKeys);
+        const message = `\nKeys where removed\n\n${formattedList}\n`;
+        console.log(chalk.red(message));
+      }
+    },
+  });
 
   // const translationKeys = new Map<string, Set<string>>();
   // console.log(translationKeys);
