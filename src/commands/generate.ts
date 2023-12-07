@@ -14,12 +14,13 @@ export function generate(config: I18nConfig) {
   parse({
     config,
     onEnter(file) {
-      console.log(`${chalk.blue("File parsed:")} ${file}`);
+      console.log(`Parsing ${chalk.blue(file)}...`);
     },
-    onError(file, error) {
-      console.log(
-        chalk.red(error instanceof Error ? error.message : `${error}`)
-      );
+    onError(file, err) {
+      const message =
+        err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
+
+      console.log(chalk.red(message));
     },
     async onData(file, rawFileData) {
       let addNewKeys = false;
@@ -34,7 +35,7 @@ export function generate(config: I18nConfig) {
             chalk.yellow("New keys have been found"),
             formatKeyList(rawFileData.newKeys),
             "Would you like to add them?`",
-          ].join("\n\n"),
+          ].join("\n"),
         });
         addNewKeys = Boolean(proceed);
       }
@@ -48,7 +49,7 @@ export function generate(config: I18nConfig) {
             chalk.red("Unused keys have been found"),
             formatKeyList(rawFileData.unusedKeys),
             "Do you want to delete them?`",
-          ].join("\n\n"),
+          ].join("\n"),
         });
         removeUnusedKeys = Boolean(proceed);
       }
@@ -78,71 +79,22 @@ export function generate(config: I18nConfig) {
         }
 
         const targetFile = path.join(targetDir, `${lang}.${fileName}.json`);
-        fs.writeFileSync(targetFile, `${JSON.stringify(fileData, null, 2)}\n`, {
+        fs.writeFileSync(targetFile, JSON.stringify(fileData, null, 2), {
           encoding: "utf8",
         });
       }
 
       if (addNewKeys) {
         const formattedList = formatKeyList(rawFileData.newKeys);
-        const message = `\nKeys where added\n\n${formattedList}\n`;
+        const message = `Keys where added\n${formattedList}`;
         console.log(chalk.green(message));
       }
 
       if (removeUnusedKeys) {
         const formattedList = formatKeyList(rawFileData.unusedKeys);
-        const message = `\nKeys where removed\n\n${formattedList}\n`;
+        const message = `Keys where removed\n${formattedList}`;
         console.log(chalk.red(message));
       }
     },
   });
-
-  // const translationKeys = new Map<string, Set<string>>();
-  // console.log(translationKeys);
-  // walkDirs(config.pattern, config.dirExt, (dir) => {
-  //   console.log(`Searching in \x1b[33m${dir.path}\x1b[0m`);
-  //   const translationKeys = new Set<string>();
-  //   walkFiles(dir.path, (file) => {
-  //     traverseFile(file, config.funcName, compilers, (key) => {
-  //       translationKeys.add(key);
-  //     });
-  //   });
-  //   const addedKeys = new Set<string>();
-  //   const unusedKeys: Array<string> = [];
-  //   const translations = getTranslationsFor(dir, config.langs);
-  //   for (const lang of config.langs) {
-  //     const targetLangKeys = Object.keys(translations[lang]);
-  //     for (const key of translationKeys) {
-  //       if (targetLangKeys.includes(key)) {
-  //         continue;
-  //       }
-  //       translations[lang][key] = "";
-  //       addedKeys.add(key);
-  //     }
-  //     for (const key of Object.keys(translations[lang])) {
-  //       if (!translationKeys.has(key)) {
-  //         unusedKeys.push(`${lang}.json: ${key}`);
-  //       }
-  //     }
-  //   }
-  //   if (addedKeys.size > 0 || unusedKeys.length > 0) {
-  //     console.log(`Folder: \x1b[33m${dir.i18nDir}\x1b[0m`);
-  //     for (const key of addedKeys) {
-  //       console.log(`Added key: ${key}`);
-  //     }
-  //     for (const key of unusedKeys) {
-  //       console.log(`\x1b[31mUnused key\x1b[0m: ${key}`);
-  //     }
-  //   }
-  //   // if (translationKeys.size > 0) {
-  //   //   const tpl = render(createTemplateData(config, dir));
-  //   //   writeI8nDirectory(
-  //   //     dir,
-  //   //     config.langs,
-  //   //     translations,
-  //   //     tpl,
-  //   //     config.generate.sortKeys
-  //   //   );
-  //   // }
-  // });
 }

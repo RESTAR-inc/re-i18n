@@ -1,4 +1,3 @@
-import path from "path";
 import type { I18nTemplateData } from "../schemas/template";
 import type { I18nConfig } from "../types";
 import { render as renderVanilla } from "./vanilla.js";

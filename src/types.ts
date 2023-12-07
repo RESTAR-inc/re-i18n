@@ -41,3 +41,22 @@ export interface I18nRawData {
     };
   };
 }
+
+export interface I18nExportData {
+  data: {
+    [file: string]: {
+      [key: string]: {
+        locales: I18nKeyset<string>;
+        comment: string;
+      };
+    };
+  };
+  createdAt: string;
+}
+
+export interface I18nCSVColumns {
+  key: string;
+  translation: string;
+  comment: string;
+  file: string;
+}

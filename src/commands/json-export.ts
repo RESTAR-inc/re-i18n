@@ -1,23 +1,44 @@
-import type { I18nConfig } from "../types";
+import chalk from "chalk";
+import fs from "fs";
+import path from "path";
+import { parse } from "../parser.js";
+import type { I18nConfig, I18nExportData } from "../types";
 
-export function jsonExport(config: I18nConfig) {
-  // const entries = getRawData(config);
-  // const exportData: I18nRawDataOLD = {
-  //   entries,
-  //   meta: {
-  //     datetime: new Date().toUTCString(),
-  //   },
-  // };
-  // const outDirPath = path.resolve(config.json.outDir);
-  // console.log(`Writing JSON files to ${outDirPath}`);
-  // if (!fs.existsSync(outDirPath)) {
-  //   fs.mkdirSync(outDirPath, { recursive: true });
-  // }
-  // fs.writeFileSync(
-  //   path.resolve(config.json.outDir, "i18n.json"),
-  //   JSON.stringify(exportData, null, 2),
-  //   {
-  //     encoding: "utf8",
-  //   }
-  // );
+export async function jsonExport(config: I18nConfig) {
+  const exportData: I18nExportData = {
+    createdAt: new Date().toUTCString(),
+    data: {},
+  };
+
+  await parse({
+    config,
+    onEnter(file) {
+      console.log(`Parsing ${chalk.blue(file)}...`);
+    },
+    onError(file, err) {
+      const message =
+        err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
+
+      console.log(chalk.red(message));
+    },
+    async onData(file, rawFileData) {
+      exportData.data[file] = rawFileData.keys;
+    },
+  });
+
+  const targetDir = path.resolve(config.json.outDir);
+  const targetFile = path.join(targetDir, "i18n.json");
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
+  }
+
+  fs.writeFileSync(targetFile, `${JSON.stringify(exportData, null, 2)}\n`, {
+    encoding: "utf8",
+  });
+
+  console.log(
+    `The export file was created at ${chalk.green(
+      path.join(config.json.outDir, path.basename(targetFile))
+    )}`
+  );
 }

@@ -116,16 +116,14 @@ function readLocaleFile(file: string): I18nKeyset<string> {
 
 interface ParseParams {
   config: I18nConfig;
-  onEnter?(file: string): void;
+  onEnter(file: string): void;
   onData(file: string, data: I18nRawData): Promise<void>;
-  onError?(file: string, error: unknown): void;
+  onError(file: string, error: unknown): void;
 }
 
 export async function parse(params: ParseParams) {
   for (const file of glob.sync(params.config.pattern)) {
-    if (params.onEnter) {
-      params.onEnter(file);
-    }
+    params.onEnter(file);
 
     // TODO: refactor compilers
     const compilers: Array<I18nCompiler> = [];
@@ -172,9 +170,7 @@ export async function parse(params: ParseParams) {
       compilers,
       funcName: params.config.funcName,
       onError(error) {
-        if (params.onError) {
-          params.onError(file, error);
-        }
+        params.onError(file, error);
       },
       onEnter(key, target) {
         allKeys.add(key);
