@@ -9,7 +9,7 @@ export const configSchema = z.object({
   generate: z.object({
     getLangPath: z.string(),
     formatterPath: z.string().nullable().default(null),
-    sortKeys: z.boolean().default(false),
+    sortKeys: z.boolean().default(true),
   }),
   json: z.object({
     outDir: z.string(),

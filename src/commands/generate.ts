@@ -10,6 +10,15 @@ function formatKeyList(list: Array<string>) {
   return list.map((key) => `\t- ${key}`).join("\n");
 }
 
+function sortKeyset(target: I18nKeyset<string>) {
+  return Object.keys(target)
+    .sort()
+    .reduce<I18nKeyset<string>>((acc, key) => {
+      acc[key] = target[key];
+      return acc;
+    }, {});
+}
+
 export function generate(config: I18nConfig) {
   parse({
     config,
@@ -63,7 +72,7 @@ export function generate(config: I18nConfig) {
       }
 
       for (const lang of config.langs) {
-        const fileData: I18nKeyset<string> = {};
+        let fileData: I18nKeyset<string> = {};
         for (const [key, keyData] of Object.entries(rawFileData.keys)) {
           if (rawFileData.newKeys.includes(key)) {
             if (addNewKeys) {
@@ -76,6 +85,10 @@ export function generate(config: I18nConfig) {
           } else {
             fileData[key] = keyData.locales[lang];
           }
+        }
+
+        if (config.generate.sortKeys) {
+          fileData = sortKeyset(fileData);
         }
 
         const targetFile = path.join(targetDir, `${lang}.${fileName}.json`);
