@@ -1,5 +1,7 @@
 {
   "おはよう{name}さん": "Good morning, {name}",
+  "こんにちは{name}さん": "",
+  "こんばんは{name}さん": "",
   "偶数": "even",
   "奇数": "odd"
 }

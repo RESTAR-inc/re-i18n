@@ -111,11 +111,10 @@ interface ParseParams {
   config: I18nConfig;
   onEnterDir(dir: string): void;
   onEnterFile(file: string): void;
-  onData(file: string, data: I18nRawData): Promise<void>;
   onError(file: string, error: unknown): void;
 }
 
-export async function parse(params: ParseParams) {
+export function parse(params: ParseParams): Record<string, I18nRawData> {
   const rawDataDict: Record<string, I18nRawData> = {};
 
   for (const file of glob.sync(params.config.pattern)) {
@@ -147,7 +146,7 @@ export async function parse(params: ParseParams) {
         for (const oldKey of Object.keys(currentLocale)) {
           rawDataDict[dirName].keys[oldKey] = {
             ...rawDataDict[dirName].keys[oldKey],
-            comment: "",
+            files: [],
             locales: {
               ...rawDataDict[dirName].keys[oldKey]?.locales,
               [lang]: currentLocale[oldKey],
@@ -174,12 +173,17 @@ export async function parse(params: ParseParams) {
           .map((block) => block.value.trim())
           .join("\n");
 
-        rawDataDict[dirName].keys[key] = {
-          comment,
-          locales: {
-            ...rawDataDict[dirName].keys[key]?.locales,
-          },
-        };
+        if (!rawDataDict[dirName].keys[key]) {
+          rawDataDict[dirName].keys[key] = {
+            files: [],
+            locales: {},
+          };
+        }
+
+        rawDataDict[dirName].keys[key].files.push({ file, comment });
+        // rawDataDict[dirName].keys[key].locales = {
+        //   ...rawDataDict[dirName].keys[key].locales,
+        // };
 
         for (const lang of params.config.langs) {
           const translation = rawDataDict[dirName].keys[key].locales[lang];
@@ -196,7 +200,7 @@ export async function parse(params: ParseParams) {
         rawDataDict[dirName].stats.unused.delete(key);
       }
     }
-
-    await params.onData(file, rawDataDict[dirName]);
   }
+
+  return rawDataDict;
 }

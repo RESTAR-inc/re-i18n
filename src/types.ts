@@ -30,7 +30,10 @@ export interface I18nRawData {
   keys: {
     [key: string]: {
       locales: I18nKeyset<string>;
-      comment: string;
+      files: Array<{
+        file: string;
+        comment: string;
+      }>;
     };
   };
 }
