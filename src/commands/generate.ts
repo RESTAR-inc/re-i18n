@@ -5,7 +5,7 @@ import prompts from "prompts";
 import { parse } from "../parser.js";
 import type { I18nConfig } from "../schemas/config.js";
 import { render } from "../template/index.js";
-import type { I18nKeyset, I18nTemplateData } from "../types.js";
+import type { I18nKeyset } from "../types.js";
 
 function formatKeyList(set: Set<string>) {
   return Array.from(set)
@@ -103,18 +103,7 @@ export async function generate(config: I18nConfig) {
       });
     }
 
-    const localeDirPath = path.join(dir, config.dirName);
-
-    const templateData: I18nTemplateData = {
-      appType: config.appType,
-      formatterPath: config.generate.formatterPath
-        ? path.relative(localeDirPath, config.generate.formatterPath)
-        : null,
-      getLangPath: path.relative(localeDirPath, config.generate.getLangPath),
-      funcName: config.funcName,
-      langs: config.langs,
-    };
-    const template = render(templateData);
+    const template = render(config, dir);
     const targetTemplateFile = path.join(dir, config.dirName, "index.ts");
 
     console.log(`Saving template file at ${chalk.bold(targetTemplateFile)}`);

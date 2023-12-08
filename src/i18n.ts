@@ -1,4 +1,4 @@
-import type { I18nFormatter, I18nGetLang, I18nLocales, I18nParams } from "./types";
+import type { I18nFormatter, I18nGetLang, I18nLocales, I18nParams } from "./types.js";
 
 export function createI18n<L extends string, T extends string>(
   locales: I18nLocales<L, T>,

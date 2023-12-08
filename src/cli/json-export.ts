@@ -15,5 +15,6 @@ const opts = program.opts<{
 }>();
 
 const config = loadConfig(path.resolve(opts.config));
-
-jsonExport(config);
+if (config) {
+  jsonExport(config);
+}

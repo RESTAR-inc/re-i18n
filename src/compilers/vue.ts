@@ -1,6 +1,6 @@
 import * as compiler from "@vue/compiler-sfc";
 import { CompilerError } from "../error.js";
-import type { I18nCompiler } from "../types";
+import type { I18nCompiler } from "../types.js";
 
 export class VueCompiler implements I18nCompiler {
   constructor(public fileName: string) {}

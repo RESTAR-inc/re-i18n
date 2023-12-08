@@ -15,5 +15,6 @@ const opts = program.opts<{
 }>();
 
 const config = loadConfig(path.resolve(opts.config));
-
-csvExport(config);
+if (config) {
+  csvExport(config);
+}

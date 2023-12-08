@@ -1,3 +1,3 @@
-export * from "./formatter";
-export * from "./i18n";
-export * from "./types";
+export * from "./formatter.js";
+export * from "./i18n.js";
+export * from "./types.js";

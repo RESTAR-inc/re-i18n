@@ -6,7 +6,7 @@ import * as glob from "glob";
 import path from "path";
 import { VueCompiler } from "./compilers/vue.js";
 import { ParseError } from "./error.js";
-import type { I18nCompiler, I18nConfig, I18nKeyset, I18nRawData } from "./types";
+import type { I18nCompiler, I18nConfig, I18nKeyset, I18nRawData } from "./types.js";
 
 const isFuncCall = (node: CallExpression, target: string) => {
   return isIdentifier(node.callee) && node.callee.name === target;
@@ -181,9 +181,6 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
         }
 
         rawDataDict[dirName].keys[key].files.push({ file, comment });
-        // rawDataDict[dirName].keys[key].locales = {
-        //   ...rawDataDict[dirName].keys[key].locales,
-        // };
 
         for (const lang of params.config.langs) {
           const translation = rawDataDict[dirName].keys[key].locales[lang];

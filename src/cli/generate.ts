@@ -15,5 +15,6 @@ const opts = program.opts<{
 }>();
 
 const config = loadConfig(path.resolve(opts.config));
-
-generate(config);
+if (config) {
+  generate(config);
+}

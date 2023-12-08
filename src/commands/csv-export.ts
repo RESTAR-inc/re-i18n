@@ -3,7 +3,7 @@ import * as csv from "csv";
 import fs from "fs";
 import path from "path";
 import { parse } from "../parser.js";
-import type { I18nConfig, I18nCSVColumns, I18nExportData } from "../types";
+import type { I18nConfig, I18nCSVColumns, I18nExportData } from "../types.js";
 
 export function csvExport(config: I18nConfig) {
   const data = parse({
