@@ -40,12 +40,7 @@ export interface I18nRawData {
 
 export interface I18nExportData {
   data: {
-    [file: string]: {
-      [key: string]: {
-        locales: I18nKeyset<string>;
-        comment: string;
-      };
-    };
+    [dir: string]: I18nRawData["keys"];
   };
   createdAt: string;
 }

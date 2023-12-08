@@ -4,43 +4,40 @@ import path from "path";
 import { parse } from "../parser.js";
 import type { I18nConfig, I18nExportData } from "../types";
 
-export async function jsonExport(config: I18nConfig) {
+export function jsonExport(config: I18nConfig) {
+  const data = parse({
+    config,
+    onEnterFile(file) {
+      console.log(`  File ${chalk.blue(file)}`);
+    },
+    onError(file, err) {
+      const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
+
+      console.log(chalk.red(message));
+    },
+    onEnterDir(dir) {
+      console.log(`Dir ${chalk.cyan.bold(dir)}`);
+    },
+  });
+
   const exportData: I18nExportData = {
     createdAt: new Date().toUTCString(),
-    data: {},
+    data: Object.entries(data).reduce<I18nExportData["data"]>((acc, [dir, rawData]) => {
+      acc[dir] = rawData.keys;
+      return acc;
+    }, {}),
   };
 
-  // await parse({
-  //   config,
-  //   onEnterDir(dir) {
-  //     console.log(`Dir ${chalk.cyan.bold(dir)}`);
-  //   },
-  //   onEnterFile(file) {
-  //     console.log(`  File ${chalk.blue(file)}`);
-  //   },
-  //   onError(file, err) {
-  //     const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
+  const targetDir = path.resolve(config.json.outDir);
+  const targetFile = path.join(targetDir, "i18n.json");
 
-  //     console.log(chalk.red(message));
-  //   },
-  //   async onData(file, rawFileData) {
-  //     // exportData.data[file] = rawFileData.keys;
-  //   },
-  // });
+  if (!fs.existsSync(targetDir)) {
+    console.log(`Creating directory at ${chalk.bold(config.json.outDir)}`);
+    fs.mkdirSync(targetDir, { recursive: true });
+  }
 
-  // const targetDir = path.resolve(config.json.outDir);
-  // const targetFile = path.join(targetDir, "i18n.json");
-  // if (!fs.existsSync(targetDir)) {
-  //   fs.mkdirSync(targetDir, { recursive: true });
-  // }
-
-  // fs.writeFileSync(targetFile, `${JSON.stringify(exportData, null, 2)}\n`, {
-  //   encoding: "utf8",
-  // });
-
-  // console.log(
-  //   `The export file was created at ${chalk.green(
-  //     path.join(config.json.outDir, path.basename(targetFile))
-  //   )}`
-  // );
+  console.log(`Saving file at ${chalk.bold(targetFile)}`);
+  fs.writeFileSync(targetFile, JSON.stringify(exportData, null, 2), {
+    encoding: "utf8",
+  });
 }
