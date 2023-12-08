@@ -3,20 +3,10 @@ export type { I18nTemplateData } from "./schemas/template";
 
 export type I18nKeyset<T extends string> = Record<T, string>;
 
-export type I18nLocales<L extends string, T extends string> = Record<
-  L,
-  I18nKeyset<T>
->;
+export type I18nLocales<L extends string, T extends string> = Record<L, I18nKeyset<T>>;
 
 export interface I18nParams {
-  [key: string]:
-    | string
-    | number
-    | boolean
-    | null
-    | undefined
-    | Date
-    | I18nParams;
+  [key: string]: string | number | boolean | null | undefined | Date | I18nParams;
 }
 
 export interface I18nFormatter {
@@ -32,8 +22,11 @@ export interface I18nCompiler {
 }
 
 export interface I18nRawData {
-  newKeys: Array<string>;
-  unusedKeys: Array<string>;
+  stats: {
+    all: Set<string>;
+    added: Set<string>;
+    unused: Set<string>;
+  };
   keys: {
     [key: string]: {
       locales: I18nKeyset<string>;

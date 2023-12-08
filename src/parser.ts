@@ -1,23 +1,12 @@
 import { parse as babelParse, traverse as babelTraverse } from "@babel/core";
 import type { CallExpression, StringLiteral } from "@babel/types";
-import {
-  isCallExpression,
-  isIdentifier,
-  isMemberExpression,
-  isStringLiteral,
-} from "@babel/types";
+import { isCallExpression, isIdentifier, isMemberExpression, isStringLiteral } from "@babel/types";
 import fs from "fs";
 import * as glob from "glob";
 import path from "path";
-import { getLocaleFilePath } from "./common.js";
 import { VueCompiler } from "./compilers/vue.js";
 import { ParseError } from "./error.js";
-import type {
-  I18nCompiler,
-  I18nConfig,
-  I18nKeyset,
-  I18nRawData,
-} from "./types";
+import type { I18nCompiler, I18nConfig, I18nKeyset, I18nRawData } from "./types";
 
 const isFuncCall = (node: CallExpression, target: string) => {
   return isIdentifier(node.callee) && node.callee.name === target;
@@ -105,26 +94,31 @@ function traverseFile(params: TraverseFileParams) {
   });
 }
 
-function readLocaleFile(file: string): I18nKeyset<string> {
-  if (!fs.existsSync(file)) {
+function readTranslations(lang: string, file: string, localeDirName: string): I18nKeyset<string> {
+  const dirName = path.dirname(file);
+  const translationDir = path.join(dirName, localeDirName);
+  const targetFile = path.join(translationDir, `${lang}.json`);
+
+  if (!fs.existsSync(targetFile)) {
     return {};
   }
 
-  const data = fs.readFileSync(file, { encoding: "utf-8" });
+  const data = fs.readFileSync(targetFile, { encoding: "utf-8" });
   return JSON.parse(data);
 }
 
 interface ParseParams {
   config: I18nConfig;
-  onEnter(file: string): void;
+  onEnterDir(dir: string): void;
+  onEnterFile(file: string): void;
   onData(file: string, data: I18nRawData): Promise<void>;
   onError(file: string, error: unknown): void;
 }
 
 export async function parse(params: ParseParams) {
-  for (const file of glob.sync(params.config.pattern)) {
-    params.onEnter(file);
+  const rawDataDict: Record<string, I18nRawData> = {};
 
+  for (const file of glob.sync(params.config.pattern)) {
     // TODO: refactor compilers
     const compilers: Array<I18nCompiler> = [];
     if (params.config.appType === "vue") {
@@ -132,38 +126,39 @@ export async function parse(params: ParseParams) {
     }
 
     const dirName = path.dirname(file);
-
-    const rawData: I18nRawData = {
-      keys: {},
-      newKeys: [],
-      unusedKeys: [],
-    };
-
-    const oldKeys = new Set<string>();
-    const newKeys = new Set<string>();
-    const allKeys = new Set<string>();
-
-    // TODO: add extra check for dirName
     if (path.basename(dirName) === params.config.dirName) {
       continue;
     }
 
-    for (const lang of params.config.langs) {
-      const targetFile = getLocaleFilePath(lang, file, params.config.dirName);
-      const currentLocale = readLocaleFile(targetFile);
+    if (!rawDataDict[dirName]) {
+      params.onEnterDir(dirName);
+      rawDataDict[dirName] = {
+        keys: {},
+        stats: {
+          all: new Set(),
+          added: new Set(),
+          unused: new Set(),
+        },
+      };
 
-      for (const oldKey of Object.keys(currentLocale)) {
-        rawData.keys[oldKey] = {
-          ...rawData.keys[oldKey],
-          comment: "",
-          locales: {
-            ...rawData.keys[oldKey]?.locales,
-            [lang]: currentLocale[oldKey],
-          },
-        };
-        oldKeys.add(oldKey);
+      for (const lang of params.config.langs) {
+        const currentLocale = readTranslations(lang, file, params.config.dirName);
+
+        for (const oldKey of Object.keys(currentLocale)) {
+          rawDataDict[dirName].keys[oldKey] = {
+            ...rawDataDict[dirName].keys[oldKey],
+            comment: "",
+            locales: {
+              ...rawDataDict[dirName].keys[oldKey]?.locales,
+              [lang]: currentLocale[oldKey],
+            },
+          };
+          rawDataDict[dirName].stats.unused.add(oldKey);
+        }
       }
     }
+
+    params.onEnterFile(file);
 
     traverseFile({
       file,
@@ -173,42 +168,35 @@ export async function parse(params: ParseParams) {
         params.onError(file, error);
       },
       onEnter(key, target) {
-        allKeys.add(key);
+        rawDataDict[dirName].stats.all.add(key);
 
-        const comment = (
-          target.leadingComments ||
-          target.trailingComments ||
-          []
-        )
+        const comment = (target.leadingComments || target.trailingComments || [])
           .map((block) => block.value.trim())
           .join("\n");
 
-        rawData.keys[key] = {
+        rawDataDict[dirName].keys[key] = {
           comment,
           locales: {
-            ...rawData.keys[key]?.locales,
+            ...rawDataDict[dirName].keys[key]?.locales,
           },
         };
 
         for (const lang of params.config.langs) {
-          const translation = rawData.keys[key].locales[lang];
+          const translation = rawDataDict[dirName].keys[key].locales[lang];
           if (typeof translation === "undefined") {
-            newKeys.add(key);
+            rawDataDict[dirName].stats.added.add(key);
           }
-          rawData.keys[key].locales[lang] = translation || "";
+          rawDataDict[dirName].keys[key].locales[lang] = translation || "";
         }
       },
     });
 
-    for (const key of allKeys) {
-      if (oldKeys.has(key)) {
-        oldKeys.delete(key);
+    for (const key of rawDataDict[dirName].stats.all) {
+      if (rawDataDict[dirName].stats.unused.has(key)) {
+        rawDataDict[dirName].stats.unused.delete(key);
       }
     }
 
-    rawData.newKeys = Array.from(newKeys);
-    rawData.unusedKeys = Array.from(oldKeys);
-
-    await params.onData(file, rawData);
+    await params.onData(file, rawDataDict[dirName]);
   }
 }

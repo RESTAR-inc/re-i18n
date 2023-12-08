@@ -12,33 +12,35 @@ export async function jsonExport(config: I18nConfig) {
 
   await parse({
     config,
-    onEnter(file) {
-      console.log(`Parsing ${chalk.blue(file)}...`);
+    onEnterDir(dir) {
+      console.log(`Dir ${chalk.cyan.bold(dir)}`);
+    },
+    onEnterFile(file) {
+      console.log(`  File ${chalk.blue(file)}`);
     },
     onError(file, err) {
-      const message =
-        err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
+      const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
 
       console.log(chalk.red(message));
     },
     async onData(file, rawFileData) {
-      exportData.data[file] = rawFileData.keys;
+      // exportData.data[file] = rawFileData.keys;
     },
   });
 
-  const targetDir = path.resolve(config.json.outDir);
-  const targetFile = path.join(targetDir, "i18n.json");
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir, { recursive: true });
-  }
+  // const targetDir = path.resolve(config.json.outDir);
+  // const targetFile = path.join(targetDir, "i18n.json");
+  // if (!fs.existsSync(targetDir)) {
+  //   fs.mkdirSync(targetDir, { recursive: true });
+  // }
 
-  fs.writeFileSync(targetFile, `${JSON.stringify(exportData, null, 2)}\n`, {
-    encoding: "utf8",
-  });
+  // fs.writeFileSync(targetFile, `${JSON.stringify(exportData, null, 2)}\n`, {
+  //   encoding: "utf8",
+  // });
 
-  console.log(
-    `The export file was created at ${chalk.green(
-      path.join(config.json.outDir, path.basename(targetFile))
-    )}`
-  );
+  // console.log(
+  //   `The export file was created at ${chalk.green(
+  //     path.join(config.json.outDir, path.basename(targetFile))
+  //   )}`
+  // );
 }

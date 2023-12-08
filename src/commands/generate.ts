@@ -19,19 +19,25 @@ function sortKeyset(target: I18nKeyset<string>) {
     }, {});
 }
 
-export function generate(config: I18nConfig) {
-  parse({
+export async function generate(config: I18nConfig) {
+  await parse({
     config,
-    onEnter(file) {
-      console.log(`Parsing ${chalk.blue(file)}...`);
+    onEnterDir(dir) {
+      console.log(`Dir ${chalk.cyan.bold(dir)}`);
+    },
+    onEnterFile(file) {
+      console.log(`  File ${chalk.blue(file)}`);
     },
     onError(file, err) {
-      const message =
-        err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
+      const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
 
       console.log(chalk.red(message));
     },
     async onData(file, rawFileData) {
+      console.log(rawFileData.stats);
+    },
+    /*
+    async onFileData(file, rawFileData) {
       let addNewKeys = false;
       let removeUnusedKeys = false;
 
@@ -65,11 +71,12 @@ export function generate(config: I18nConfig) {
 
       const dirName = path.dirname(file);
       const targetDir = path.resolve(path.join(dirName, config.dirName));
-      const fileName = path.basename(file, path.extname(file));
 
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir, { recursive: true });
       }
+
+      console.log(targetDir);
 
       for (const lang of config.langs) {
         let fileData: I18nKeyset<string> = {};
@@ -91,6 +98,7 @@ export function generate(config: I18nConfig) {
           fileData = sortKeyset(fileData);
         }
 
+        const fileName = path.basename(file, path.extname(file));
         const targetFile = path.join(targetDir, `${lang}.${fileName}.json`);
         fs.writeFileSync(targetFile, JSON.stringify(fileData, null, 2), {
           encoding: "utf8",
@@ -109,5 +117,8 @@ export function generate(config: I18nConfig) {
         console.log(chalk.red(message));
       }
     },
+    */
   });
+
+  // console.log(groupedByDirs);
 }
