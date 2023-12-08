@@ -1,29 +1,22 @@
-import type { I18nFormatter, I18nGetLang, I18nLocales, I18nParams } from "./types.js";
+import type { I18nFormatter, I18nGetLocale, I18nLocales, I18nParams } from "./types.js";
 
-export function createI18n<L extends string, T extends string>(
-  locales: I18nLocales<L, T>,
+export function createI18n<T extends string>(
+  locales: I18nLocales<T>,
   formatter: I18nFormatter,
-  getLang: I18nGetLang<L>
+  getLocale: I18nGetLocale
 ) {
-  const resolve = (key: T): string => {
-    const lang = getLang();
-    if (!lang) {
-      throw new Error("Invalid locale");
+  function wrapper(key: T, params?: I18nParams): string {
+    const localeName = getLocale();
+    if (!localeName) {
+      throw new Error("No language is set");
     }
 
-    const keyset = locales[lang];
+    const keyset = locales[localeName];
     if (!keyset) {
-      throw new Error("Invalid keyset");
-    }
-    if (keyset[key] == null) {
-      return "";
+      throw new Error(`No locale for ${localeName}`);
     }
 
-    return keyset[key] || key;
-  };
-
-  function wrapper<P extends I18nParams>(key: T, params?: P): string {
-    const message = resolve(key);
+    const message = keyset[key] || key;
     return formatter.str(message, params);
   }
 
