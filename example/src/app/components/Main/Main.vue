@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HelloWorld from "../../../lib/components/HelloWorld/HelloWorld.vue";
-import { t } from "./Main.i18n";
+import { t } from "./locales";
 </script>
 
 <template>

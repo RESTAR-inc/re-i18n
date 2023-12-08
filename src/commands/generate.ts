@@ -4,7 +4,8 @@ import path from "path";
 import prompts from "prompts";
 import { parse } from "../parser.js";
 import type { I18nConfig } from "../schemas/config.js";
-import type { I18nKeyset } from "../types.js";
+import { render } from "../template/index.js";
+import type { I18nKeyset, I18nTemplateData } from "../types.js";
 
 function formatKeyList(set: Set<string>) {
   return Array.from(set)
@@ -96,10 +97,30 @@ export async function generate(config: I18nConfig) {
       }
 
       const targetFile = path.join(dir, config.dirName, `${lang}.json`);
-      console.log(`Saving file at ${chalk.bold(targetFile)}`);
+      console.log(`Saving locale file at ${chalk.bold(targetFile)}`);
       fs.writeFileSync(path.resolve(targetFile), JSON.stringify(fileData, null, 2), {
         encoding: "utf8",
       });
     }
+
+    const localeDirPath = path.join(dir, config.dirName);
+
+    const templateData: I18nTemplateData = {
+      appType: config.appType,
+      formatterPath: config.generate.formatterPath
+        ? path.relative(localeDirPath, config.generate.formatterPath)
+        : null,
+      getLangPath: path.relative(localeDirPath, config.generate.getLangPath),
+      funcName: config.funcName,
+      langs: config.langs,
+    };
+    const template = render(templateData);
+    const targetTemplateFile = path.join(dir, config.dirName, "index.ts");
+
+    console.log(`Saving template file at ${chalk.bold(targetTemplateFile)}`);
+
+    fs.writeFileSync(path.resolve(targetTemplateFile), template, {
+      encoding: "utf8",
+    });
   }
 }

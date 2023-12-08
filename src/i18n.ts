@@ -22,7 +22,7 @@ export function createI18n<L extends string, T extends string>(
     return keyset[key] || key;
   };
 
-  function wrapper<P extends Record<string, I18nParams>>(key: T, params?: P): string {
+  function wrapper<P extends I18nParams>(key: T, params?: P): string {
     const message = resolve(key);
     return formatter.str(message, params);
   }
