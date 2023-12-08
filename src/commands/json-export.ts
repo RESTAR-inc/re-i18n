@@ -36,8 +36,13 @@ export function jsonExport(config: I18nConfig) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
 
-  console.log(`Saving file at ${chalk.bold(targetFile)}`);
   fs.writeFileSync(targetFile, JSON.stringify(exportData, null, 2), {
     encoding: "utf8",
   });
+
+  console.log(
+    `The export file was created at ${chalk.green(
+      path.join(config.json.outDir, path.basename(targetFile))
+    )}`
+  );
 }

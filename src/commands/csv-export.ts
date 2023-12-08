@@ -5,75 +5,78 @@ import path from "path";
 import { parse } from "../parser.js";
 import type { I18nConfig, I18nCSVColumns, I18nExportData } from "../types";
 
-export async function csvExport(config: I18nConfig) {
+export function csvExport(config: I18nConfig) {
+  const data = parse({
+    config,
+    onEnterDir(dir) {
+      console.log(`Dir ${chalk.cyan.bold(dir)}`);
+    },
+    onEnterFile(file) {
+      console.log(`  File ${chalk.blue(file)}`);
+    },
+    onError(file, err) {
+      const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
+
+      console.log(chalk.red(message));
+    },
+  });
+
   const exportData: I18nExportData = {
     createdAt: new Date().toUTCString(),
-    data: {},
+    data: Object.entries(data).reduce<I18nExportData["data"]>((acc, [dir, rawData]) => {
+      acc[dir] = rawData.keys;
+      return acc;
+    }, {}),
   };
 
-  // await parse({
-  //   config,
-  //   onEnterDir(dir) {
-  //     console.log(`Dir ${chalk.cyan.bold(dir)}`);
-  //   },
-  //   onEnterFile(file) {
-  //     console.log(`  File ${chalk.blue(file)}`);
-  //   },
-  //   onError(file, err) {
-  //     const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
+  const targetDir = path.resolve(config.csv.outDir);
+  if (!fs.existsSync(targetDir)) {
+    console.log(`Creating directory at ${chalk.bold(config.csv.outDir)}`);
+    fs.mkdirSync(targetDir, { recursive: true });
+  }
 
-  //     console.log(chalk.red(message));
-  //   },
-  //   async onData(file, rawFileData) {
-  //     // exportData.data[file] = rawFileData.keys;
-  //   },
-  // });
+  for (const lang of config.langs) {
+    const csvData: Array<I18nCSVColumns> = [];
 
-  // const targetDir = path.resolve(config.csv.outDir);
-  // if (!fs.existsSync(targetDir)) {
-  //   fs.mkdirSync(targetDir, { recursive: true });
-  // }
+    for (const entryData of Object.values(exportData.data)) {
+      for (const [key, { locales, files }] of Object.entries(entryData)) {
+        csvData.push({
+          key,
+          translation: locales[lang],
+          comment: files.map(({ comment }) => comment).join("\n"),
+          file: files.map(({ file }) => file).join("\n"),
+        });
+      }
+    }
 
-  // for (const lang of config.langs) {
-  //   const csvData: Array<I18nCSVColumns> = [];
+    const targetFile = path.join(targetDir, `${lang}.csv`);
+    csv.stringify(
+      csvData,
+      {
+        delimiter: config.csv.delimiter,
+        header: true,
+        columns: [
+          { key: "key", header: "Key" },
+          { key: "translation", header: "Translation" },
+          { key: "comment", header: "Comment" },
+          { key: "file", header: "File (do not edit)" },
+        ],
+      },
+      (err, output) => {
+        if (err) {
+          console.log(`Error exporting csv ${chalk.red(config.json.outDir)}`);
+          return;
+        }
 
-  //   for (const [file, entryData] of Object.entries(exportData.data)) {
-  //     for (const [key, { locales, comment }] of Object.entries(entryData)) {
-  //       csvData.push({
-  //         key,
-  //         translation: locales[lang],
-  //         comment,
-  //         file,
-  //       });
-  //     }
-  //   }
-
-  //   const targetFile = path.join(targetDir, `${lang}.csv`);
-  //   csv.stringify(
-  //     csvData,
-  //     {
-  //       delimiter: config.csv.delimiter,
-  //       header: true,
-  //       columns: [
-  //         { key: "key", header: "Key" },
-  //         { key: "translation", header: "Translation" },
-  //         { key: "comment", header: "Comment" },
-  //         { key: "file", header: "File (do not edit)" },
-  //       ],
-  //     },
-  //     (err, output) => {
-  //       if (err) {
-  //         throw err;
-  //       }
-  //       fs.writeFileSync(targetFile, output, {
-  //         encoding: "utf8",
-  //       });
-  //       console.log(
-  //         `The export file was created at ${chalk.green(
-  //           path.join(config.csv.outDir, path.basename(targetFile))
-  //         )}`
-  //       );
-  //     }
-  //   );
-  // }
+        fs.writeFileSync(targetFile, output, {
+          encoding: "utf8",
+        });
+        console.log(
+          `The export file was created at ${chalk.green(
+            path.join(config.csv.outDir, path.basename(targetFile))
+          )}`
+        );
+      }
+    );
+  }
 }
