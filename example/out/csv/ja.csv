@@ -1,4 +1,4 @@
-Key;Translation;Comment;File (do not edit)
+Key (DO NOT EDIT);Translation;Comment (DO NOT EDIT);File (DO NOT EDIT)
 i18N アプリケーションの例;;;src/app/components/Main/Main.vue
 おはよう{name}さん;;"Good Morning in useGreeting
 Good Morning in useGreeting
