@@ -5,7 +5,7 @@ import path from "path";
 import { parse } from "../parser.js";
 import type { I18nConfig, I18nCSVColumns, I18nExportData } from "../types.js";
 
-export function csvExport(config: I18nConfig) {
+export function exportCSV(config: I18nConfig) {
   const data = parse({
     config,
     onEnterDir(dir) {

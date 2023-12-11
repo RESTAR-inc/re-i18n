@@ -7,8 +7,8 @@
     "typings": "lib/index.d.ts",
     "bin": {
         "i18n-generate": "./lib/cli/generate.js",
-        "i18n-csv-export": "./lib/cli/csv-export.js",
-        "i18n-json-export": "./lib/cli/json-export.js"
+        "i18n-export-csv": "./lib/cli/export-csv.js",
+        "i18n-export-json": "./lib/cli/export-json.js"
     },
     "files": [
         "lib"

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import path from "path";
-import { csvExport } from "../commands/csv-export.js";
+import { exportJSON } from "../commands/export-json.js";
 import { loadConfig } from "../config.js";
 
 const program = new Command();
@@ -16,5 +16,5 @@ const opts = program.opts<{
 
 const config = loadConfig(path.resolve(opts.config));
 if (config) {
-  csvExport(config);
+  exportJSON(config);
 }
