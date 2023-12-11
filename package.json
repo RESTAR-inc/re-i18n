@@ -6,15 +6,13 @@
     "main": "lib/index.js",
     "typings": "lib/index.d.ts",
     "bin": {
-        "i18n-generate": "./lib/cli/generate.js",
-        "i18n-export-csv": "./lib/cli/export-csv.js",
-        "i18n-export-json": "./lib/cli/export-json.js"
+        "re-i18n": "./lib/cli.js"
     },
     "files": [
         "lib"
     ],
     "scripts": {
-        "build": "npm run clean && npm run compile && chmod u+x ./lib/cli/*.js",
+        "build": "npm run clean && npm run compile && chmod u+x ./lib/cli.js",
         "type-check": "tsc --noEmit",
         "watch": "tsc -w",
         "clean": "rm -rf lib",

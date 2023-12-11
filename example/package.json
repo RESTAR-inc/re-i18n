@@ -7,9 +7,9 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "i18n:generate": "i18n-generate",
-    "i18n:export-csv": "i18n-export-csv",
-    "i18n:export-json": "i18n-export-json"
+    "i18n:generate": "re-i18n generate",
+    "i18n:export-csv": "re-i18n export-csv",
+    "i18n:export-json": "re-i18n export-json"
   },
   "dependencies": {
     "intl-messageformat": "^10.5.8",
