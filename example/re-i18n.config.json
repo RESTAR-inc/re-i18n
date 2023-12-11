@@ -10,7 +10,12 @@
     },
     "csv": {
         "outDir": "./out/csv",
+        "inputDir": "./out/csv",
         "delimiter": ";"
+    },
+    "xls": {
+        "outDir": "./out/xls",
+        "inputDir": "./out/xls"
     },
     "generate": {
         "getLangPath": "./src/i18n/getLang",

@@ -1,0 +1,191 @@
+{
+  "createdAt": "Mon, 11 Dec 2023 05:57:00 GMT",
+  "data": {
+    "src/app/components/Main": {
+      "i18N アプリケーションの例": {
+        "files": [
+          {
+            "file": "src/app/components/Main/Main.vue",
+            "comment": ""
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": "i18N application example"
+        }
+      }
+    },
+    "src/lib/composables": {
+      "おはよう{name}さん": {
+        "files": [
+          {
+            "file": "src/lib/composables/useWelcome.ts",
+            "comment": "Good Morning in useGreeting"
+          },
+          {
+            "file": "src/lib/composables/useGreeting.ts",
+            "comment": "Good Morning in useGreeting"
+          },
+          {
+            "file": "src/lib/composables/useGoodMorning.ts",
+            "comment": "Good Morning in useGoodMorning"
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": "Good morning, {name}"
+        }
+      },
+      "こんにちは{name}さん": {
+        "files": [
+          {
+            "file": "src/lib/composables/useWelcome.ts",
+            "comment": ""
+          },
+          {
+            "file": "src/lib/composables/useGreeting.ts",
+            "comment": ""
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": ""
+        }
+      },
+      "こんばんは{name}さん": {
+        "files": [
+          {
+            "file": "src/lib/composables/useWelcome.ts",
+            "comment": ""
+          },
+          {
+            "file": "src/lib/composables/useGreeting.ts",
+            "comment": ""
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": ""
+        }
+      },
+      "偶数": {
+        "files": [
+          {
+            "file": "src/lib/composables/useWelcome.ts",
+            "comment": "Label for useWelcome"
+          },
+          {
+            "file": "src/lib/composables/useOddEven.ts",
+            "comment": "Label for useOddEven"
+          },
+          {
+            "file": "src/lib/composables/useCounter.ts",
+            "comment": "Label for useCounter"
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": "even"
+        }
+      },
+      "奇数": {
+        "files": [
+          {
+            "file": "src/lib/composables/useWelcome.ts",
+            "comment": "Label for useWelcome"
+          },
+          {
+            "file": "src/lib/composables/useOddEven.ts",
+            "comment": "Label for useOddEven"
+          },
+          {
+            "file": "src/lib/composables/useCounter.ts",
+            "comment": "Label for useCounter"
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": "odd"
+        }
+      }
+    },
+    "src/lib/composables/nestedComposable": {
+      "もっと見せる": {
+        "files": [
+          {
+            "file": "src/lib/composables/nestedComposable/useMore.ts",
+            "comment": ""
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": ""
+        }
+      }
+    },
+    "src/lib/components/PageTitle": {
+      "ページタイトル": {
+        "files": [
+          {
+            "file": "src/lib/components/PageTitle/PageTitle.vue",
+            "comment": "test comment"
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": ""
+        }
+      }
+    },
+    "src/lib/components/HelloWorld": {
+      "i18n サンプル アプリケーションへようこそ": {
+        "files": [
+          {
+            "file": "src/lib/components/HelloWorld/HelloWorld.vue",
+            "comment": "HelloWorld title"
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": ""
+        }
+      },
+      "カウンター": {
+        "files": [
+          {
+            "file": "src/lib/components/HelloWorld/HelloWorld.vue",
+            "comment": ""
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": ""
+        }
+      },
+      "カウントアップ": {
+        "files": [
+          {
+            "file": "src/lib/components/HelloWorld/HelloWorld.vue",
+            "comment": ""
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": "Count Application"
+        }
+      },
+      "奇数・偶数": {
+        "files": [
+          {
+            "file": "src/lib/components/HelloWorld/HelloWorld.vue",
+            "comment": ""
+          }
+        ],
+        "locales": {
+          "ja": "",
+          "en": "Odd or Even"
+        }
+      }
+    }
+  }
+}

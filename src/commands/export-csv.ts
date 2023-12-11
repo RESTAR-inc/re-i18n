@@ -5,7 +5,7 @@ import path from "path";
 import { parse } from "../parser.js";
 import type { I18nConfig, I18nCSVColumns, I18nExportData } from "../types.js";
 
-export function csvExport(config: I18nConfig) {
+export function exportCSV(config: I18nConfig) {
   const data = parse({
     config,
     onEnterDir(dir) {
@@ -56,10 +56,10 @@ export function csvExport(config: I18nConfig) {
         delimiter: config.csv.delimiter,
         header: true,
         columns: [
-          { key: "key", header: "Key" },
+          { key: "key", header: "Key (DO NOT EDIT)" },
           { key: "translation", header: "Translation" },
-          { key: "comment", header: "Comment" },
-          { key: "file", header: "File (do not edit)" },
+          { key: "comment", header: "Comment (DO NOT EDIT)" },
+          { key: "file", header: "File (DO NOT EDIT)" },
         ],
       },
       (err, output) => {

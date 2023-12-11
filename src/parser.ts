@@ -109,9 +109,10 @@ function readTranslations(lang: string, file: string, localeDirName: string): I1
 
 interface ParseParams {
   config: I18nConfig;
-  onEnterDir(dir: string): void;
-  onEnterFile(file: string): void;
-  onError(file: string, error: unknown): void;
+  onEnterDir?(dir: string): void;
+  onEnterFile?(file: string): void;
+  onError?(file: string, error: unknown): void;
+  onEntry?(file: string, lang: string, key: string, translation: string, comment: string): void;
 }
 
 export function parse(params: ParseParams): Record<string, I18nRawData> {
@@ -130,7 +131,9 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
     }
 
     if (!rawDataDict[dirName]) {
-      params.onEnterDir(dirName);
+      if (params.onEnterDir) {
+        params.onEnterDir(dirName);
+      }
       rawDataDict[dirName] = {
         keys: {},
         stats: {
@@ -157,14 +160,18 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
       }
     }
 
-    params.onEnterFile(file);
+    if (params.onEnterFile) {
+      params.onEnterFile(file);
+    }
 
     traverseFile({
       file,
       compilers,
       funcName: params.config.funcName,
       onError(error) {
-        params.onError(file, error);
+        if (params.onError) {
+          params.onError(file, error);
+        }
       },
       onEnter(key, target) {
         rawDataDict[dirName].stats.all.add(key);
@@ -187,6 +194,11 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
           if (typeof translation === "undefined") {
             rawDataDict[dirName].stats.added.add(key);
           }
+
+          if (params.onEntry) {
+            params.onEntry(file, lang, key, translation || "", comment);
+          }
+
           rawDataDict[dirName].keys[key].locales[lang] = translation || "";
         }
       },
