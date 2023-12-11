@@ -1,6 +1,6 @@
 {
     "name": "re-i18n",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "TODO",
     "type": "module",
     "main": "lib/index.js",
@@ -11,11 +11,11 @@
         "i18n-json-export": "./lib/cli/json-export.js"
     },
     "files": [
-        "lib",
-        "bin"
+        "lib"
     ],
     "scripts": {
-        "build": "npm run clean && npm run compile && chmod -R 755 ./lib/cli/**/*.js",
+        "build": "npm run clean && npm run compile && chmod u+x ./lib/cli/*.js",
+        "type-check": "tsc --noEmit",
         "watch": "tsc -w",
         "clean": "rm -rf lib",
         "compile": "tsc",

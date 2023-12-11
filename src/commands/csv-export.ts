@@ -3,45 +3,48 @@ import * as csv from "csv";
 import fs from "fs";
 import path from "path";
 import { parse } from "../parser.js";
-import type { I18nConfig, I18nCSVColumns, I18nExportData } from "../types";
+import type { I18nConfig, I18nCSVColumns, I18nExportData } from "../types.js";
 
-export async function csvExport(config: I18nConfig) {
-  const exportData: I18nExportData = {
-    createdAt: new Date().toUTCString(),
-    data: {},
-  };
-
-  await parse({
+export function csvExport(config: I18nConfig) {
+  const data = parse({
     config,
-    onEnter(file) {
-      console.log(`Parsing ${chalk.blue(file)}...`);
+    onEnterDir(dir) {
+      console.log(`Dir ${chalk.cyan.bold(dir)}`);
+    },
+    onEnterFile(file) {
+      console.log(`  File ${chalk.blue(file)}`);
     },
     onError(file, err) {
-      const message =
-        err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
+      const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
 
       console.log(chalk.red(message));
     },
-    async onData(file, rawFileData) {
-      exportData.data[file] = rawFileData.keys;
-    },
   });
+
+  const exportData: I18nExportData = {
+    createdAt: new Date().toUTCString(),
+    data: Object.entries(data).reduce<I18nExportData["data"]>((acc, [dir, rawData]) => {
+      acc[dir] = rawData.keys;
+      return acc;
+    }, {}),
+  };
 
   const targetDir = path.resolve(config.csv.outDir);
   if (!fs.existsSync(targetDir)) {
+    console.log(`Creating directory at ${chalk.bold(config.csv.outDir)}`);
     fs.mkdirSync(targetDir, { recursive: true });
   }
 
   for (const lang of config.langs) {
     const csvData: Array<I18nCSVColumns> = [];
 
-    for (const [file, entryData] of Object.entries(exportData.data)) {
-      for (const [key, { locales, comment }] of Object.entries(entryData)) {
+    for (const entryData of Object.values(exportData.data)) {
+      for (const [key, { locales, files }] of Object.entries(entryData)) {
         csvData.push({
           key,
           translation: locales[lang],
-          comment,
-          file,
+          comment: files.map(({ comment }) => comment).join("\n"),
+          file: files.map(({ file }) => file).join("\n"),
         });
       }
     }
@@ -61,8 +64,10 @@ export async function csvExport(config: I18nConfig) {
       },
       (err, output) => {
         if (err) {
-          throw err;
+          console.log(`Error exporting csv ${chalk.red(config.json.outDir)}`);
+          return;
         }
+
         fs.writeFileSync(targetFile, output, {
           encoding: "utf8",
         });

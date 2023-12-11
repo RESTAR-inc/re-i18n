@@ -1,6 +1,5 @@
 import { IntlMessageFormat } from "intl-messageformat";
-import { I18nFormatter } from "re-i18n";
-
+import type { I18nFormatter } from "re-i18n";
 import getLang from "./getLang";
 
 const fmt: I18nFormatter = {

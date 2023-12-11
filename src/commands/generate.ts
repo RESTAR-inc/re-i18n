@@ -4,10 +4,13 @@ import path from "path";
 import prompts from "prompts";
 import { parse } from "../parser.js";
 import type { I18nConfig } from "../schemas/config.js";
+import { render } from "../template/index.js";
 import type { I18nKeyset } from "../types.js";
 
-function formatKeyList(list: Array<string>) {
-  return list.map((key) => `\t- ${key}`).join("\n");
+function formatKeyList(set: Set<string>) {
+  return Array.from(set)
+    .map((key) => `\t- ${key}`)
+    .join("\n");
 }
 
 function sortKeyset(target: I18nKeyset<string>) {
@@ -19,95 +22,94 @@ function sortKeyset(target: I18nKeyset<string>) {
     }, {});
 }
 
-export function generate(config: I18nConfig) {
-  parse({
+export async function generate(config: I18nConfig) {
+  const data = parse({
     config,
-    onEnter(file) {
-      console.log(`Parsing ${chalk.blue(file)}...`);
+    onEnterDir(dir) {
+      console.log(`Dir ${chalk.cyan.bold(dir)}`);
+    },
+    onEnterFile(file) {
+      console.log(`  File ${chalk.blue(file)}`);
     },
     onError(file, err) {
-      const message =
-        err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
-
+      const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
       console.log(chalk.red(message));
     },
-    async onData(file, rawFileData) {
-      let addNewKeys = false;
-      let removeUnusedKeys = false;
+  });
 
-      if (rawFileData.newKeys.length > 0) {
-        const { proceed } = await prompts({
-          type: "confirm",
-          name: "proceed",
-          initial: true,
-          message: [
-            chalk.yellow("New keys have been found"),
-            formatKeyList(rawFileData.newKeys),
-            "Would you like to add them?`",
-          ].join("\n"),
-        });
-        addNewKeys = Boolean(proceed);
-      }
+  for (const [dir, rawData] of Object.entries(data)) {
+    let addNewKeys = false;
+    let removeUnusedKeys = false;
 
-      if (rawFileData.unusedKeys.length > 0) {
-        const { proceed } = await prompts({
-          type: "confirm",
-          name: "proceed",
-          initial: true,
-          message: [
-            chalk.red("Unused keys have been found"),
-            formatKeyList(rawFileData.unusedKeys),
-            "Do you want to delete them?`",
-          ].join("\n"),
-        });
-        removeUnusedKeys = Boolean(proceed);
-      }
+    if (rawData.stats.added.size > 0) {
+      const { proceed } = await prompts({
+        type: "confirm",
+        name: "proceed",
+        initial: true,
+        message: [
+          chalk.yellow(`New keys have been found in ${chalk.cyan.bold(dir)}`),
+          formatKeyList(rawData.stats.added),
+          "Would you like to add them?`",
+        ].join("\n"),
+      });
+      addNewKeys = Boolean(proceed);
+    }
 
-      const dirName = path.dirname(file);
-      const targetDir = path.resolve(path.join(dirName, config.dirName));
-      const fileName = path.basename(file, path.extname(file));
+    if (rawData.stats.unused.size > 0) {
+      const { proceed } = await prompts({
+        type: "confirm",
+        name: "proceed",
+        initial: true,
+        message: [
+          chalk.red(`Unused keys have been found in ${chalk.cyan.bold(dir)}`),
+          formatKeyList(rawData.stats.unused),
+          "Do you want to delete them?`",
+        ].join("\n"),
+      });
+      removeUnusedKeys = Boolean(proceed);
+    }
 
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
-      }
+    const targetDir = path.resolve(path.join(dir, config.dirName));
+    if (!fs.existsSync(targetDir)) {
+      console.log(`Creating directory at ${chalk.bold(dir)}`);
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
 
-      for (const lang of config.langs) {
-        let fileData: I18nKeyset<string> = {};
-        for (const [key, keyData] of Object.entries(rawFileData.keys)) {
-          if (rawFileData.newKeys.includes(key)) {
-            if (addNewKeys) {
-              fileData[key] = keyData.locales[lang];
-            }
-          } else if (rawFileData.unusedKeys.includes(key)) {
-            if (!removeUnusedKeys) {
-              fileData[key] = keyData.locales[lang];
-            }
-          } else {
+    for (const lang of config.langs) {
+      let fileData: I18nKeyset<string> = {};
+
+      for (const [key, keyData] of Object.entries(rawData.keys)) {
+        if (rawData.stats.added.has(key)) {
+          if (addNewKeys) {
             fileData[key] = keyData.locales[lang];
           }
+        } else if (rawData.stats.unused.has(key)) {
+          if (!removeUnusedKeys) {
+            fileData[key] = keyData.locales[lang];
+          }
+        } else {
+          fileData[key] = keyData.locales[lang];
         }
-
-        if (config.generate.sortKeys) {
-          fileData = sortKeyset(fileData);
-        }
-
-        const targetFile = path.join(targetDir, `${lang}.${fileName}.json`);
-        fs.writeFileSync(targetFile, JSON.stringify(fileData, null, 2), {
-          encoding: "utf8",
-        });
       }
 
-      if (addNewKeys) {
-        const formattedList = formatKeyList(rawFileData.newKeys);
-        const message = `Keys where added\n${formattedList}`;
-        console.log(chalk.green(message));
+      if (config.generate.sortKeys) {
+        fileData = sortKeyset(fileData);
       }
 
-      if (removeUnusedKeys) {
-        const formattedList = formatKeyList(rawFileData.unusedKeys);
-        const message = `Keys where removed\n${formattedList}`;
-        console.log(chalk.red(message));
-      }
-    },
-  });
+      const targetFile = path.join(dir, config.dirName, `${lang}.json`);
+      console.log(`Saving locale file at ${chalk.bold(targetFile)}`);
+      fs.writeFileSync(path.resolve(targetFile), JSON.stringify(fileData, null, 2), {
+        encoding: "utf8",
+      });
+    }
+
+    const template = render(config, dir);
+    const targetTemplateFile = path.join(dir, config.dirName, "index.ts");
+
+    console.log(`Saving template file at ${chalk.bold(targetTemplateFile)}`);
+
+    fs.writeFileSync(path.resolve(targetTemplateFile), template, {
+      encoding: "utf8",
+    });
+  }
 }

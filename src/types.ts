@@ -1,29 +1,21 @@
-export type { I18nConfig } from "./schemas/config";
-export type { I18nTemplateData } from "./schemas/template";
+export type { I18nConfig } from "./schemas/config.js";
+export type { I18nTemplateData } from "./schemas/template.js";
 
 export type I18nKeyset<T extends string> = Record<T, string>;
 
-export type I18nLocales<L extends string, T extends string> = Record<
-  L,
-  I18nKeyset<T>
->;
+export type I18nLocales<T extends string> = Record<string, I18nKeyset<T>>;
+
+export type I18nParam = string | number | boolean | null | undefined | Date;
 
 export interface I18nParams {
-  [key: string]:
-    | string
-    | number
-    | boolean
-    | null
-    | undefined
-    | Date
-    | I18nParams;
+  [key: string]: I18nParam;
 }
 
 export interface I18nFormatter {
-  str<T extends I18nParams>(msg: string, options?: T): string;
+  str(message: string, options?: I18nParams): string;
 }
 
-export type I18nGetLang<T extends string> = () => T;
+export type I18nGetLocale = () => string;
 
 export interface I18nCompiler {
   fileName: string;
@@ -32,24 +24,25 @@ export interface I18nCompiler {
 }
 
 export interface I18nRawData {
-  newKeys: Array<string>;
-  unusedKeys: Array<string>;
+  stats: {
+    all: Set<string>;
+    added: Set<string>;
+    unused: Set<string>;
+  };
   keys: {
     [key: string]: {
       locales: I18nKeyset<string>;
-      comment: string;
+      files: Array<{
+        file: string;
+        comment: string;
+      }>;
     };
   };
 }
 
 export interface I18nExportData {
   data: {
-    [file: string]: {
-      [key: string]: {
-        locales: I18nKeyset<string>;
-        comment: string;
-      };
-    };
+    [dir: string]: I18nRawData["keys"];
   };
   createdAt: string;
 }
