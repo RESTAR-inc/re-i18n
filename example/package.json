@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "i18n:generate": "re-i18n generate",
     "i18n:export-csv": "re-i18n export-csv",
-    "i18n:export-json": "re-i18n export-json"
+    "i18n:export-json": "re-i18n export-json",
+    "i18n:export-xls": "re-i18n export-xls",
+    "i18n:import-csv": "re-i18n import-csv",
+    "i18n:import-xls": "re-i18n import-xls"
   },
   "dependencies": {
     "intl-messageformat": "^10.5.8",

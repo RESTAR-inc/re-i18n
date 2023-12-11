@@ -18,6 +18,10 @@ export const configSchema = z.object({
   csv: z.object({
     outDir: z.string(),
     delimiter: z.string(),
+    inputDir: z.string(),
+  }),
+  xls: z.object({
+    outDir: z.string(),
   }),
 });
 
