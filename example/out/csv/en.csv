@@ -1,0 +1,29 @@
+Key;Translation;Comment;File (do not edit)
+i18N アプリケーションの例;i18N application example;;src/app/components/Main/Main.vue
+おはよう{name}さん;Good morning, {name};"Good Morning in useGreeting
+Good Morning in useGreeting
+Good Morning in useGoodMorning";"src/lib/composables/useWelcome.ts
+src/lib/composables/useGreeting.ts
+src/lib/composables/useGoodMorning.ts"
+こんにちは{name}さん;;"
+";"src/lib/composables/useWelcome.ts
+src/lib/composables/useGreeting.ts"
+こんばんは{name}さん;;"
+";"src/lib/composables/useWelcome.ts
+src/lib/composables/useGreeting.ts"
+偶数;even;"Label for useWelcome
+Label for useOddEven
+Label for useCounter";"src/lib/composables/useWelcome.ts
+src/lib/composables/useOddEven.ts
+src/lib/composables/useCounter.ts"
+奇数;odd;"Label for useWelcome
+Label for useOddEven
+Label for useCounter";"src/lib/composables/useWelcome.ts
+src/lib/composables/useOddEven.ts
+src/lib/composables/useCounter.ts"
+もっと見せる;;;src/lib/composables/nestedComposable/useMore.ts
+ページタイトル;;test comment;src/lib/components/PageTitle/PageTitle.vue
+i18n サンプル アプリケーションへようこそ;;HelloWorld title;src/lib/components/HelloWorld/HelloWorld.vue
+カウンター;;;src/lib/components/HelloWorld/HelloWorld.vue
+カウントアップ;Count Application;;src/lib/components/HelloWorld/HelloWorld.vue
+奇数・偶数;Odd or Even;;src/lib/components/HelloWorld/HelloWorld.vue
