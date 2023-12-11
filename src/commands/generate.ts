@@ -2,6 +2,7 @@ import chalk from "chalk";
 import fs from "fs";
 import path from "path";
 import prompts from "prompts";
+import { sortKeyset } from "../common.js";
 import { parse } from "../parser.js";
 import type { I18nConfig } from "../schemas/config.js";
 import { render } from "../template/index.js";
@@ -11,15 +12,6 @@ function formatKeyList(set: Set<string>) {
   return Array.from(set)
     .map((key) => `\t- ${key}`)
     .join("\n");
-}
-
-function sortKeyset(target: I18nKeyset<string>) {
-  return Object.keys(target)
-    .sort()
-    .reduce<I18nKeyset<string>>((acc, key) => {
-      acc[key] = target[key];
-      return acc;
-    }, {});
 }
 
 export async function generate(config: I18nConfig) {

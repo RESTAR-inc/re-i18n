@@ -2,7 +2,9 @@ import chalk from "chalk";
 import * as csv from "csv";
 import fs from "fs";
 import path from "path";
-import type { I18nConfig, I18nRawData } from "../types.js";
+import { sortKeyset } from "../common.js";
+import { parse } from "../parser.js";
+import type { I18nConfig, I18nKeyset, I18nRawData } from "../types.js";
 
 function parseFile(
   target: Record<string, I18nRawData["keys"]>,
@@ -81,5 +83,58 @@ export async function importCSV(config: I18nConfig) {
     return;
   }
 
-  console.log(JSON.stringify(parsed, null, 2));
+  const dataToImport: Record<string, I18nRawData> = {};
+
+  parse({
+    config,
+    onEntry(file, lang, key, translation, comment) {
+      const dirName = path.dirname(file);
+      if (!dataToImport[dirName]) {
+        dataToImport[dirName] = {
+          keys: {},
+          stats: {
+            all: new Set(),
+            added: new Set(),
+            unused: new Set(),
+          },
+        };
+      }
+
+      if (!dataToImport[dirName].keys[key]) {
+        dataToImport[dirName].keys[key] = {
+          files: [],
+          locales: {},
+        };
+      }
+      dataToImport[dirName].keys[key].files.push({ file, comment });
+
+      const csvTranslation = parsed[dirName][key].locales[lang];
+      dataToImport[dirName].keys[key].locales[lang] = csvTranslation || translation;
+    },
+  });
+
+  for (const [dir, rawData] of Object.entries(dataToImport)) {
+    const targetDir = path.resolve(path.join(dir, config.dirName));
+    if (!fs.existsSync(targetDir)) {
+      console.log(chalk.red(`Directory ${chalk.bold(dir)} does not exist`));
+    }
+
+    for (const lang of config.langs) {
+      let fileData: I18nKeyset<string> = {};
+
+      for (const [key, keyData] of Object.entries(rawData.keys)) {
+        fileData[key] = keyData.locales[lang];
+      }
+
+      if (config.generate.sortKeys) {
+        fileData = sortKeyset(fileData);
+      }
+
+      const targetFile = path.join(dir, config.dirName, `${lang}.json`);
+      console.log(`Import locale into ${chalk.bold(targetFile)}`);
+      fs.writeFileSync(path.resolve(targetFile), JSON.stringify(fileData, null, 2), {
+        encoding: "utf8",
+      });
+    }
+  }
 }
