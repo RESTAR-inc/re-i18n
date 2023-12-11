@@ -39,14 +39,20 @@ export async function exportXLS(config: I18nConfig) {
 
   for (const lang of config.langs) {
     const sheet = workbook.addWorksheet(lang, {
-      views: [{ state: "frozen", xSplit: 0, ySplit: 1 }],
+      views: [
+        {
+          state: "frozen",
+          xSplit: 1,
+          ySplit: 1,
+        },
+      ],
     });
 
     sheet.columns = [
-      { header: "Key", key: "key", width: 30 },
+      { header: "Key (DO NOT EDIT)", key: "key", width: 30, protection: { locked: true } },
       { header: "Translation", key: "translation", width: 30 },
-      { header: "Comment", key: "comment", width: 50 },
-      { header: "File (do not edit)", key: "file", width: 50 },
+      { header: "Comment (DO NOT EDIT)", key: "comment", width: 50, protection: { locked: true } },
+      { header: "File (DO NOT EDIT)", key: "file", width: 50, protection: { locked: true } },
     ];
 
     let rowCount = 2;

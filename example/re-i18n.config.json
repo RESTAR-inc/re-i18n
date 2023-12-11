@@ -14,7 +14,8 @@
         "delimiter": ";"
     },
     "xls": {
-        "outDir": "./out/xls"
+        "outDir": "./out/xls",
+        "inputDir": "./out/xls"
     },
     "generate": {
         "getLangPath": "./src/i18n/getLang",

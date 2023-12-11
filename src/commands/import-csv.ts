@@ -108,7 +108,7 @@ export async function importCSV(config: I18nConfig) {
       }
       dataToImport[dirName].keys[key].files.push({ file, comment });
 
-      const csvTranslation = parsed[dirName][key].locales[lang];
+      const csvTranslation = parsed[dirName][key]?.locales[lang];
       dataToImport[dirName].keys[key].locales[lang] = csvTranslation || translation;
     },
   });
@@ -117,6 +117,7 @@ export async function importCSV(config: I18nConfig) {
     const targetDir = path.resolve(path.join(dir, config.dirName));
     if (!fs.existsSync(targetDir)) {
       console.log(chalk.red(`Directory ${chalk.bold(dir)} does not exist`));
+      continue;
     }
 
     for (const lang of config.langs) {

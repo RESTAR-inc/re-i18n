@@ -56,10 +56,10 @@ export function exportCSV(config: I18nConfig) {
         delimiter: config.csv.delimiter,
         header: true,
         columns: [
-          { key: "key", header: "Key" },
+          { key: "key", header: "Key (DO NOT EDIT)" },
           { key: "translation", header: "Translation" },
-          { key: "comment", header: "Comment" },
-          { key: "file", header: "File (do not edit)" },
+          { key: "comment", header: "Comment (DO NOT EDIT)" },
+          { key: "file", header: "File (DO NOT EDIT)" },
         ],
       },
       (err, output) => {

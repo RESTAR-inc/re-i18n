@@ -22,6 +22,7 @@ export const configSchema = z.object({
   }),
   xls: z.object({
     outDir: z.string(),
+    inputDir: z.string(),
   }),
 });
 
