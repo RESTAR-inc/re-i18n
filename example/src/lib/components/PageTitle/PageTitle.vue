@@ -1,10 +1,7 @@
 <script setup lang="ts">
-const props = defineProps<{}>();
+import { t } from './locales';
 </script>
 
 <template>
-  <h1>{{ t("ページタイトル" /* test comment */) }}</h1>
-  <div>
-    <slot />
-  </div>
+  <h2>{{ t("ページタイトル" /* test comment */) }}</h2>
 </template>

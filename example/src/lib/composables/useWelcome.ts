@@ -1,7 +1,7 @@
 import { computed, type Ref } from "vue";
 import { t } from "./locales";
 
-export function useWelcome(name: Ref<string>, hours: Ref<number>) {
+export const useWelcome = (name: Ref<string>, hours: Ref<number>) => {
   const hoursLabel = computed(() => {
     return hours.value % 2 === 0
       ? t("偶数" /* Label for useWelcome */)
@@ -19,4 +19,4 @@ export function useWelcome(name: Ref<string>, hours: Ref<number>) {
   });
 
   return { hoursLabel, greeting };
-}
+};
