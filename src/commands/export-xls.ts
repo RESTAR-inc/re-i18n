@@ -69,8 +69,8 @@ export async function exportXLS(config: I18nConfig) {
             sheet.addRow(["", "", files[i].comment, files[i].file]);
             rowCount += 1;
           }
-          sheet.mergeCells(`A${rowCountBefore}:A${rowCount}`);
-          sheet.mergeCells(`B${rowCountBefore}:B${rowCount}`);
+          sheet.mergeCells(`A${rowCountBefore}:A${rowCount}`); // merge key cells
+          sheet.mergeCells(`B${rowCountBefore}:B${rowCount}`); // merge translation cells
         }
 
         rowCount += 1;
@@ -82,7 +82,7 @@ export async function exportXLS(config: I18nConfig) {
 
   console.log(
     `The export file was created at ${chalk.green(
-      path.join(config.xls.outDir, path.basename("i18n.xlsx"))
+      path.join(config.xls.outDir, path.basename("i18n.xls"))
     )}`
   );
 }

@@ -31,13 +31,31 @@ const isFuncRawCall = (node: CallExpression, target: string) => {
 };
 
 interface TraverseFileParams {
+  /**
+   * The path of the file to traverse.
+   */
   file: string;
+  /**
+   * The name of the function to look for during traversal.
+   */
   funcName: string;
+  /**
+   * An array of compilers to apply based on the file extension.
+   */
   compilers: Array<I18nCompiler>;
+  /**
+   * A callback function to handle errors.
+   */
   onEnter(key: string, target: StringLiteral, node: CallExpression): void;
+  /**
+   * A callback function to execute when encountering the specified function call.
+   */
   onError(error: unknown): void;
 }
 
+/**
+ * Traverses a file and calls the onEnter callback when funcName is encountered.
+ */
 function traverseFile(params: TraverseFileParams) {
   const filename = path.basename(params.file);
   const fileExt = path.extname(filename);
@@ -55,6 +73,7 @@ function traverseFile(params: TraverseFileParams) {
     return result;
   }, codeRaw);
 
+  // TODO: move babel config to a separate file
   const ast = babelParse(code, {
     filename,
     presets: ["@babel/typescript"],
@@ -94,6 +113,13 @@ function traverseFile(params: TraverseFileParams) {
   });
 }
 
+/**
+ * Reads translations from a JSON file for a specific language.
+ * @param lang - The language code for the translations.
+ * @param file - The path to the file containing the translations.
+ * @param localeDirName - The name of the directory where the translations are stored.
+ * @returns An object representing the translations for the specified language.
+ */
 function readTranslations(lang: string, file: string, localeDirName: string): I18nKeyset<string> {
   const dirName = path.dirname(file);
   const translationDir = path.join(dirName, localeDirName);
@@ -108,13 +134,32 @@ function readTranslations(lang: string, file: string, localeDirName: string): I1
 }
 
 interface ParseParams {
+  /**
+   * The configuration for the parser.
+   */
   config: I18nConfig;
+  /**
+   * A callback function to execute when entering a directory.
+   */
   onEnterDir?(dir: string): void;
+  /**
+   * A callback function to execute when starting to parse a file.
+   */
   onEnterFile?(file: string): void;
+  /**
+   * A callback function to execute when an error occurs.
+   */
   onError?(file: string, error: unknown): void;
+  /**
+   * A callback function to execute when the parser encounters a translation key.
+   */
   onEntry?(file: string, lang: string, key: string, translation: string, comment: string): void;
 }
 
+/**
+ * Finds all files matching the pattern in the config, reads the translations for each language,
+ * from corresponding JSON files, and parses the files for translation keys.
+ */
 export function parse(params: ParseParams): Record<string, I18nRawData> {
   const rawDataDict: Record<string, I18nRawData> = {};
 
@@ -144,6 +189,7 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
       };
 
       for (const lang of params.config.langs) {
+        // read translations from JSON file and add them to the raw data
         const currentLocale = readTranslations(lang, file, params.config.dirName);
 
         for (const oldKey of Object.keys(currentLocale)) {

@@ -8,8 +8,12 @@ const fmt: I18nFormatter = {
       const intl = new IntlMessageFormat(str, getLang());
       const formatted = intl.format(opts);
 
+      if (Array.isArray(formatted)) {
+        return formatted.map((f) => (f ? f.toString() : "")).join("");
+      }
+
       if (typeof formatted !== "string") {
-        return "";
+        return formatted?.toString() ?? "";
       }
 
       return formatted;

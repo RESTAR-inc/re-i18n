@@ -1,17 +1,26 @@
-import type { I18nFormatter, I18nParam, I18nParams } from "./types.js";
+import type { I18nFormatter, I18nParams } from "./types.js";
 
+/**
+ * Default implementation of the I18nFormatter interface.
+ * It replaces all the {placeholders} in the message with the values in the params object.
+ * It's recommended to use a custom implementation of this interface to support more complex
+ * formatting.
+ */
 class DefaultFormatter implements I18nFormatter {
   private static readonly openBracket = "{";
   private static readonly closeBracket = "}";
 
-  private traverse(_message: string, _options: I18nParams) {
-    // TODO: implement
-    const result: Array<I18nParam> = [];
-    return result;
-  }
+  str(message: string, params?: I18nParams): string {
+    if (!params) {
+      return message;
+    }
 
-  str(message: string, _options?: I18nParams): string {
-    // TODO: implement
+    for (const [key, value] of Object.entries(params)) {
+      const pattern = `${DefaultFormatter.openBracket}${key}${DefaultFormatter.closeBracket}`;
+      const reg = new RegExp(pattern, "g");
+      message = message.replace(reg, value?.toString() ?? "");
+    }
+
     return message;
   }
 }

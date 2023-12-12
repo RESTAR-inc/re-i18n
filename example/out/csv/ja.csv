@@ -1,5 +1,6 @@
 Key (DO NOT EDIT);Translation;Comment (DO NOT EDIT);File (DO NOT EDIT)
 i18N アプリケーションの例;;;src/app/components/Main/Main.vue
+こんにちは世界;;;src/app/components/Main/Main.vue
 おはよう{name}さん;;"Good Morning in useGreeting
 Good Morning in useGreeting
 Good Morning in useGoodMorning";"src/lib/composables/useWelcome.ts
@@ -22,8 +23,13 @@ Label for useCounter";"src/lib/composables/useWelcome.ts
 src/lib/composables/useOddEven.ts
 src/lib/composables/useCounter.ts"
 もっと見せる;;;src/lib/composables/nestedComposable/useMore.ts
+名前：　{lastName} {firstName}。誕生日：　{birthday}。ポイント：　{points};;;src/lib/components/UserCard/UserCard.vue
 ページタイトル;;test comment;src/lib/components/PageTitle/PageTitle.vue
 i18n サンプル アプリケーションへようこそ;;HelloWorld title;src/lib/components/HelloWorld/HelloWorld.vue
-カウンター;;;src/lib/components/HelloWorld/HelloWorld.vue
+カウンター;;Counter label;src/lib/components/HelloWorld/HelloWorld.vue
 カウントアップ;;;src/lib/components/HelloWorld/HelloWorld.vue
-奇数・偶数;;;src/lib/components/HelloWorld/HelloWorld.vue
+ユーザーを追加する;;;src/lib/components/HelloWorld/HelloWorld.vue
+名前;;;src/lib/components/HelloWorld/HelloWorld.vue
+奇数・偶数;;Counter odd/even label;src/lib/components/HelloWorld/HelloWorld.vue
+苗字;;;src/lib/components/HelloWorld/HelloWorld.vue
+誕生日;;;src/lib/components/HelloWorld/HelloWorld.vue

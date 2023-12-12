@@ -1,7 +1,7 @@
 import { computed, ref } from "vue";
 import { t } from "./locales";
 
-export const useOddEven = (initial: number) => {
+export const useCounter = (initial: number) => {
   const counter = ref(initial);
   const label = computed(() =>
     counter.value % 2 === 0
