@@ -20,7 +20,7 @@ export type I18nGetLocale = () => string;
 export interface I18nCompiler {
   fileName: string;
   match(ext: string): boolean;
-  compile(code: string): string;
+  compile(code: string): [string, Array<Error>];
 }
 
 export interface I18nRawData {
