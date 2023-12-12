@@ -82,7 +82,7 @@ export async function exportXLS(config: I18nConfig) {
 
   console.log(
     `The export file was created at ${chalk.green(
-      path.join(config.xls.outDir, path.basename("i18n.xlsx"))
+      path.join(config.xls.outDir, path.basename("i18n.xls"))
     )}`
   );
 }

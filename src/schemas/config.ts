@@ -6,11 +6,11 @@ export const configSchema = z.object({
    */
   appType: z.enum(["vanilla", "vue"]),
   /**
-   * The languages to generate translations for.
+   * Languages for which translations should be created.
    */
   langs: z.array(z.string()),
   /**
-   * The glob pattern to search for translation keys.
+   * Glob pattern to search for translation keys.
    */
   pattern: z.string(),
   /**
@@ -18,16 +18,16 @@ export const configSchema = z.object({
    */
   dirName: z.string().default("locales"),
   /**
-   * The name of the translation function.
+   * Translation function name.
    */
   funcName: z.string().default("t"),
   generate: z.object({
     /**
-     * The path to the module that exports the `I18nGetLocale` implementation.
+     * Path to the module that exports the `I18nGetLocale` implementation.
      */
     getLangPath: z.string(),
     /**
-     * The path to the module that exports the `I18nFormatter` implementation.
+     * Path to the module that exports the `I18nFormatter` implementation.
      */
     formatterPath: z.string().nullable().default(null),
     /**
@@ -36,16 +36,33 @@ export const configSchema = z.object({
     sortKeys: z.boolean().default(true),
   }),
   json: z.object({
+    /**
+     * The output directory for the JSON file. The export file will be named `i18n.json`.
+     */
     outDir: z.string(),
-    pretty: z.boolean().default(true),
   }),
   csv: z.object({
+    /**
+     * The output directory for the CSV file. The export file will be named `{locale}.csv`.
+     */
     outDir: z.string(),
+    /**
+     * The delimiter to be used for the CSV file.
+     */
     delimiter: z.string(),
+    /**
+     * The directory containing the CSV files to import.
+     */
     inputDir: z.string(),
   }),
   xls: z.object({
+    /**
+     * The output directory for the XLS file. The export file will be named `i18n.xls`.
+     */
     outDir: z.string(),
+    /**
+     * The directory containing the XLS files to import.
+     */
     inputDir: z.string(),
   }),
 });
