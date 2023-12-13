@@ -63,12 +63,13 @@ function traverseFile(params: TraverseFileParams) {
 
   const code = params.compilers.reduce((result, compiler) => {
     if (compiler.match(fileExt)) {
-      try {
-        return compiler.compile(result);
-      } catch (error) {
-        params.onError(error);
-        return "";
+      const [code, errors] = compiler.compile(result);
+      if (errors.length > 0) {
+        for (const error of errors) {
+          params.onError(error);
+        }
       }
+      return code;
     }
     return result;
   }, codeRaw);
@@ -250,9 +251,15 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
       },
     });
 
-    for (const key of rawDataDict[dirName].stats.all) {
-      if (rawDataDict[dirName].stats.unused.has(key)) {
-        rawDataDict[dirName].stats.unused.delete(key);
+    // TODO: update to traverseFile first, then remove unused keys
+    if (rawDataDict[dirName].stats.all.size === 0 && rawDataDict[dirName].stats.unused.size === 0) {
+      // nothing found in this directory, remove it from the raw data
+      delete rawDataDict[dirName];
+    } else {
+      for (const key of rawDataDict[dirName].stats.all) {
+        if (rawDataDict[dirName].stats.unused.has(key)) {
+          rawDataDict[dirName].stats.unused.delete(key);
+        }
       }
     }
   }

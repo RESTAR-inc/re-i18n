@@ -9,9 +9,10 @@ export class VueCompiler implements I18nCompiler {
     return ext === ".vue";
   }
 
-  compile(code: string): string {
+  compile(code: string): [string, Array<Error>] {
     const parsed = compiler.parse(code, {});
     const result = [];
+    const errors: Array<Error> = [];
 
     try {
       const { content } = compiler.compileScript(parsed.descriptor, {
@@ -19,10 +20,12 @@ export class VueCompiler implements I18nCompiler {
       });
       result.push(content);
     } catch (error) {
-      throw new CompilerError(
-        `unable to parse "${this.fileName}" script: ${
-          error instanceof Error ? error.message : error
-        }`
+      errors.push(
+        new CompilerError(
+          `unable to parse "${this.fileName}" script: ${
+            error instanceof Error ? error.message : error
+          }`
+        )
       );
     }
 
@@ -34,13 +37,15 @@ export class VueCompiler implements I18nCompiler {
       });
       result.push(code);
     } catch (error) {
-      throw new CompilerError(
-        `unable to parse "${this.fileName}" template: ${
-          error instanceof Error ? error.message : error
-        }`
+      errors.push(
+        new CompilerError(
+          `unable to parse "${this.fileName}" template: ${
+            error instanceof Error ? error.message : error
+          }`
+        )
       );
     }
 
-    return result.join(";");
+    return [result.join(";"), errors];
   }
 }
