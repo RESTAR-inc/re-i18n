@@ -1,7 +1,8 @@
 {
+    "defaultLocale": "ja",
     "appType": "vue",
     "pattern": "src/{app,lib}/**/*.{ts,vue}",
-    "langs": [
+    "locales": [
         "ja",
         "en"
     ],
@@ -18,7 +19,7 @@
         "inputDir": "./out/xls"
     },
     "generate": {
-        "getLangPath": "./src/i18n/getLang",
+        "getLocalePath": "./src/i18n/getLocale",
         "formatterPath": "./src/i18n/formatter"
     }
 }

@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import { sortKeyset } from "../common.js";
 import { parse } from "../parser.js";
-import type { I18nConfig, I18nKeyset, I18nRawData } from "../types.js";
+import type { I18nConfig, I18nKeyset, I18nRawDataKeys } from "../types.js";
 
 export async function importXLS(config: I18nConfig) {
   const workbook = new excel.Workbook();
@@ -22,7 +22,7 @@ export async function importXLS(config: I18nConfig) {
     return;
   }
 
-  const parsed: Record<string, I18nRawData["keys"]> = {};
+  const parsed: Record<string, I18nRawDataKeys> = {};
 
   for (const sheet of workbook.worksheets) {
     const lang = sheet.name;
@@ -52,33 +52,26 @@ export async function importXLS(config: I18nConfig) {
     }
   }
 
-  const dataToImport: Record<string, I18nRawData> = {};
+  const dataToImport: Record<string, I18nRawDataKeys> = {};
 
   parse({
     config,
     onEntry(file, lang, key, translation, comment) {
       const dirName = path.dirname(file);
       if (!dataToImport[dirName]) {
-        dataToImport[dirName] = {
-          keys: {},
-          stats: {
-            all: new Set(),
-            added: new Set(),
-            unused: new Set(),
-          },
-        };
+        dataToImport[dirName] = {};
       }
 
-      if (!dataToImport[dirName].keys[key]) {
-        dataToImport[dirName].keys[key] = {
+      if (!dataToImport[dirName][key]) {
+        dataToImport[dirName][key] = {
           files: [],
           locales: {},
         };
       }
-      dataToImport[dirName].keys[key].files.push({ file, comment });
+      dataToImport[dirName][key].files.push({ file, comment });
 
       const csvTranslation = parsed[dirName][key]?.locales[lang];
-      dataToImport[dirName].keys[key].locales[lang] = csvTranslation || translation;
+      dataToImport[dirName][key].locales[lang] = csvTranslation || translation;
     },
   });
 
@@ -89,7 +82,7 @@ export async function importXLS(config: I18nConfig) {
       continue;
     }
 
-    for (const lang of config.langs) {
+    for (const lang of config.locales) {
       let fileData: I18nKeyset<string> = {};
 
       for (const [key, keyData] of Object.entries(rawData.keys)) {

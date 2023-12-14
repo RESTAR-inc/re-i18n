@@ -3,7 +3,7 @@ export type { I18nTemplateData } from "./schemas/template.js";
 
 export type I18nKeyset<T extends string> = Record<T, string>;
 
-export type I18nLocales<T extends string> = Record<string, I18nKeyset<T>>;
+export type I18nLocaleKeyset<T extends string> = Record<string, I18nKeyset<T>>;
 
 export type I18nParam = string | number | boolean | null | undefined | Date;
 
@@ -12,10 +12,10 @@ export interface I18nParams {
 }
 
 export interface I18nFormatter {
-  str(message: string, options?: I18nParams): string;
+  str(locale: string, message: string, options?: I18nParams): string;
 }
 
-export type I18nGetLocale = () => string;
+export type I18nGetLocale<T extends string = string> = (locales: Array<T>, defaultLocale: T) => T;
 
 export interface I18nCompiler {
   fileName: string;
@@ -23,21 +23,27 @@ export interface I18nCompiler {
   compile(code: string): [string, Array<Error>];
 }
 
+export interface I18nRawDataKey {
+  locales: I18nKeyset<string>;
+  files: Array<{
+    file: string;
+    comment: string;
+  }>;
+}
+
+export interface I18nRawDataKeys {
+  [key: string]: I18nRawDataKey;
+}
+
+export interface I18nRawDataStats {
+  all: Set<string>;
+  added: Set<string>;
+  unused: Set<string>;
+}
+
 export interface I18nRawData {
-  stats: {
-    all: Set<string>;
-    added: Set<string>;
-    unused: Set<string>;
-  };
-  keys: {
-    [key: string]: {
-      locales: I18nKeyset<string>;
-      files: Array<{
-        file: string;
-        comment: string;
-      }>;
-    };
-  };
+  stats: I18nRawDataStats;
+  keys: I18nRawDataKeys;
 }
 
 export interface I18nExportData {

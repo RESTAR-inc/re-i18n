@@ -1,14 +1,15 @@
 import z from "zod";
 
 export const configSchema = z.object({
-  /**
-   * The type of application to generate translations for.
-   */
-  appType: z.enum(["vanilla", "vue"]),
+  defaultLocale: z.string(),
   /**
    * Languages for which translations should be created.
    */
-  langs: z.array(z.string()),
+  locales: z.array(z.string()),
+  /**
+   * The type of application to generate translations for.
+   */
+  appType: z.enum(["vanilla", "vue"]).default("vanilla"),
   /**
    * Glob pattern to search for translation keys.
    */
@@ -25,7 +26,7 @@ export const configSchema = z.object({
     /**
      * Path to the module that exports the `I18nGetLocale` implementation.
      */
-    getLangPath: z.string(),
+    getLocalePath: z.string(),
     /**
      * Path to the module that exports the `I18nFormatter` implementation.
      */

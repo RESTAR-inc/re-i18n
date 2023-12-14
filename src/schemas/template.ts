@@ -1,10 +1,10 @@
 import z from "zod";
 
 export const templateDataSchema = z.object({
-  appType: z.enum(["vanilla", "vue"]),
+  defaultLocale: z.string(),
+  locales: z.array(z.string()),
   funcName: z.string(),
-  langs: z.array(z.string()),
-  getLangPath: z.string(),
+  getLocalePath: z.string(),
   formatterPath: z.string().nullable().default(null),
 });
 

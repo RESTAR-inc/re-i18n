@@ -5,7 +5,7 @@ import prompts from "prompts";
 import { sortKeyset } from "../common.js";
 import { parse } from "../parser.js";
 import type { I18nConfig } from "../schemas/config.js";
-import { render } from "../template/index.js";
+import { render } from "../template/render.js";
 import type { I18nKeyset } from "../types.js";
 
 function formatKeyList(set: Set<string>) {
@@ -18,16 +18,19 @@ export async function generate(config: I18nConfig) {
   const data = parse({
     config,
     onEnterDir(dir) {
-      console.log(`Dir ${chalk.cyan.bold(dir)}`);
+      console.log(chalk.cyan.bold(dir));
     },
     onEnterFile(file) {
-      console.log(`  File ${chalk.blue(file)}`);
+      console.log(`  ${chalk.bold.blue(path.basename(file))}`);
     },
     onError(file, err) {
       const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
       console.log(chalk.red(message));
     },
   });
+
+  const localesToCreate: Record<string, { [file: string]: string }> = {};
+  const localesToDelete = new Set<string>();
 
   for (const [dir, rawData] of Object.entries(data)) {
     let addNewKeys = false;
@@ -39,10 +42,13 @@ export async function generate(config: I18nConfig) {
         name: "proceed",
         initial: true,
         message: [
-          chalk.yellow(`New keys have been found in ${chalk.cyan.bold(dir)}`),
+          chalk.yellow("New keys have been found in"),
+          chalk.blue(dir),
+          "\n",
           formatKeyList(rawData.stats.added),
-          "Would you like to add them?`",
-        ].join("\n"),
+          "\n",
+          chalk.blue("Would you like to add them?"),
+        ].join(" "),
       });
       addNewKeys = Boolean(proceed);
     }
@@ -53,21 +59,18 @@ export async function generate(config: I18nConfig) {
         name: "proceed",
         initial: true,
         message: [
-          chalk.red(`Unused keys have been found in ${chalk.cyan.bold(dir)}`),
+          chalk.yellow("Unused keys have been found in"),
+          chalk.red(dir),
+          "\n",
           formatKeyList(rawData.stats.unused),
-          "Do you want to delete them?`",
-        ].join("\n"),
+          "\n",
+          chalk.red("Do you want to delete them?"),
+        ].join(" "),
       });
       removeUnusedKeys = Boolean(proceed);
     }
 
-    const targetDir = path.resolve(path.join(dir, config.dirName));
-    if (!fs.existsSync(targetDir)) {
-      console.log(`Creating directory at ${chalk.bold(dir)}`);
-      fs.mkdirSync(targetDir, { recursive: true });
-    }
-
-    for (const lang of config.langs) {
+    for (const lang of config.locales) {
       let fileData: I18nKeyset<string> = {};
 
       for (const [key, keyData] of Object.entries(rawData.keys)) {
@@ -84,24 +87,66 @@ export async function generate(config: I18nConfig) {
         }
       }
 
-      if (config.generate.sortKeys) {
-        fileData = sortKeyset(fileData);
-      }
+      if (Object.keys(fileData).length === 0) {
+        localesToDelete.add(dir);
+      } else {
+        if (config.generate.sortKeys) {
+          fileData = sortKeyset(fileData);
+        }
 
-      const targetFile = path.join(dir, config.dirName, `${lang}.json`);
-      console.log(`Saving locale file at ${chalk.bold(targetFile)}`);
-      fs.writeFileSync(path.resolve(targetFile), JSON.stringify(fileData, null, 2), {
-        encoding: "utf8",
+        if (!localesToCreate[dir]) {
+          localesToCreate[dir] = {};
+        }
+        localesToCreate[dir][lang] = JSON.stringify(fileData, null, 2);
+      }
+    }
+  }
+
+  for (const dir of localesToDelete) {
+    const dirToDelete = path.resolve(path.join(dir, config.dirName));
+
+    if (fs.existsSync(dirToDelete)) {
+      const { proceed } = await prompts({
+        type: "confirm",
+        name: "proceed",
+        initial: true,
+        message: [
+          chalk.yellow("An unused locale directory was found in"),
+          chalk.red(dir),
+          "\n",
+          chalk.red("Do you want to delete it?"),
+        ].join(" "),
       });
+
+      if (proceed) {
+        console.log(`${chalk.red("Deleting a directory")} ${chalk.bold(dir)}`);
+        fs.rmSync(dirToDelete, { recursive: true });
+      }
+    }
+  }
+
+  for (const [dir, files] of Object.entries(localesToCreate)) {
+    const dirName = path.join(dir, config.dirName);
+    const dirTarget = path.resolve(dirName);
+
+    if (!fs.existsSync(dirTarget)) {
+      console.log(`Creating directory ${chalk.bold(dirName)}`);
+      fs.mkdirSync(dirTarget, { recursive: true });
     }
 
-    const template = render(config, dir);
-    const targetTemplateFile = path.join(dir, config.dirName, "index.ts");
+    for (const [file, content] of Object.entries(files)) {
+      const fileName = path.join(dir, config.dirName, `${file}.json`);
+      const fileTarget = path.resolve(fileName);
 
-    console.log(`Saving template file at ${chalk.bold(targetTemplateFile)}`);
+      console.log(`Saving locale file at ${chalk.bold(fileName)}`);
+      fs.writeFileSync(fileTarget, content, { encoding: "utf8" });
+    }
 
-    fs.writeFileSync(path.resolve(targetTemplateFile), template, {
-      encoding: "utf8",
-    });
+    const template = render(config, dirTarget);
+    const templateFileName = path.join(dir, config.dirName, "index.ts");
+    const templateFileTarget = path.resolve(templateFileName);
+
+    console.log(`Saving template file at ${chalk.bold(templateFileName)}`);
+    fs.writeFileSync(templateFileTarget, template, { encoding: "utf8" });
   }
 }
