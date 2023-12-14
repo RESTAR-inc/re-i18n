@@ -14,12 +14,10 @@ function normalizePath(value: string | null, dir: string) {
 }
 
 function createTemplateData(config: I18nConfig, dir: string): I18nTemplateData {
-  const localeDirPath = path.join(dir, config.dirName);
-
   return {
     defaultLocale: config.defaultLocale,
-    formatterPath: normalizePath(config.generate.formatterPath, localeDirPath),
-    getLocalePath: normalizePath(config.generate.getLocalePath, localeDirPath),
+    formatterPath: normalizePath(config.generate.formatterPath, dir),
+    getLocalePath: normalizePath(config.generate.getLocalePath, dir),
     funcName: config.funcName,
     locales: config.locales,
   };

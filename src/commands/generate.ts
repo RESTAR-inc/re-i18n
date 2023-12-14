@@ -29,6 +29,9 @@ export async function generate(config: I18nConfig) {
     },
   });
 
+  const localesToCreate: Record<string, { [file: string]: string }> = {};
+  const localesToDelete = new Set<string>();
+
   for (const [dir, rawData] of Object.entries(data)) {
     let addNewKeys = false;
     let removeUnusedKeys = false;
@@ -39,10 +42,13 @@ export async function generate(config: I18nConfig) {
         name: "proceed",
         initial: true,
         message: [
-          chalk.yellow(`New keys have been found in ${chalk.cyan.bold(dir)}`),
+          chalk.yellow("New keys have been found in"),
+          chalk.blue(dir),
+          "\n",
           formatKeyList(rawData.stats.added),
-          "Would you like to add them?`",
-        ].join("\n"),
+          "\n",
+          chalk.blue("Would you like to add them?"),
+        ].join(" "),
       });
       addNewKeys = Boolean(proceed);
     }
@@ -53,19 +59,18 @@ export async function generate(config: I18nConfig) {
         name: "proceed",
         initial: true,
         message: [
-          chalk.red(`Unused keys have been found in ${chalk.cyan.bold(dir)}`),
+          chalk.yellow("Unused keys have been found in"),
+          chalk.red(dir),
+          "\n",
           formatKeyList(rawData.stats.unused),
-          "Do you want to delete them?`",
-        ].join("\n"),
+          "\n",
+          chalk.red("Do you want to delete them?"),
+        ].join(" "),
       });
       removeUnusedKeys = Boolean(proceed);
     }
 
-    const targetDir = path.resolve(path.join(dir, config.dirName));
-    if (!fs.existsSync(targetDir)) {
-      console.log(`Creating directory at ${chalk.bold(dir)}`);
-      fs.mkdirSync(targetDir, { recursive: true });
-    }
+    const localeDir = path.join(dir, config.dirName);
 
     for (const lang of config.locales) {
       let fileData: I18nKeyset<string> = {};
@@ -84,24 +89,61 @@ export async function generate(config: I18nConfig) {
         }
       }
 
-      if (config.generate.sortKeys) {
-        fileData = sortKeyset(fileData);
-      }
+      if (Object.keys(fileData).length === 0) {
+        if (fs.existsSync(path.resolve(localeDir))) {
+          localesToDelete.add(localeDir);
+          continue;
+        }
+      } else {
+        if (config.generate.sortKeys) {
+          fileData = sortKeyset(fileData);
+        }
 
-      const targetFile = path.join(dir, config.dirName, `${lang}.json`);
-      console.log(`Saving locale file at ${chalk.bold(targetFile)}`);
-      fs.writeFileSync(path.resolve(targetFile), JSON.stringify(fileData, null, 2), {
-        encoding: "utf8",
-      });
+        if (!localesToCreate[localeDir]) {
+          localesToCreate[localeDir] = {};
+        }
+        const targetFile = path.join(dir, config.dirName, `${lang}.json`);
+        localesToCreate[localeDir][targetFile] = JSON.stringify(fileData, null, 2);
+      }
+    }
+  }
+
+  for (const dirToDelete of localesToDelete) {
+    const { proceed } = await prompts({
+      type: "confirm",
+      name: "proceed",
+      initial: true,
+      message: [
+        chalk.yellow("Unused locale have been found in"),
+        chalk.red(dirToDelete),
+        "\n",
+        chalk.red("Do you want to delete it?"),
+      ].join(" "),
+    });
+
+    if (proceed) {
+      fs.rmSync(dirToDelete, { recursive: true });
+    }
+  }
+
+  for (const [dir, files] of Object.entries(localesToCreate)) {
+    const targetDir = path.resolve(dir);
+
+    if (!fs.existsSync(targetDir)) {
+      console.log(`Creating directory at ${chalk.bold(dir)}`);
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    for (const [file, content] of Object.entries(files)) {
+      console.log(`Saving locale file at ${chalk.bold(file)}`);
+      fs.writeFileSync(path.resolve(file), content, { encoding: "utf8" });
     }
 
     const template = render(config, dir);
-    const targetTemplateFile = path.join(dir, config.dirName, "index.ts");
+    const targetTemplateFile = path.join(dir, "index.ts");
 
     console.log(`Saving template file at ${chalk.bold(targetTemplateFile)}`);
 
-    fs.writeFileSync(path.resolve(targetTemplateFile), template, {
-      encoding: "utf8",
-    });
+    fs.writeFileSync(path.resolve(targetTemplateFile), template, { encoding: "utf8" });
   }
 }
