@@ -18,10 +18,10 @@ export async function generate(config: I18nConfig) {
   const data = parse({
     config,
     onEnterDir(dir) {
-      console.log(`Dir ${chalk.cyan.bold(dir)}`);
+      console.log(chalk.cyan.bold(dir));
     },
     onEnterFile(file) {
-      console.log(`  File ${chalk.blue(file)}`);
+      console.log(`  ${chalk.bold.blue(path.basename(file))}`);
     },
     onError(file, err) {
       const message = err instanceof Error ? err.message : `Error parsing "${file}": ${err}`;
@@ -70,8 +70,6 @@ export async function generate(config: I18nConfig) {
       removeUnusedKeys = Boolean(proceed);
     }
 
-    const localeDir = path.join(dir, config.dirName);
-
     for (const lang of config.locales) {
       let fileData: I18nKeyset<string> = {};
 
@@ -90,60 +88,65 @@ export async function generate(config: I18nConfig) {
       }
 
       if (Object.keys(fileData).length === 0) {
-        if (fs.existsSync(path.resolve(localeDir))) {
-          localesToDelete.add(localeDir);
-          continue;
-        }
+        localesToDelete.add(dir);
       } else {
         if (config.generate.sortKeys) {
           fileData = sortKeyset(fileData);
         }
 
-        if (!localesToCreate[localeDir]) {
-          localesToCreate[localeDir] = {};
+        if (!localesToCreate[dir]) {
+          localesToCreate[dir] = {};
         }
-        const targetFile = path.join(dir, config.dirName, `${lang}.json`);
-        localesToCreate[localeDir][targetFile] = JSON.stringify(fileData, null, 2);
+        localesToCreate[dir][lang] = JSON.stringify(fileData, null, 2);
       }
     }
   }
 
-  for (const dirToDelete of localesToDelete) {
-    const { proceed } = await prompts({
-      type: "confirm",
-      name: "proceed",
-      initial: true,
-      message: [
-        chalk.yellow("Unused locale have been found in"),
-        chalk.red(dirToDelete),
-        "\n",
-        chalk.red("Do you want to delete it?"),
-      ].join(" "),
-    });
+  for (const dir of localesToDelete) {
+    const dirToDelete = path.resolve(path.join(dir, config.dirName));
 
-    if (proceed) {
-      fs.rmSync(dirToDelete, { recursive: true });
+    if (fs.existsSync(dirToDelete)) {
+      const { proceed } = await prompts({
+        type: "confirm",
+        name: "proceed",
+        initial: true,
+        message: [
+          chalk.yellow("An unused locale directory was found in"),
+          chalk.red(dir),
+          "\n",
+          chalk.red("Do you want to delete it?"),
+        ].join(" "),
+      });
+
+      if (proceed) {
+        console.log(`${chalk.red("Deleting a directory")} ${chalk.bold(dir)}`);
+        fs.rmSync(dirToDelete, { recursive: true });
+      }
     }
   }
 
   for (const [dir, files] of Object.entries(localesToCreate)) {
-    const targetDir = path.resolve(dir);
+    const dirName = path.join(dir, config.dirName);
+    const dirTarget = path.resolve(dirName);
 
-    if (!fs.existsSync(targetDir)) {
-      console.log(`Creating directory at ${chalk.bold(dir)}`);
-      fs.mkdirSync(targetDir, { recursive: true });
+    if (!fs.existsSync(dirTarget)) {
+      console.log(`Creating directory ${chalk.bold(dirName)}`);
+      fs.mkdirSync(dirTarget, { recursive: true });
     }
 
     for (const [file, content] of Object.entries(files)) {
-      console.log(`Saving locale file at ${chalk.bold(file)}`);
-      fs.writeFileSync(path.resolve(file), content, { encoding: "utf8" });
+      const fileName = path.join(dir, config.dirName, `${file}.json`);
+      const fileTarget = path.resolve(fileName);
+
+      console.log(`Saving locale file at ${chalk.bold(fileName)}`);
+      fs.writeFileSync(fileTarget, content, { encoding: "utf8" });
     }
 
-    const template = render(config, dir);
-    const targetTemplateFile = path.join(dir, "index.ts");
+    const template = render(config, dirTarget);
+    const templateFileName = path.join(dir, config.dirName, "index.ts");
+    const templateFileTarget = path.resolve(templateFileName);
 
-    console.log(`Saving template file at ${chalk.bold(targetTemplateFile)}`);
-
-    fs.writeFileSync(path.resolve(targetTemplateFile), template, { encoding: "utf8" });
+    console.log(`Saving template file at ${chalk.bold(templateFileName)}`);
+    fs.writeFileSync(templateFileTarget, template, { encoding: "utf8" });
   }
 }
