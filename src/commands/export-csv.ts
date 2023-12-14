@@ -35,7 +35,7 @@ export function exportCSV(config: I18nConfig) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
 
-  for (const lang of config.langs) {
+  for (const lang of config.locales) {
     const csvData: Array<I18nCSVColumns> = [];
 
     for (const entryData of Object.values(exportData.data)) {

@@ -10,7 +10,7 @@ class DefaultFormatter implements I18nFormatter {
   private static readonly openBracket = "{";
   private static readonly closeBracket = "}";
 
-  str(message: string, params?: I18nParams): string {
+  str(_locale: string, message: string, params?: I18nParams): string {
     if (!params) {
       return message;
     }

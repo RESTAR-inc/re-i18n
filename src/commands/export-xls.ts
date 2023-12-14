@@ -37,7 +37,7 @@ export async function exportXLS(config: I18nConfig) {
 
   const workbook = new excel.Workbook();
 
-  for (const lang of config.langs) {
+  for (const lang of config.locales) {
     const sheet = workbook.addWorksheet(lang, {
       views: [
         {

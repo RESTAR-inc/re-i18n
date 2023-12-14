@@ -89,7 +89,7 @@ export async function importXLS(config: I18nConfig) {
       continue;
     }
 
-    for (const lang of config.langs) {
+    for (const lang of config.locales) {
       let fileData: I18nKeyset<string> = {};
 
       for (const [key, keyData] of Object.entries(rawData.keys)) {

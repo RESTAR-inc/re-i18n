@@ -189,7 +189,7 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
         },
       };
 
-      for (const lang of params.config.langs) {
+      for (const lang of params.config.locales) {
         // read translations from JSON file and add them to the raw data
         const currentLocale = readTranslations(lang, file, params.config.dirName);
 
@@ -236,7 +236,7 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
 
         rawDataDict[dirName].keys[key].files.push({ file, comment });
 
-        for (const lang of params.config.langs) {
+        for (const lang of params.config.locales) {
           const translation = rawDataDict[dirName].keys[key].locales[lang];
           if (typeof translation === "undefined") {
             rawDataDict[dirName].stats.added.add(key);

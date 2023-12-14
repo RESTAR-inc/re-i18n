@@ -3,7 +3,7 @@ export type { I18nTemplateData } from "./schemas/template.js";
 
 export type I18nKeyset<T extends string> = Record<T, string>;
 
-export type I18nLocales<T extends string> = Record<string, I18nKeyset<T>>;
+export type I18nLocaleKeyset<T extends string> = Record<string, I18nKeyset<T>>;
 
 export type I18nParam = string | number | boolean | null | undefined | Date;
 
@@ -12,10 +12,10 @@ export interface I18nParams {
 }
 
 export interface I18nFormatter {
-  str(message: string, options?: I18nParams): string;
+  str(locale: string, message: string, options?: I18nParams): string;
 }
 
-export type I18nGetLocale = () => string;
+export type I18nGetLocale<T extends string = string> = (locales: Array<T>, defaultLocale: T) => T;
 
 export interface I18nCompiler {
   fileName: string;

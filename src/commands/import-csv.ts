@@ -72,7 +72,7 @@ export async function importCSV(config: I18nConfig) {
 
   const parsed: Record<string, I18nRawData["keys"]> = {};
 
-  const promises = config.langs.map((lang) => {
+  const promises = config.locales.map((lang) => {
     return parseFile(parsed, lang, csvFiles, config);
   });
 
@@ -120,7 +120,7 @@ export async function importCSV(config: I18nConfig) {
       continue;
     }
 
-    for (const lang of config.langs) {
+    for (const lang of config.locales) {
       let fileData: I18nKeyset<string> = {};
 
       for (const [key, keyData] of Object.entries(rawData.keys)) {

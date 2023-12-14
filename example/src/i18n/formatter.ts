@@ -1,11 +1,10 @@
 import { IntlMessageFormat } from "intl-messageformat";
 import type { I18nFormatter } from "re-i18n";
-import getLang from "./getLang";
 
 const fmt: I18nFormatter = {
-  str: (str, opts) => {
+  str: (locale, str, opts) => {
     try {
-      const intl = new IntlMessageFormat(str, getLang());
+      const intl = new IntlMessageFormat(str, locale);
       const formatted = intl.format(opts);
 
       if (Array.isArray(formatted)) {

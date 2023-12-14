@@ -5,7 +5,7 @@ import prompts from "prompts";
 import { sortKeyset } from "../common.js";
 import { parse } from "../parser.js";
 import type { I18nConfig } from "../schemas/config.js";
-import { render } from "../template/index.js";
+import { render } from "../template/render.js";
 import type { I18nKeyset } from "../types.js";
 
 function formatKeyList(set: Set<string>) {
@@ -67,7 +67,7 @@ export async function generate(config: I18nConfig) {
       fs.mkdirSync(targetDir, { recursive: true });
     }
 
-    for (const lang of config.langs) {
+    for (const lang of config.locales) {
       let fileData: I18nKeyset<string> = {};
 
       for (const [key, keyData] of Object.entries(rawData.keys)) {
