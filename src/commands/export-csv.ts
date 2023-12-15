@@ -43,6 +43,7 @@ export function exportCSV(config: I18nConfig) {
         csvData.push({
           key,
           translation: locales[lang],
+          note: "",
           comment: files.map(({ comment }) => comment).join("\n"),
           file: files.map(({ file }) => file).join("\n"),
         });
@@ -58,6 +59,7 @@ export function exportCSV(config: I18nConfig) {
         columns: [
           { key: "key", header: "Key (DO NOT EDIT)" },
           { key: "translation", header: "Translation" },
+          { key: "note", header: "Note" },
           { key: "comment", header: "Comment (DO NOT EDIT)" },
           { key: "file", header: "File (DO NOT EDIT)" },
         ],

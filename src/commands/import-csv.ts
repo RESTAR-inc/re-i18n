@@ -27,7 +27,7 @@ function parseFile(
 
       rows.shift(); // remove header
 
-      for (const [key, translation, commentsStr, filesStr] of rows) {
+      for (const [key, translation, note, commentsStr, filesStr] of rows) {
         const files = filesStr.split("\n");
         const comments = commentsStr.split("\n");
 
@@ -43,6 +43,17 @@ function parseFile(
         }
 
         target[targetDir][key].locales[lang] = translation;
+
+        if (note) {
+          const message = [
+            chalk.yellow("A note from the translator was found"),
+            `  key:\n\t${chalk.bold(key)}`,
+            `  location:\n${chalk.bold(files.map((f) => `\t${f}`).join("\n"))}`,
+            `  note:\n\t${chalk.bold(note)}`,
+          ].join("\n");
+
+          console.log(`${message}\n`);
+        }
       }
       resolve();
     });
