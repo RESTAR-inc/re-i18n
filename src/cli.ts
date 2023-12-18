@@ -8,6 +8,7 @@ import { exportXLS } from "./commands/export-xls.js";
 import { generate } from "./commands/generate.js";
 import { importCSV } from "./commands/import-csv.js";
 import { importXLS } from "./commands/import-xls.js";
+import { stats } from "./commands/stats.js";
 import { loadConfig } from "./config.js";
 
 new Command("re-i18n")
@@ -20,6 +21,7 @@ new Command("re-i18n")
       "export-xls",
       "import-csv",
       "import-xls",
+      "stats",
     ])
   )
   .option("-c, --config <string>", "Load config from file", "./re-i18n.config.json")
@@ -53,6 +55,10 @@ new Command("re-i18n")
 
         case "import-xls":
           importXLS(config);
+          break;
+
+        case "stats":
+          stats(config);
           break;
       }
     } catch (error) {

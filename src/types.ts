@@ -56,6 +56,7 @@ export interface I18nExportData {
 export interface I18nCSVColumns {
   key: string;
   translation: string;
+  note: string;
   comment: string;
   file: string;
 }
