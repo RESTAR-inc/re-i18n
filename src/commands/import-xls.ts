@@ -28,13 +28,15 @@ export async function importXLS(config: I18nConfig) {
     const lang = sheet.name;
 
     // start from 2 to skip the header
-    for (let i = 2; i < sheet.rowCount; i++) {
+    // because of the xls format, the column index starts at 1
+    for (let i = 2; i <= sheet.rowCount; i++) {
       const row = sheet.getRow(i);
 
       const key = row.getCell(1).text;
       const translation = row.getCell(2).text;
-      const comment = row.getCell(3).text;
-      const file = row.getCell(4).text;
+      const note = row.getCell(3).text;
+      const comment = row.getCell(4).text;
+      const file = row.getCell(5).text;
 
       const targetDir = path.dirname(file);
       if (!parsed[targetDir]) {
@@ -49,6 +51,17 @@ export async function importXLS(config: I18nConfig) {
 
       parsed[targetDir][key].files.push({ file, comment });
       parsed[targetDir][key].locales[lang] = translation;
+
+      if (note) {
+        const message = [
+          chalk.yellow("A note from the translator was found"),
+          `  key:\n\t${chalk.bold(key)}`,
+          `  location:\n${chalk.bold(file)}`,
+          `  note:\n\t${chalk.bold(note)}`,
+        ].join("\n");
+
+        console.log(`${message}\n`);
+      }
     }
   }
 
@@ -85,7 +98,7 @@ export async function importXLS(config: I18nConfig) {
     for (const lang of config.locales) {
       let fileData: I18nKeyset<string> = {};
 
-      for (const [key, keyData] of Object.entries(rawData.keys)) {
+      for (const [key, keyData] of Object.entries(rawData)) {
         fileData[key] = keyData.locales[lang];
       }
 

@@ -51,6 +51,7 @@ export async function exportXLS(config: I18nConfig) {
     sheet.columns = [
       { header: "Key (DO NOT EDIT)", key: "key", width: 30, protection: { locked: true } },
       { header: "Translation", key: "translation", width: 30 },
+      { header: "Note", key: "note", width: 20 },
       { header: "Comment (DO NOT EDIT)", key: "comment", width: 50, protection: { locked: true } },
       { header: "File (DO NOT EDIT)", key: "file", width: 50, protection: { locked: true } },
     ];
@@ -59,14 +60,18 @@ export async function exportXLS(config: I18nConfig) {
 
     for (const entryData of Object.values(exportData.data)) {
       for (const [key, { locales, files }] of Object.entries(entryData)) {
+        if (files.length === 0) {
+          continue;
+        }
+
         const firstFile = files[0];
 
-        sheet.addRow([key, locales[lang], firstFile.comment, firstFile.file]);
+        sheet.addRow([key, locales[lang], "", firstFile.comment, firstFile.file]);
 
         if (files.length > 1) {
           const rowCountBefore = rowCount;
           for (let i = 1; i < files.length; i++) {
-            sheet.addRow(["", "", files[i].comment, files[i].file]);
+            sheet.addRow(["", "", "", files[i].comment, files[i].file]);
             rowCount += 1;
           }
           sheet.mergeCells(`A${rowCountBefore}:A${rowCount}`); // merge key cells
