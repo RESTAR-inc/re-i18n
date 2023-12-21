@@ -1,3 +1,4 @@
+import { resolveLocale, resolveMessage } from "./resolvers.js";
 import type { I18nFormatter, I18nGetLocale, I18nLocaleKeyset, I18nParams } from "./types.js";
 
 /**
@@ -13,17 +14,12 @@ export function createI18n<T extends string>(
   getLocale: I18nGetLocale<keyof I18nLocaleKeyset<T>>,
   defaultLocale: string
 ) {
-  function wrapper(key: T, params?: I18nParams): string {
-    const locales = Object.keys(localeKeyset);
-    const locale = getLocale(locales, defaultLocale);
-    const keyset = localeKeyset[locale];
+  function translator(key: T, params?: I18nParams): string {
+    const locale = resolveLocale(localeKeyset, getLocale, defaultLocale);
+    const message = resolveMessage(key, locale, localeKeyset);
 
-    if (!keyset) {
-      throw new Error(`No locale for ${locale}`);
-    }
-
-    return formatter.str(locale, keyset[key] || key, params);
+    return formatter(locale, message, params);
   }
 
-  return wrapper;
+  return translator;
 }

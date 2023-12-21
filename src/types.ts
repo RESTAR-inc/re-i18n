@@ -11,9 +11,17 @@ export interface I18nParams {
   [key: string]: I18nParam;
 }
 
-export interface I18nFormatter {
-  str(locale: string, message: string, options?: I18nParams): string;
-}
+export type I18nRawChunk =
+  | {
+      type: "text";
+      value: string;
+    }
+  | {
+      type: "node";
+      index: number;
+    };
+
+export type I18nFormatter = (locale: string, message: string, options?: I18nParams) => string;
 
 export type I18nGetLocale<T extends string = string> = (locales: Array<T>, defaultLocale: T) => T;
 

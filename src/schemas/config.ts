@@ -22,6 +22,7 @@ export const configSchema = z.object({
    * Translation function name.
    */
   funcName: z.string().default("t"),
+  componentName: z.string().default("ReI18n"),
   generate: z.object({
     /**
      * Path to the module that exports the `I18nGetLocale` implementation.

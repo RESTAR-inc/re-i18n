@@ -3,6 +3,8 @@ import z from "zod";
 export const templateDataSchema = z.object({
   defaultLocale: z.string(),
   locales: z.array(z.string()),
+  appType: z.enum(["vanilla", "vue"]).default("vanilla"),
+  componentName: z.string(),
   funcName: z.string(),
   getLocalePath: z.string(),
   formatterPath: z.string().nullable().default(null),

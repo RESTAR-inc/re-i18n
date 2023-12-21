@@ -2,6 +2,7 @@
     "defaultLocale": "ja",
     "appType": "vue",
     "pattern": "src/{app,lib}/**/*.{ts,vue}",
+    "componentName": "ReI18n",
     "locales": [
         "ja",
         "en"

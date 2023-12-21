@@ -16,10 +16,12 @@ function normalizePath(value: string | null, dir: string) {
 function createTemplateData(config: I18nConfig, dir: string): I18nTemplateData {
   return {
     defaultLocale: config.defaultLocale,
-    formatterPath: normalizePath(config.generate.formatterPath, dir),
-    getLocalePath: normalizePath(config.generate.getLocalePath, dir),
-    funcName: config.funcName,
     locales: config.locales,
+    appType: config.appType,
+    funcName: config.funcName,
+    componentName: config.componentName,
+    getLocalePath: normalizePath(config.generate.getLocalePath, dir),
+    formatterPath: normalizePath(config.generate.formatterPath, dir),
   };
 }
 
@@ -30,6 +32,9 @@ ${HEADER_AUTO_GENERATED}
 ${HEADER_WARNING}
 {% if formatterPath -%}
 import { createI18n } from "re-i18n";
+{%- if appType == "vue" %}
+import { createComponent } from "re-i18n/lib/vendor/vue";
+{% endif -%}
 import formatter from "{{ formatterPath }}";
 {% else -%}
 import { createI18n, formatter } from "re-i18n";
@@ -40,7 +45,12 @@ import {{ locale }} from "./{{ locale }}.json";
 {% endfor %}
 type I18nKey = {% for locale in locales %}keyof typeof {{ locale }}{% if not loop.last %} & {% endif %}{% endfor %};
 
-export const {{ funcName }} = createI18n<I18nKey>({ {% for locale in locales %}{{ locale -}}{% if not loop.last %},{% endif %} {% endfor -%} }, formatter, getLocale, "{{ defaultLocale }}");
+const localeKeyset = { {% for locale in locales %}{{ locale -}}{% if not loop.last %},{% endif %} {% endfor -%} };
+
+export const {{ funcName }} = createI18n<I18nKey>(localeKeyset, formatter, getLocale, "{{ defaultLocale }}");
+{%- if appType == "vue" %}
+export const {{ componentName }} = createComponent<I18nKey>(localeKeyset, formatter, getLocale, "{{ defaultLocale }}");
+{% endif -%}
 `;
 
 function renderTemplate(data: I18nTemplateData) {

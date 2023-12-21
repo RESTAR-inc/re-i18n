@@ -1,4 +1,5 @@
 {
-  "i18N アプリケーションの例": "i18N application example",
-  "こんにちは世界": "Hello, World"
+  "i18N アプリケーションの例": "",
+  "こんにちは世界": "",
+  "開始 | {0} 最初 {1} 2 番目 {2} 3 番目 {0} 最初 {2} 3 番目 {3} 最後 {1} 2 番目 {2} 3 番目 {0} 最初 | 終わり": "start | {0} first {1} second {2} third {0} first {2} third {3} last {1} second {2} third {0} first | end"
 }
