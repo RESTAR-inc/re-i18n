@@ -1,9 +1,10 @@
 import type { UseLocaleLocator } from "re-i18n/lib/vendor/vue";
 import { computed, ref } from "vue";
+import type { Locale } from "./types";
 
-const innerLocale = ref("ja");
+const innerLocale = ref<Locale>("ja");
 
-const useLocaleLocator: UseLocaleLocator = (locales, defaultLocale) => {
+const useLocaleLocator: UseLocaleLocator<Locale> = (locales, defaultLocale) => {
   return computed({
     get: () => innerLocale.value,
     set: (value) => {

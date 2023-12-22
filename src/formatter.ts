@@ -1,4 +1,4 @@
-import type { I18nFormatter, I18nParams } from "./types.js";
+import type { I18nFormatter } from "./types.js";
 
 const OPEN_BRACKET = "{";
 const CLOSE_BRACKET = "}";
@@ -9,7 +9,7 @@ const CLOSE_BRACKET = "}";
  * It's recommended to use a custom implementation of this interface to support more complex
  * formatting.
  */
-export const formatter: I18nFormatter = (_locale: string, message: string, params?: I18nParams) => {
+export const formatter: I18nFormatter<string> = (_locale, message, params) => {
   if (!params) {
     return message;
   }

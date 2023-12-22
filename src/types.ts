@@ -1,9 +1,9 @@
 export type { I18nConfig } from "./schemas/config.js";
 export type { I18nTemplateData } from "./schemas/template.js";
 
-export type I18nKeyset<T extends string> = Record<T, string>;
+export type I18nKeyset<K extends string> = Record<K, string>;
 
-export type I18nLocaleKeyset<T extends string> = Record<string, I18nKeyset<T>>;
+export type I18nLocaleKeyset<L extends string, K extends string> = Record<L, I18nKeyset<K>>;
 
 export type I18nParam = string | number | boolean | null | undefined | Date;
 
@@ -21,14 +21,13 @@ export type I18nRawChunk =
       index: number;
     };
 
-export type I18nFormatter = (locale: string, message: string, options?: I18nParams) => string;
+export type I18nFormatter<L extends string> = (
+  locale: L,
+  message: string,
+  options?: I18nParams
+) => string;
 
-export interface I18nLocaleLocator<T> {
-  readonly defaultLocale: T;
-  readonly locales: Array<T>;
-  getLocale(): T;
-  setLocale(locale: T): void;
-}
+export type I18nGetLocale<L extends string> = (locales: Array<L>, defaultLocale: L) => L;
 
 export interface I18nCompiler {
   fileName: string;

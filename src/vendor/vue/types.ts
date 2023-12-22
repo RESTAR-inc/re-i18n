@@ -1,6 +1,6 @@
 import type { WritableComputedRef } from "vue";
 
-export type UseLocaleLocator = (
-  locales: Array<string>,
-  defaultLocale: string
-) => WritableComputedRef<string>;
+export type UseLocaleLocator<T extends string> = (
+  locales: Array<T>,
+  defaultLocale: T
+) => WritableComputedRef<T>;

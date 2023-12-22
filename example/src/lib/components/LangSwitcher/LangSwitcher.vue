@@ -1,8 +1,5 @@
 <script setup lang=ts>
-import useLocateLocator from "../../../i18n/useLocateLocator";
-import { t } from "./locales";
-
-const locale = useLocateLocator(["en", "ja"], "ja");
+import { t, locale } from "./locales";
 
 const changeLocale = (value: "en" | "ja") => {
   locale.value = value;
