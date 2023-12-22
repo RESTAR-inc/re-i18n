@@ -20,7 +20,7 @@
         "inputDir": "./out/xls"
     },
     "generate": {
-        "getLocalePath": "./src/i18n/getLocale",
+        "localeLocatorPath": "./src/i18n/useLocateLocator",
         "formatterPath": "./src/i18n/formatter"
     }
 }

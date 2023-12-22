@@ -2,9 +2,9 @@
   "i18n サンプル アプリケーションへようこそ": "Welcome to the i18n sample application",
   "カウンター": "Counter",
   "カウントアップ": "Count Application",
-  "ユーザーを追加する": "",
+  "ユーザーを追加する": "Add User",
   "名前": "First Name",
-  "奇数・偶数": "",
+  "奇数・偶数": "Odd/Even",
   "苗字": "Family Name",
   "誕生日": "Birthday"
 }

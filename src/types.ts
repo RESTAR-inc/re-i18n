@@ -23,7 +23,12 @@ export type I18nRawChunk =
 
 export type I18nFormatter = (locale: string, message: string, options?: I18nParams) => string;
 
-export type I18nGetLocale<T extends string = string> = (locales: Array<T>, defaultLocale: T) => T;
+export interface I18nLocaleLocator<T> {
+  readonly defaultLocale: T;
+  readonly locales: Array<T>;
+  getLocale(): T;
+  setLocale(locale: T): void;
+}
 
 export interface I18nCompiler {
   fileName: string;
