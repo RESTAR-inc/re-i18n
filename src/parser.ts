@@ -1,34 +1,20 @@
 import { parse as babelParse, traverse as babelTraverse } from "@babel/core";
-import type { CallExpression, StringLiteral } from "@babel/types";
-import { isCallExpression, isIdentifier, isMemberExpression, isStringLiteral } from "@babel/types";
+import type { StringLiteral } from "@babel/types";
+import {
+  isCallExpression,
+  isIdentifier,
+  isMemberExpression,
+  isObjectExpression,
+  isObjectProperty,
+  isStringLiteral,
+  isVariableDeclarator,
+} from "@babel/types";
 import fs from "fs";
 import * as glob from "glob";
 import path from "path";
 import { VueCompiler } from "./compilers/vue.js";
 import { ParseError } from "./error.js";
 import type { I18nCompiler, I18nConfig, I18nKeyset, I18nRawData } from "./types.js";
-
-const isFuncCall = (node: CallExpression, target: string) => {
-  return isIdentifier(node.callee) && node.callee.name === target;
-};
-
-const isFuncMemberCall = (node: CallExpression, target: string) => {
-  return (
-    isMemberExpression(node.callee) &&
-    isIdentifier(node.callee.property) &&
-    node.callee.property.name === target
-  );
-};
-
-const isFuncRawCall = (node: CallExpression, target: string) => {
-  return (
-    isMemberExpression(node.callee) &&
-    isIdentifier(node.callee.property) &&
-    isIdentifier(node.callee.object) &&
-    node.callee.object.name === target &&
-    node.callee.property.name === "raw"
-  );
-};
 
 interface TraverseFileParams {
   /**
@@ -40,13 +26,17 @@ interface TraverseFileParams {
    */
   funcName: string;
   /**
+   * The name of the component to look for during traversal.
+   */
+  componentName: string;
+  /**
    * An array of compilers to apply based on the file extension.
    */
   compilers: Array<I18nCompiler>;
   /**
    * A callback function to handle errors.
    */
-  onEnter(key: string, target: StringLiteral, node: CallExpression): void;
+  onEnter(target: StringLiteral): void;
   /**
    * A callback function to execute when encountering the specified function call.
    */
@@ -86,28 +76,58 @@ function traverseFile(params: TraverseFileParams) {
     return;
   }
 
+  let funcNameVDOM: string | null = null;
+
   babelTraverse(ast, {
     enter(p) {
       const { node } = p;
 
-      if (!isCallExpression(node)) {
-        return;
-      }
-
-      if (node.arguments.length < 1) {
-        return;
-      }
-
       if (
-        isFuncCall(node, params.funcName) ||
-        isFuncRawCall(node, params.funcName) ||
-        isFuncMemberCall(node, params.funcName)
+        isCallExpression(node) &&
+        isIdentifier(node.callee) &&
+        node.callee.name === params.funcName
       ) {
-        const target = node.arguments[0];
+        // If the function was called directly
+        const arg = node.arguments[0];
+        if (isStringLiteral(arg)) {
+          params.onEnter(arg);
+        }
+      } else if (
+        isCallExpression(node) &&
+        isMemberExpression(node.callee) &&
+        isIdentifier(node.callee.property) &&
+        node.callee.property.name === params.funcName
+      ) {
+        // If the function was called inside the VDOM
+        const arg = node.arguments[0];
+        if (isStringLiteral(arg)) {
+          params.onEnter(arg);
+        }
+      } else if (
+        isVariableDeclarator(node) &&
+        isIdentifier(node.id) &&
+        isCallExpression(node.init)
+      ) {
+        // VDom First Step: search for internal component name
+        const arg = node.init.arguments[0];
+        if (isStringLiteral(arg) && arg.value === params.componentName) {
+          funcNameVDOM = node.id.name;
+        }
+      } else if (funcNameVDOM !== null && isCallExpression(node)) {
+        // VDom Second Step: search for an internal component call
+        const arg1 = node.arguments[0];
+        const arg2 = node.arguments[1];
+        if (isIdentifier(arg1) && arg1.name === funcNameVDOM && isObjectExpression(arg2)) {
+          const prop = arg2.properties[0];
 
-        if (isStringLiteral(target)) {
-          const key = target.value;
-          params.onEnter(key, target, node);
+          if (
+            isObjectProperty(prop) &&
+            isIdentifier(prop.key) &&
+            isStringLiteral(prop.value) &&
+            prop.key.name === "msg"
+          ) {
+            params.onEnter(prop.value);
+          }
         }
       }
     },
@@ -215,12 +235,15 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
       file,
       compilers,
       funcName: params.config.funcName,
+      componentName: params.config.componentName,
       onError(error) {
         if (params.onError) {
           params.onError(file, error);
         }
       },
-      onEnter(key, target) {
+      onEnter(target) {
+        const key = target.value;
+
         rawDataDict[dirName].stats.all.add(key);
 
         const comment = (target.leadingComments || target.trailingComments || [])

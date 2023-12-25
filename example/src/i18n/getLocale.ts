@@ -1,7 +1,8 @@
 import type { I18nGetLocale } from "re-i18n";
+import type { Locale } from "./types";
 
-const getLocale: I18nGetLocale = (locales, defaultLocale) => {
-  const locale = navigator.language.split(/-|_/)[0];
+const getLocale: I18nGetLocale<Locale> = (locales, defaultLocale) => {
+  const locale = navigator.language.split(/-|_/)[0] as Locale;
 
   if (locales.includes(locale)) {
     return locale;

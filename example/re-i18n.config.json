@@ -2,6 +2,7 @@
     "defaultLocale": "ja",
     "appType": "vue",
     "pattern": "src/{app,lib}/**/*.{ts,vue}",
+    "componentName": "ReI18n",
     "locales": [
         "ja",
         "en"
@@ -19,7 +20,7 @@
         "inputDir": "./out/xls"
     },
     "generate": {
-        "getLocalePath": "./src/i18n/getLocale",
+        "localeLocatorPath": "./src/i18n/useLocateLocator",
         "formatterPath": "./src/i18n/formatter"
     }
 }

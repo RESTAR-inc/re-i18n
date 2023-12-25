@@ -139,7 +139,7 @@ export async function generate(config: I18nConfig) {
       const fileTarget = path.resolve(fileName);
 
       console.log(`Saving locale file at ${chalk.bold(fileName)}`);
-      fs.writeFileSync(fileTarget, content, { encoding: "utf8" });
+      fs.writeFileSync(fileTarget, content + "\n", { encoding: "utf8" });
     }
 
     const template = render(config, dirTarget);
