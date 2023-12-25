@@ -18,8 +18,7 @@
         "clean": "rm -rf lib",
         "compile": "tsc",
         "lint": "eslint . --max-warnings 0",
-        "format": "eslint --fix .",
-        "postinstall": "npm run build"
+        "format": "eslint --fix ."
     },
     "dependencies": {
         "@babel/core": "^7.23.6",
