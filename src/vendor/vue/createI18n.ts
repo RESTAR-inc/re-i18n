@@ -1,4 +1,5 @@
 import { computed, defineComponent, type PropType } from "vue";
+import { normalizeKey } from "../../common.js";
 import type { I18nFormatter, I18nLocaleKeyset, I18nParams, I18nRawChunk } from "../../types.js";
 import type { UseLocaleLocator } from "./types.js";
 
@@ -84,7 +85,8 @@ export function createI18n<L extends string, K extends string>(
       const children = ctx.slots.default();
 
       return () => {
-        const parsed = parseMessage(props.msg as K, locale.value);
+        const message = normalizeKey(props.msg as string) as K;
+        const parsed = parseMessage(message, locale.value);
 
         return parsed.map((chunk) => {
           if (chunk.type === "text") {
