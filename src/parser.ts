@@ -12,6 +12,7 @@ import {
 import fs from "fs";
 import * as glob from "glob";
 import path from "path";
+import { normalizeKey } from "./common.js";
 import { VueCompiler } from "./compilers/vue.js";
 import { ParseError } from "./error.js";
 import type { I18nCompiler, I18nConfig, I18nKeyset, I18nRawData } from "./types.js";
@@ -242,7 +243,7 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
         }
       },
       onEnter(target) {
-        const key = target.value;
+        const key = normalizeKey(target.value);
 
         rawDataDict[dirName].stats.all.add(key);
 

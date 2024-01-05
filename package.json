@@ -12,11 +12,10 @@
         "lib"
     ],
     "scripts": {
-        "build": "npm run clean && npm run compile && chmod u+x ./lib/cli.js",
+        "compile": "npm run clean && tsc && chmod u+x ./lib/cli.js",
         "type-check": "tsc --noEmit",
         "watch": "tsc -w",
         "clean": "rm -rf lib",
-        "compile": "tsc",
         "lint": "eslint . --max-warnings 0",
         "format": "eslint --fix ."
     },

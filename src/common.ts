@@ -12,3 +12,14 @@ export function sortKeyset(target: I18nKeyset<string>): I18nKeyset<string> {
 
   return result;
 }
+
+const strReplacements: Record<string, string> = {
+  "\\\\": "\\",
+  "\\n": "\n",
+  "\\t": "\t",
+  "\\r": "\r",
+};
+
+export function normalizeKey(key: string) {
+  return key.replace(/\\(\\|n|t|r|")/g, (replace) => strReplacements[replace]);
+}
