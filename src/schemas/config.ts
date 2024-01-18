@@ -22,6 +22,9 @@ export const configSchema = z.object({
    * Translation function name.
    */
   funcName: z.string().default("t"),
+  /**
+   * The name of the generated component that will be used to render the translations.
+   */
   componentName: z.string().default("ReI18n"),
   generate: z.object({
     /**
