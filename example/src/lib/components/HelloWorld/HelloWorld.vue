@@ -36,17 +36,17 @@ const addUser = (event: Event) => {
 </script>
 
 <template>
-  <div class="root">
+  <div class="flex flex-col gap-4">
     <div class="top">
-      <h3>{{ title }}</h3>
+      <h3 class="text-lg font-bold">{{ title }}</h3>
       <p>
         {{ t("i18n サンプル アプリケーションへようこそ" /* HelloWorld title */) }}
       </p>
     </div>
   
-    <div class="counter">
-      <button @click="counter++">{{ t("カウントアップ") }}</button>
-      <p>{{ t("カウンター" /* Counter label */) }}: {{ counter }}</p>
+    <div class="flex items-center gap-4 bg-indigo-100 p-4">
+      <button class="bg-gray-400 p-2 text-white" @click="counter++">{{ t("カウントアップ") }}</button>
+      <p>{{ t("カウンター" /* Counter label */) }}: <span class="font-bold">{{ counter }}</span></p>
       <p>{{ t("奇数・偶数" /* Counter odd/even label */) }}: {{ num }}</p>
     </div>
   
@@ -56,11 +56,11 @@ const addUser = (event: Event) => {
     </div>
 
     <div class="users">
-      <form @submit="addUser">
-        <input name="firstName" required :placeholder="t('名前')" />
-        <input name="lastName" required :placeholder="t('苗字')" />
-        <input name="birthday" required type="date" :placeholder="t('誕生日')" />
-        <button type="submit">{{ t("ユーザーを追加する") }}</button>
+      <form @submit="addUser" class="flex gap-2">
+        <input class="border border-gray-400 px-3 py-1" name="firstName" required :placeholder="t('名前').value" />
+        <input class="border border-gray-400 px-3 py-1" name="lastName" required :placeholder="t('苗字').value" />
+        <input class="border border-gray-400 px-3 py-1" name="birthday" required type="date" :placeholder="t('誕生日').value" />
+        <button class="bg-gray-400 text-white p-2" type="submit">{{ t("ユーザーを追加する") }}</button>
       </form>
     
       <ul>
@@ -72,34 +72,3 @@ const addUser = (event: Event) => {
   
   </div>
 </template>
-
-<style scoped>
-.root {
-  display: grid;
-  gap: 24px;
-  grid-template:
-    "top top"
-    "counter greeting"
-    "users users"
-}
-
-.top {
-  grid-area: top;
-}
-.counter {
-  grid-area: counter; 
-}
-
-.greeting {
-  grid-area: greeting; 
-}
-
-.users {
-  grid-area: users;
-}
-
-.users form {
-  display: flex;
-  gap: 12px;
-}
-</style>

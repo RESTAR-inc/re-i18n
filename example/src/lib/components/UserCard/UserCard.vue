@@ -13,12 +13,12 @@ const formatted = computed(() => {
   return t("名前：　{lastName} {firstName}。誕生日：　{birthday}。ポイント：　{points}", {
     firstName: props.firstName,
     lastName: props.lastName,
-    birthday: props.birthday,
+    birthday: props.birthday.toLocaleDateString(),
     points: props.points,
   });
 });
 </script>
 
 <template>
-  <div>{{ formatted }}</div>
+  <div class="p-1">{{ formatted }}</div>
 </template>
