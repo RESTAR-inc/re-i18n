@@ -57,9 +57,9 @@ const addUser = (event: Event) => {
 
     <div class="users">
       <form @submit="addUser" class="flex gap-2">
-        <input class="border border-gray-400 px-3 py-1" name="firstName" required :placeholder="t('名前').value" />
-        <input class="border border-gray-400 px-3 py-1" name="lastName" required :placeholder="t('苗字').value" />
-        <input class="border border-gray-400 px-3 py-1" name="birthday" required type="date" :placeholder="t('誕生日').value" />
+        <input class="border border-gray-400 px-3 py-1" name="firstName" required :placeholder="t('名前')" />
+        <input class="border border-gray-400 px-3 py-1" name="lastName" required :placeholder="t('苗字')" />
+        <input class="border border-gray-400 px-3 py-1" name="birthday" required type="date" :placeholder="t('誕生日')" />
         <button class="bg-gray-400 text-white p-2" type="submit">{{ t("ユーザーを追加する") }}</button>
       </form>
     

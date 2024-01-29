@@ -26,6 +26,10 @@ export const configSchema = z.object({
    * The name of the generated component that will be used to render the translations.
    */
   componentName: z.string().default("ReI18n"),
+  /**
+   * The name of the generated composable function that will be used to render the translations.
+   */
+  composableName: z.string().default("useReI18n"),
   generate: z.object({
     /**
      * Path to the module that exports the `I18nLocaleLocator` implementation.

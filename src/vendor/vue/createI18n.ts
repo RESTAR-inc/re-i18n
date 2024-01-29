@@ -11,28 +11,29 @@ export function createI18n<L extends string, K extends string>(
 ) {
   const locale = useLocaleLocator(Object.keys(localeKeyset) as L[], defaultLocale);
 
-  const useI18n = () => {
-    return computed(() => (key: K, params?: I18nParams) => {
-      const keyset = localeKeyset[locale.value];
-      if (!keyset) {
-        throw new Error(`No locale for "${locale.value}"`);
-      }
-      const message = keyset[key] || key;
+  const keyset = computed(() => {
+    const value = localeKeyset[locale.value];
+    if (!value) {
+      throw new Error(`No locale found for "${locale.value}"`);
+    }
+    return value;
+  });
 
-      return formatter(locale.value, message, params);
-    }).value;
+  const t = (key: K, params?: I18nParams) => {
+    const message = keyset.value[key] || key;
+    return formatter(locale.value, message, params);
   };
 
-  const parseMessage = (key: K, locale: L): Array<I18nRawChunk> => {
-    const keyset = localeKeyset[locale];
-    if (!keyset) {
-      throw new Error(`No locale for "${locale}"`);
-    }
+  const useI18nInternal = (key: K, params?: I18nParams) => computed(() => t(key, params));
 
+  const translate = (key: K, params?: I18nParams) => t(key, params);
+  translate.$ = useI18nInternal;
+
+  const parseMessage = (key: K): Array<I18nRawChunk> => {
     const result: Array<I18nRawChunk> = [];
     let lastIndex = 0;
 
-    const message = keyset[key] || key;
+    const message = keyset.value[key] || key;
 
     for (const match of message.matchAll(/{\d+}/g)) {
       if (typeof match.index !== "number") {
@@ -86,7 +87,7 @@ export function createI18n<L extends string, K extends string>(
 
       return () => {
         const message = normalizeKey(props.msg as string) as K;
-        const parsed = parseMessage(message, locale.value);
+        const parsed = parseMessage(message);
 
         return parsed.map((chunk) => {
           if (chunk.type === "text") {
@@ -99,5 +100,5 @@ export function createI18n<L extends string, K extends string>(
     },
   });
 
-  return { Component, useI18n, locale };
+  return { Component, useI18nInternal, locale, translate };
 }

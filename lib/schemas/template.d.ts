@@ -5,21 +5,24 @@ export declare const templateDataSchema: z.ZodObject<{
     appType: z.ZodDefault<z.ZodEnum<["vanilla", "vue"]>>;
     componentName: z.ZodString;
     funcName: z.ZodString;
+    composableName: z.ZodString;
     localeLocatorPath: z.ZodString;
     formatterPath: z.ZodDefault<z.ZodNullable<z.ZodString>>;
 }, "strip", z.ZodTypeAny, {
     defaultLocale: string;
     locales: string[];
     appType: "vanilla" | "vue";
-    funcName: string;
     componentName: string;
+    funcName: string;
+    composableName: string;
     localeLocatorPath: string;
     formatterPath: string | null;
 }, {
     defaultLocale: string;
     locales: string[];
-    funcName: string;
     componentName: string;
+    funcName: string;
+    composableName: string;
     localeLocatorPath: string;
     appType?: "vanilla" | "vue" | undefined;
     formatterPath?: string | null | undefined;
