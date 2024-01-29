@@ -96,7 +96,7 @@ const props = defineProps({
   name: String,
 });
 
-const showAlert = () => alert(`おはようございます${name}さん`);
+const showAlert = () => alert(`おはようございます${props.name}さん`);
 </script>
 
 <template>
@@ -175,6 +175,59 @@ import { t } from "./locales";
 Now you can put the translations in the locale files.
 
 For more details, see the [example](./example) directory.
+
+### Reactivity
+
+By default, the translation function returns a string. If you want to use reactivity, you can use the composable function `useReI18n` or its shortcut `t.$`.
+
+```json
+// re-i18n.config.json
+{
+  "funcName": "t",
+  "composableName": "useMyReI18n" // default `useReI18n`
+}
+```
+
+```ts
+// Component.vue
+<script setup lang="ts">
+import { t, ReI18n, useMyReI18n } from "./locales";
+
+const MSG_1 = t("メッセージ　１"); // MSG_1 is `string`
+const MSG_2 = t.$("メッセージ　２"); // MSG_2 is `ComputedRef<string>`
+const MSG_3 = useMyReI18n("メッセージ　３"); // MSG_3 is `ComputedRef<string>`
+</script>
+```
+
+### Vendor
+
+You can also use vendor specific features. For example, if you are using Vue, you can use the `ReI18n` component to display translation keys in source code and use VDOM nodes as parameters.
+
+<p style="color: red">Note: If you use <code>t</code> inside child nodes, reactivity will not work</p>
+
+First you need to specify the component name in the configuration file.
+
+```json
+{
+  "componentName": "MyI18n" // default `ReI18n`
+}
+```
+
+Then you can use it in your source code.
+
+```ts
+<script setup lang="ts">
+import { MyI18n } from "./locales";
+</script>
+
+<template>
+  <MyI18n msg="赤い：{0}　緑：{1}　青い：{2}">
+    <div class="bg-red-400 w-10 h-10 rounded-full"></div>
+    <div class="bg-green-400 w-10 h-10 rounded-full"></div>
+    <div class="bg-blue-400 w-10 h-10 rounded-full"></div>
+  </MyI18n>
+</template>
+```
 
 ## Commands
 
