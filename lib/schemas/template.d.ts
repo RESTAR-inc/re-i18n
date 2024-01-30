@@ -12,16 +12,16 @@ export declare const templateDataSchema: z.ZodObject<{
     defaultLocale: string;
     locales: string[];
     appType: "vanilla" | "vue";
-    componentName: string;
     funcName: string;
+    componentName: string;
     composableName: string;
     localeLocatorPath: string;
     formatterPath: string | null;
 }, {
     defaultLocale: string;
     locales: string[];
-    componentName: string;
     funcName: string;
+    componentName: string;
     composableName: string;
     localeLocatorPath: string;
     appType?: "vanilla" | "vue" | undefined;

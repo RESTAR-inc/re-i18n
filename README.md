@@ -176,7 +176,9 @@ Now you can put the translations in the locale files.
 
 For more details, see the [example](./example) directory.
 
-### Reactivity
+## Vendor Specific Features
+
+### Vue Reactivity
 
 By default, the translation function returns a string. If you want to use reactivity, you can use the composable function `useReI18n` or its shortcut `t.$`.
 
@@ -199,7 +201,9 @@ const MSG_3 = useMyReI18n("メッセージ　３"); // MSG_3 is `ComputedRef<str
 </script>
 ```
 
-### Vendor
+> NOTE: If you use `t.$` inside object fields, such as `const obj = { msg: t.$("message") }`, reactivity will work, but you will have to manually unwrap the value with `obj.msg.value`. This is not related to this package, but is a limitation of Vue.
+
+### Vue Component
 
 You can also use vendor specific features. For example, if you are using Vue, you can use the `ReI18n` component to display translation keys in source code and use VDOM nodes as parameters.
 

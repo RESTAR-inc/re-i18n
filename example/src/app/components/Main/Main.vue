@@ -5,8 +5,11 @@ import LangSwitcher from "../../../lib/components/LangSwitcher/LangSwitcher.vue"
 import { t, ReI18n, useReI18n } from "./locales";
 
 const STATIC_MESSAGE_1 = t("静的メッセージ　１");
-const STATIC_MESSAGE_2 = t.$("静的メッセージ　２");
-const STATIC_MESSAGE_3 = useReI18n("静的メッセージ　３"); // Same as t.$
+const STATIC_MESSAGE_2 = useReI18n("静的メッセージ　２");
+const STATIC_MESSAGE_3 = t.$("静的メッセージ　３"); // Same as `useReI18n`
+const STATIC_MESSAGE_4 = {
+  msg: useReI18n("静的メッセージ　４"),
+}
 </script>
 
 <template>
@@ -20,17 +23,25 @@ const STATIC_MESSAGE_3 = useReI18n("静的メッセージ　３"); // Same as t.
   <main class="container mx-auto flex flex-col gap-4">
     <PageTitle />
     <div class="bg-indigo-100 p-4 grid grid-cols-[auto_auto_1fr] gap-x-4">
-      <span class="font-bold">t</span>
+      <span class="font-bold">Method</span>
+      <span class="font-bold">Type</span>
+      <span class="font-bold">Result</span>
+
+      <span>t</span>
       <span>string</span>
       <h3>{{ STATIC_MESSAGE_1 }}</h3>
 
-      <span class="font-bold">t.$</span>
+      <span>useReI18n</span>
       <span>{{ "ComputedRef<string>" }}</span>
       <h3>{{ STATIC_MESSAGE_2 }}</h3>
 
-      <span class="font-bold">useReI18n</span>
+      <span>t.$</span>
       <span>{{ "ComputedRef<string>" }}</span>
       <h3>{{ STATIC_MESSAGE_3 }}</h3>
+
+      <span>t.$ nested</span>
+      <span>{{ "ComputedRef<string>" }} unwrapped</span>
+      <h3>{{ STATIC_MESSAGE_4.msg.value }}</h3>
     </div>
     <div class="bg-gray-200 flex gap-2 flex-wrap items-center p-4">
       <ReI18n msg="赤い：{0}　緑：{1}　青い：{2}">
