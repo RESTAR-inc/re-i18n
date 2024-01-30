@@ -20,13 +20,14 @@ type I18nKey = {% for locale in locales %}keyof typeof {{ locale }}{% if not loo
 
 const localeKeyset = { {% for locale in locales %}{{ locale -}}{% if not loop.last %},{% endif %} {% endfor -%} };
 const {
-  Component,
-  useI18nInternal,
-  translate,
-  locale: currentLocale,
+  Component: {{ componentName }}Internal,
+  translate: {{ funcName }}Internal,
+  useReI18n: {{ composableName }}Internal,
+  locale: localeInternal,
 } = createI18n<I18nLocale, I18nKey>(localeKeyset, formatter, useLocaleLocator, "{{ defaultLocale }}");
-export const {{ funcName }} = translate;
-export const {{ componentName }} = Component;
-export const {{ composableName }} = useI18nInternal;
-export const locale = currentLocale;
+
+export const {{ funcName }} = {{ funcName }}Internal;
+export const {{ composableName }} = {{ composableName }}Internal;
+export const {{ componentName }} = {{ componentName }}Internal;
+export const locale = localeInternal;
 `;

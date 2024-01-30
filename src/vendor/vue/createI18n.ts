@@ -24,10 +24,10 @@ export function createI18n<L extends string, K extends string>(
     return formatter(locale.value, message, params);
   };
 
-  const useI18nInternal = (key: K, params?: I18nParams) => computed(() => t(key, params));
+  const useReI18n = (key: K, params?: I18nParams) => computed(() => t(key, params));
 
   const translate = (key: K, params?: I18nParams) => t(key, params);
-  translate.$ = useI18nInternal;
+  translate.$ = useReI18n;
 
   const parseMessage = (key: K): Array<I18nRawChunk> => {
     const result: Array<I18nRawChunk> = [];
@@ -100,5 +100,5 @@ export function createI18n<L extends string, K extends string>(
     },
   });
 
-  return { Component, useI18nInternal, locale, translate };
+  return { Component, useReI18n, locale, translate };
 }

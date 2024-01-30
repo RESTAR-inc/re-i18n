@@ -15,7 +15,7 @@ export declare function createI18n<L extends string, K extends string>(localeKey
             required: true;
         };
     }>>, {}, {}>;
-    useI18nInternal: (key: K, params?: I18nParams) => import("vue").ComputedRef<string>;
+    useReI18n: (key: K, params?: I18nParams) => import("vue").ComputedRef<string>;
     locale: import("vue").WritableComputedRef<L>;
     translate: {
         (key: K, params?: I18nParams): string;
