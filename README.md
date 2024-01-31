@@ -193,7 +193,7 @@ By default, the translation function returns a string. If you want to use reacti
 ```ts
 // Component.vue
 <script setup lang="ts">
-import { t, ReI18n, useMyReI18n } from "./locales";
+import { t, useMyReI18n } from "./locales";
 
 const MSG_1 = t("メッセージ　１"); // MSG_1 is `string`
 const MSG_2 = t.$("メッセージ　２"); // MSG_2 is `ComputedRef<string>`
@@ -201,13 +201,49 @@ const MSG_3 = useMyReI18n("メッセージ　３"); // MSG_3 is `ComputedRef<str
 </script>
 ```
 
-> NOTE: If you use `t.$` inside object fields, such as `const obj = { msg: t.$("message") }`, reactivity will work, but you will have to manually unwrap the value with `obj.msg.value`. This is not related to this package, but is a limitation of Vue.
+> **NOTE**: `t.$` is just a shortcut for `useReI18n`, it works exactly the same way. A typical use in the `<script setup>` section is to use `t.$` in nested object fields:
+
+```ts
+// Instead of this
+import { t, useMyReI18n } from "./locales";
+const msg1 = useMyReI18n("メッセージ　１");
+const msg2 = useMyReI18n("メッセージ　２");
+
+const MESSAGES = {
+  msg1,
+  msg2,
+};
+
+// You can do this
+const MESSAGES = {
+  msg1: t.$("メッセージ　１"),
+  msg2: t.$("メッセージ　２"),
+};
+```
+
+> <span style="color: red">**IMPORTANT**: If you use `t.$` inside object fields, such as `const obj = { msg: t.$("message") }`, reactivity will work, but you will have to manually unwrap the value with `obj.msg.value`. This is not related to this package, but is a limitation of Vue.</span>
+
+```ts
+<script setup lang="ts">
+import { t } from "./locales";
+
+const MSG_1 = t.$("メッセージ　１");
+const MSG_2 = {
+  msg: t.$("メッセージ　２");
+}
+</script>
+<template>
+  <p>{{ MSG_1 }}</p><!-- メッセージ　１ -->
+  <p>{{ MSG_2.msg }}</p><!-- "メッセージ　２" -->
+  <p>{{ MSG_2.msg.value }}</p><!-- メッセージ　２ -->
+</template>
+```
 
 ### Vue Component
 
 You can also use vendor specific features. For example, if you are using Vue, you can use the `ReI18n` component to display translation keys in source code and use VDOM nodes as parameters.
 
-<p style="color: red">Note: If you use <code>t</code> inside child nodes, reactivity will not work</p>
+> <span style="color: red">**IMPORTANT**: If you use `t` inside child nodes, reactivity will not work</span>
 
 First you need to specify the component name in the configuration file.
 
