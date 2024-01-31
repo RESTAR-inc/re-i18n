@@ -96,7 +96,7 @@ const props = defineProps({
   name: String,
 });
 
-const showAlert = () => alert(`おはようございます${name}さん`);
+const showAlert = () => alert(`おはようございます${props.name}さん`);
 </script>
 
 <template>
@@ -175,6 +175,99 @@ import { t } from "./locales";
 Now you can put the translations in the locale files.
 
 For more details, see the [example](./example) directory.
+
+## Vendor Specific Features
+
+### Vue Reactivity
+
+By default, the translation function returns a string. If you want to use reactivity, you can use the composable function `useReI18n` or its shortcut `t.$`.
+
+```json
+// re-i18n.config.json
+{
+  "funcName": "t",
+  "composableName": "useMyReI18n" // default `useReI18n`
+}
+```
+
+```ts
+// Component.vue
+<script setup lang="ts">
+import { t, useMyReI18n } from "./locales";
+
+const MSG_1 = t("メッセージ　１"); // MSG_1 is `string`
+const MSG_2 = t.$("メッセージ　２"); // MSG_2 is `ComputedRef<string>`
+const MSG_3 = useMyReI18n("メッセージ　３"); // MSG_3 is `ComputedRef<string>`
+</script>
+```
+
+> **NOTE**: `t.$` is just a shortcut for `useReI18n`, it works exactly the same way. A typical use in the `<script setup>` section is to use `t.$` in nested object fields:
+
+```ts
+// Instead of this
+import { t, useMyReI18n } from "./locales";
+const msg1 = useMyReI18n("メッセージ　１");
+const msg2 = useMyReI18n("メッセージ　２");
+
+const MESSAGES = {
+  msg1,
+  msg2,
+};
+
+// You can do this
+const MESSAGES = {
+  msg1: t.$("メッセージ　１"),
+  msg2: t.$("メッセージ　２"),
+};
+```
+
+> <span style="color: red">**IMPORTANT**: If you use `t.$` inside object fields, such as `const obj = { msg: t.$("message") }`, reactivity will work, but you will have to manually unwrap the value with `obj.msg.value`. This is not related to this package, but is a limitation of Vue.</span>
+
+```ts
+<script setup lang="ts">
+import { t } from "./locales";
+
+const MSG_1 = t.$("メッセージ　１");
+const MSG_2 = {
+  msg: t.$("メッセージ　２");
+}
+</script>
+<template>
+  <p>{{ MSG_1 }}</p><!-- メッセージ　１ -->
+  <p>{{ MSG_2.msg }}</p><!-- "メッセージ　２" -->
+  <p>{{ MSG_2.msg.value }}</p><!-- メッセージ　２ -->
+</template>
+```
+
+### Vue Component
+
+You can also use vendor specific features. For example, if you are using Vue, you can use the `ReI18n` component to display translation keys in source code and use VDOM nodes as parameters.
+
+> <span style="color: red">**IMPORTANT**: If you use `t` inside child nodes, reactivity will not work</span>
+
+First you need to specify the component name in the configuration file.
+
+```json
+{
+  "componentName": "MyI18n" // default `ReI18n`
+}
+```
+
+Then you can use it in your source code.
+
+```ts
+<script setup lang="ts">
+import { MyI18n } from "./locales";
+</script>
+
+<template>
+  <MyI18n msg="赤い：{0}　緑：{1}　青い：{2}">
+    <div class="bg-red-400 w-10 h-10 rounded-full"></div>
+    <div class="bg-green-400 w-10 h-10 rounded-full"></div>
+    <div class="bg-blue-400 w-10 h-10 rounded-full"></div>
+  </MyI18n>
+</template>
+```
 
 ## Commands
 

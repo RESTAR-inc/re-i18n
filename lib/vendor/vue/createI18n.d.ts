@@ -15,7 +15,11 @@ export declare function createI18n<L extends string, K extends string>(localeKey
             required: true;
         };
     }>>, {}, {}>;
-    useI18n: () => (key: K, params?: I18nParams) => string;
+    useReI18n: (key: K, params?: I18nParams) => import("vue").ComputedRef<string>;
     locale: import("vue").WritableComputedRef<L>;
+    translate: {
+        (key: K, params?: I18nParams): string;
+        $: (key: K, params?: I18nParams) => import("vue").ComputedRef<string>;
+    };
 };
 //# sourceMappingURL=createI18n.d.ts.map

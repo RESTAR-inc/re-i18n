@@ -12,10 +12,13 @@ type I18nKey = keyof typeof ja & keyof typeof en;
 
 const localeKeyset = { ja, en };
 const {
-  Component,
-  useI18n,
-  locale: currentLocale,
+  Component: ReI18nInternal,
+  translate: tInternal,
+  useReI18n: useReI18nInternal,
+  locale: localeInternal,
 } = createI18n<I18nLocale, I18nKey>(localeKeyset, formatter, useLocaleLocator, "ja");
-export const t = useI18n();
-export const ReI18n = Component;
-export const locale = currentLocale;
+
+export const t = tInternal;
+export const useReI18n = useReI18nInternal;
+export const ReI18n = ReI18nInternal;
+export const locale = localeInternal;

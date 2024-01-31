@@ -27,6 +27,10 @@ interface TraverseFileParams {
    */
   funcName: string;
   /**
+   * The name of the composable function to look for during traversal.
+   */
+  composableName: string;
+  /**
    * The name of the component to look for during traversal.
    */
   componentName: string;
@@ -86,7 +90,7 @@ function traverseFile(params: TraverseFileParams) {
       if (
         isCallExpression(node) &&
         isIdentifier(node.callee) &&
-        node.callee.name === params.funcName
+        (node.callee.name === params.funcName || node.callee.name === params.composableName)
       ) {
         // If the function was called directly
         const arg = node.arguments[0];
@@ -100,6 +104,19 @@ function traverseFile(params: TraverseFileParams) {
         node.callee.property.name === params.funcName
       ) {
         // If the function was called inside the VDOM
+        const arg = node.arguments[0];
+        if (isStringLiteral(arg)) {
+          params.onEnter(arg);
+        }
+      } else if (
+        isCallExpression(node) &&
+        isMemberExpression(node.callee) &&
+        isIdentifier(node.callee.property) &&
+        isIdentifier(node.callee.object) &&
+        node.callee.object.name === params.funcName &&
+        node.callee.property.name === "$"
+      ) {
+        // Shortcut for composables
         const arg = node.arguments[0];
         if (isStringLiteral(arg)) {
           params.onEnter(arg);
@@ -237,6 +254,7 @@ export function parse(params: ParseParams): Record<string, I18nRawData> {
       compilers,
       funcName: params.config.funcName,
       componentName: params.config.componentName,
+      composableName: params.config.composableName,
       onError(error) {
         if (params.onError) {
           params.onError(file, error);

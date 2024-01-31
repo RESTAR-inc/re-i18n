@@ -21,7 +21,14 @@ export declare const configSchema: z.ZodObject<{
      * Translation function name.
      */
     funcName: z.ZodDefault<z.ZodString>;
+    /**
+     * The name of the generated component that will be used to render the translations.
+     */
     componentName: z.ZodDefault<z.ZodString>;
+    /**
+     * The name of the generated composable function that will be used to render the translations.
+     */
+    composableName: z.ZodDefault<z.ZodString>;
     generate: z.ZodObject<{
         /**
          * Path to the module that exports the `I18nLocaleLocator` implementation.
@@ -100,6 +107,7 @@ export declare const configSchema: z.ZodObject<{
     dirName: string;
     funcName: string;
     componentName: string;
+    composableName: string;
     generate: {
         localeLocatorPath: string;
         formatterPath: string | null;
@@ -142,6 +150,7 @@ export declare const configSchema: z.ZodObject<{
     dirName?: string | undefined;
     funcName?: string | undefined;
     componentName?: string | undefined;
+    composableName?: string | undefined;
 }>;
 export type I18nConfig = z.infer<typeof configSchema>;
 //# sourceMappingURL=config.d.ts.map

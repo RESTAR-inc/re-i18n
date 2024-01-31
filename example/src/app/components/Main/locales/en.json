@@ -1,6 +1,12 @@
 {
   "re-i18n 例": "re-i18n Example",
   "こんにちは世界": "Hello, world",
-  "二番": "second",
-  "開始 | {0} 最初 {1} 2 番目 {2} 3 番目 {0} 最初 {2} 3 番目 {3} 最後 {1} 2 番目 {2} 3 番目 {0} 最初 | 終わり": "start | {0} first {1} second {2} third {0} first {2} third {3} last {1} second {2} third {0} first | end"
+  "一番": "Fst",
+  "三番": "Snd",
+  "二番": "Trd",
+  "赤い：{0}　緑：{1}　青い：{2}": "red: {0} green: {1} blue: {2}",
+  "静的メッセージ　１": "Static Message 1",
+  "静的メッセージ　２": "Static Message 2",
+  "静的メッセージ　３": "Static Message 3",
+  "静的メッセージ　４": "Static Message 4"
 }

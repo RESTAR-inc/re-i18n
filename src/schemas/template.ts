@@ -6,6 +6,7 @@ export const templateDataSchema = z.object({
   appType: z.enum(["vanilla", "vue"]).default("vanilla"),
   componentName: z.string(),
   funcName: z.string(),
+  composableName: z.string(),
   localeLocatorPath: z.string(),
   formatterPath: z.string().nullable().default(null),
 });
