@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import prompts from "prompts";
 import { sortKeyset } from "../common.js";
-import { parse } from "../parser.js";
+import { parse } from "../parser/parse.js";
 import type { I18nConfig } from "../schemas/config.js";
 import { render } from "../template/render.js";
 import type { I18nKeyset } from "../types.js";

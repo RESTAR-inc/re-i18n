@@ -22,14 +22,18 @@ export interface I18nCompiler {
 }
 export interface I18nRawDataKey {
     locales: I18nKeyset<string>;
-    files: Array<{
-        file: string;
+    files: Record<string, {
         comment: string;
+        /**
+         * Only for xls/csv files
+         */
+        notes: Record<string, string>;
     }>;
 }
 export interface I18nRawDataKeys {
     [key: string]: I18nRawDataKey;
 }
+export type I18nRawDataKeysGroup = Record<string, I18nRawDataKeys>;
 export interface I18nRawDataStats {
     all: Set<string>;
     added: Set<string>;

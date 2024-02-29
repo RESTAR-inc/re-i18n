@@ -4,34 +4,40 @@ re-i18n 例;;;;src/app/components/Main/Main.vue
 一番;;;;src/app/components/Main/Main.vue
 三番;;;;src/app/components/Main/Main.vue
 二番;;;;src/app/components/Main/Main.vue
-赤い：{0}　緑：{1}　青い：{2};;;"
-";"src/app/components/Main/Main.vue
-src/app/components/Main/Main.vue"
+赤い：{0}　緑：{1}　青い：{2};;;;src/app/components/Main/Main.vue
 静的メッセージ　１;;;;src/app/components/Main/Main.vue
 静的メッセージ　２;;;;src/app/components/Main/Main.vue
 静的メッセージ　３;;;;src/app/components/Main/Main.vue
 静的メッセージ　４;;;;src/app/components/Main/Main.vue
-おはよう{name}さん;;;"Good Morning in useGreeting
+おはよう{name}さん;;"
+
+";"Good Morning in useGoodMorning
 Good Morning in useGreeting
-Good Morning in useGoodMorning";"src/lib/composables/useWelcome.ts
+Good Morning in useGreeting";"src/lib/composables/useGoodMorning.ts
 src/lib/composables/useGreeting.ts
-src/lib/composables/useGoodMorning.ts"
-こんにちは{name}さん;;;"
-";"src/lib/composables/useWelcome.ts
-src/lib/composables/useGreeting.ts"
-こんばんは{name}さん;;;"
-";"src/lib/composables/useWelcome.ts
-src/lib/composables/useGreeting.ts"
-偶数;;;"Label for useWelcome
+src/lib/composables/useWelcome.ts"
+こんにちは{name}さん;;"
+";"
+";"src/lib/composables/useGreeting.ts
+src/lib/composables/useWelcome.ts"
+こんばんは{name}さん;;"
+";"
+";"src/lib/composables/useGreeting.ts
+src/lib/composables/useWelcome.ts"
+偶数;;"
+
+";"Label for useCounter
 Label for useOddEven
-Label for useCounter";"src/lib/composables/useWelcome.ts
+Label for useWelcome";"src/lib/composables/useCounter.ts
 src/lib/composables/useOddEven.ts
-src/lib/composables/useCounter.ts"
-奇数;;;"Label for useWelcome
+src/lib/composables/useWelcome.ts"
+奇数;;"
+
+";"Label for useCounter
 Label for useOddEven
-Label for useCounter";"src/lib/composables/useWelcome.ts
+Label for useWelcome";"src/lib/composables/useCounter.ts
 src/lib/composables/useOddEven.ts
-src/lib/composables/useCounter.ts"
+src/lib/composables/useWelcome.ts"
 もっと見せる;;;;src/lib/composables/nestedComposable/useMore.ts
 名前：　{lastName} {firstName}。誕生日：　{birthday}。ポイント：　{points};;;;src/lib/components/UserCard/UserCard.vue
 ページタイトル;;;test comment;src/lib/components/PageTitle/PageTitle.vue

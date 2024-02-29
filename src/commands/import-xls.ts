@@ -1,94 +1,61 @@
 import chalk from "chalk";
-import excel from "exceljs";
 import fs from "fs";
 import path from "path";
 import { sortKeyset } from "../common.js";
-import { parse } from "../parser.js";
-import type { I18nConfig, I18nKeyset, I18nRawDataKeys } from "../types.js";
+import { parseXLSFile } from "../files/xls.js";
+import { parse } from "../parser/parse.js";
+import type { I18nConfig, I18nKeyset, I18nRawDataKeysGroup } from "../types.js";
 
-export async function importXLS(config: I18nConfig) {
-  const workbook = new excel.Workbook();
-
-  const targetFile = path.join(config.xls.outDir, "i18n.xlsx");
-  if (!fs.existsSync(path.resolve(targetFile))) {
-    console.log(chalk.red(`File ${chalk.bold(targetFile)} does not exist`));
-    return;
-  }
+async function parseSourceCode(config: I18nConfig) {
+  const dataToImport: I18nRawDataKeysGroup = {};
 
   try {
-    await workbook.xlsx.readFile(targetFile);
+    const xlsData = await parseXLSFile(config);
+    parse({
+      config,
+      onEntry(file, lang, key, translation, comment) {
+        const dirName = path.dirname(file);
+        if (!xlsData[dirName]) {
+          console.log(
+            chalk.yellow(
+              `${chalk.bold(dirName)}: no translation found for the key "${chalk.bold(key)}"`
+            )
+          );
+          return;
+        }
+
+        if (!dataToImport[dirName]) {
+          dataToImport[dirName] = {};
+        }
+
+        if (!dataToImport[dirName][key]) {
+          dataToImport[dirName][key] = {
+            files: {},
+            locales: {},
+          };
+        }
+        dataToImport[dirName][key].files[file] = { comment, notes: {} };
+
+        const xlsTranslation = xlsData[dirName][key]?.locales[lang];
+        dataToImport[dirName][key].locales[lang] = xlsTranslation || translation;
+      },
+    });
   } catch (error) {
     console.log(chalk.red(error instanceof Error ? error.message : error));
+  }
+
+  return dataToImport;
+}
+
+export async function importXLS(config: I18nConfig) {
+  const dataToImport = await parseSourceCode(config);
+  const entries = Object.entries(dataToImport);
+  if (entries.length === 0) {
+    console.log(chalk.yellow("No data to import"));
     return;
   }
 
-  const parsed: Record<string, I18nRawDataKeys> = {};
-
-  for (const sheet of workbook.worksheets) {
-    const lang = sheet.name;
-
-    // start from 2 to skip the header
-    // because of the xls format, the column index starts at 1
-    for (let i = 2; i <= sheet.rowCount; i++) {
-      const row = sheet.getRow(i);
-
-      const key = row.getCell(1).text;
-      const translation = row.getCell(2).text;
-      const note = row.getCell(3).text;
-      const comment = row.getCell(4).text;
-      const file = row.getCell(5).text;
-
-      const targetDir = path.dirname(file);
-      if (!parsed[targetDir]) {
-        parsed[targetDir] = {};
-      }
-      if (!parsed[targetDir][key]) {
-        parsed[targetDir][key] = {
-          files: [],
-          locales: {},
-        };
-      }
-
-      parsed[targetDir][key].files.push({ file, comment });
-      parsed[targetDir][key].locales[lang] = translation;
-
-      if (note) {
-        const message = [
-          chalk.yellow("A note from the translator was found"),
-          `  key:\n\t${chalk.bold(key)}`,
-          `  location:\n${chalk.bold(file)}`,
-          `  note:\n\t${chalk.bold(note)}`,
-        ].join("\n");
-
-        console.log(`${message}\n`);
-      }
-    }
-  }
-
-  const dataToImport: Record<string, I18nRawDataKeys> = {};
-
-  parse({
-    config,
-    onEntry(file, lang, key, translation, comment) {
-      const dirName = path.dirname(file);
-      if (!dataToImport[dirName]) {
-        dataToImport[dirName] = {};
-      }
-
-      if (!dataToImport[dirName][key]) {
-        dataToImport[dirName][key] = {
-          files: [],
-          locales: {},
-        };
-      }
-      dataToImport[dirName][key].files.push({ file, comment });
-
-      const csvTranslation = parsed[dirName][key]?.locales[lang];
-      dataToImport[dirName][key].locales[lang] = csvTranslation || translation;
-    },
-  });
-
-  for (const [dir, rawData] of Object.entries(dataToImport)) {
+  for (const [dir, rawData] of entries) {
     const targetDir = path.resolve(path.join(dir, config.dirName));
     if (!fs.existsSync(targetDir)) {
       console.log(chalk.red(`Directory ${chalk.bold(dir)} does not exist`));
@@ -108,7 +75,7 @@ export async function importXLS(config: I18nConfig) {
 
       const targetFile = path.join(dir, config.dirName, `${lang}.json`);
       console.log(`Import locale into ${chalk.bold(targetFile)}`);
-      fs.writeFileSync(path.resolve(targetFile), JSON.stringify(fileData, null, 2), {
+      fs.writeFileSync(path.resolve(targetFile), JSON.stringify(fileData, null, 2) + "\n", {
         encoding: "utf8",
       });
     }

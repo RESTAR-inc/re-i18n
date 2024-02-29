@@ -2,10 +2,21 @@ import chalk from "chalk";
 import excel from "exceljs";
 import fs from "fs";
 import path from "path";
-import { parse } from "../parser.js";
+import { parseXLSFile } from "../files/xls.js";
+import { getNoteKey, getNotesHash } from "../parser/note.js";
+import { parse } from "../parser/parse.js";
 import type { I18nConfig, I18nExportData } from "../types.js";
 
 export async function exportXLS(config: I18nConfig) {
+  let notesHash: Record<string, string> = {};
+
+  try {
+    const xlsData = await parseXLSFile(config);
+    notesHash = getNotesHash(xlsData);
+  } catch (error) {
+    console.log(chalk.yellow("No data found in the XLS file"));
+  }
+
   const data = parse({
     config,
     onEnterDir(dir) {
@@ -59,21 +70,28 @@ export async function exportXLS(config: I18nConfig) {
     let rowCount = 2;
 
     for (const entryData of Object.values(exportData.data)) {
-      for (const [key, { locales, files }] of Object.entries(entryData)) {
+      for (const [key, rawData] of Object.entries(entryData)) {
+        const files = Object.entries(rawData.files);
         if (files.length === 0) {
           continue;
         }
 
-        const firstFile = files[0];
+        files.sort(([a], [b]) => a.localeCompare(b));
 
-        sheet.addRow([key, locales[lang], "", firstFile.comment, firstFile.file]);
+        const [firstFileName, firstfileData] = files[0];
+        const firstNote = notesHash[getNoteKey(lang, firstFileName, key)] || "";
+
+        sheet.addRow([key, rawData.locales[lang], firstNote, firstfileData.comment, firstFileName]);
 
         if (files.length > 1) {
           const rowCountBefore = rowCount;
           for (let i = 1; i < files.length; i++) {
-            sheet.addRow(["", "", "", files[i].comment, files[i].file]);
+            const [fileName, fileData] = files[i];
+            const note = notesHash[getNoteKey(lang, fileName, key)] || "";
+            sheet.addRow(["", "", note, fileData.comment, fileName]);
             rowCount += 1;
           }
+
           sheet.mergeCells(`A${rowCountBefore}:A${rowCount}`); // merge key cells
           sheet.mergeCells(`B${rowCountBefore}:B${rowCount}`); // merge translation cells
         }

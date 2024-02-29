@@ -1,0 +1,387 @@
+{
+  "createdAt": "Thu, 29 Feb 2024 12:42:18 GMT",
+  "data": {
+    "src/app/components/Main": {
+      "re-i18n 例": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "re-i18n Example"
+        }
+      },
+      "こんにちは世界": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Hello, world"
+        }
+      },
+      "一番": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Fst"
+        }
+      },
+      "三番": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Snd"
+        }
+      },
+      "二番": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Trd"
+        }
+      },
+      "赤い：{0}　緑：{1}　青い：{2}": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "red: {0} green: {1} blue: {2}"
+        }
+      },
+      "静的メッセージ　１": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Static Message 1"
+        }
+      },
+      "静的メッセージ　２": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Static Message 2"
+        }
+      },
+      "静的メッセージ　３": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Static Message 3"
+        }
+      },
+      "静的メッセージ　４": {
+        "files": {
+          "src/app/components/Main/Main.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Static Message 4"
+        }
+      }
+    },
+    "src/lib/composables": {
+      "おはよう{name}さん": {
+        "files": {
+          "src/lib/composables/useWelcome.ts": {
+            "comment": "Good Morning in useGreeting",
+            "notes": {}
+          },
+          "src/lib/composables/useGreeting.ts": {
+            "comment": "Good Morning in useGreeting",
+            "notes": {}
+          },
+          "src/lib/composables/useGoodMorning.ts": {
+            "comment": "Good Morning in useGoodMorning",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Good morning, {name}"
+        }
+      },
+      "こんにちは{name}さん": {
+        "files": {
+          "src/lib/composables/useWelcome.ts": {
+            "comment": "",
+            "notes": {}
+          },
+          "src/lib/composables/useGreeting.ts": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Good day, {name}"
+        }
+      },
+      "こんばんは{name}さん": {
+        "files": {
+          "src/lib/composables/useWelcome.ts": {
+            "comment": "",
+            "notes": {}
+          },
+          "src/lib/composables/useGreeting.ts": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Good evening, {name}"
+        }
+      },
+      "偶数": {
+        "files": {
+          "src/lib/composables/useWelcome.ts": {
+            "comment": "Label for useWelcome",
+            "notes": {}
+          },
+          "src/lib/composables/useOddEven.ts": {
+            "comment": "Label for useOddEven",
+            "notes": {}
+          },
+          "src/lib/composables/useCounter.ts": {
+            "comment": "Label for useCounter",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "even"
+        }
+      },
+      "奇数": {
+        "files": {
+          "src/lib/composables/useWelcome.ts": {
+            "comment": "Label for useWelcome",
+            "notes": {}
+          },
+          "src/lib/composables/useOddEven.ts": {
+            "comment": "Label for useOddEven",
+            "notes": {}
+          },
+          "src/lib/composables/useCounter.ts": {
+            "comment": "Label for useCounter",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "odd"
+        }
+      }
+    },
+    "src/lib/composables/nestedComposable": {
+      "もっと見せる": {
+        "files": {
+          "src/lib/composables/nestedComposable/useMore.ts": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "See more"
+        }
+      }
+    },
+    "src/lib/components/UserCard": {
+      "名前：　{lastName} {firstName}。誕生日：　{birthday}。ポイント：　{points}": {
+        "files": {
+          "src/lib/components/UserCard/UserCard.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Name: {lastName} {firstName}. Birthday: {birthday}. Points: {points}"
+        }
+      }
+    },
+    "src/lib/components/PageTitle": {
+      "ページタイトル": {
+        "files": {
+          "src/lib/components/PageTitle/PageTitle.vue": {
+            "comment": "test comment",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Page Title"
+        }
+      }
+    },
+    "src/lib/components/LangSwitcher": {
+      "English": {
+        "files": {
+          "src/lib/components/LangSwitcher/LangSwitcher.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": ""
+        }
+      },
+      "日本語": {
+        "files": {
+          "src/lib/components/LangSwitcher/LangSwitcher.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": ""
+        }
+      }
+    },
+    "src/lib/components/HelloWorld": {
+      "i18n サンプル アプリケーションへようこそ": {
+        "files": {
+          "src/lib/components/HelloWorld/HelloWorld.vue": {
+            "comment": "HelloWorld title",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Welcome to the i18n sample application"
+        }
+      },
+      "カウンター": {
+        "files": {
+          "src/lib/components/HelloWorld/HelloWorld.vue": {
+            "comment": "Counter label",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Counter"
+        }
+      },
+      "カウントアップ": {
+        "files": {
+          "src/lib/components/HelloWorld/HelloWorld.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Count Application"
+        }
+      },
+      "ユーザーを追加する": {
+        "files": {
+          "src/lib/components/HelloWorld/HelloWorld.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Add User"
+        }
+      },
+      "名前": {
+        "files": {
+          "src/lib/components/HelloWorld/HelloWorld.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "First Name"
+        }
+      },
+      "奇数・偶数": {
+        "files": {
+          "src/lib/components/HelloWorld/HelloWorld.vue": {
+            "comment": "Counter odd/even label",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Odd/Even"
+        }
+      },
+      "苗字": {
+        "files": {
+          "src/lib/components/HelloWorld/HelloWorld.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Family Name"
+        }
+      },
+      "誕生日": {
+        "files": {
+          "src/lib/components/HelloWorld/HelloWorld.vue": {
+            "comment": "",
+            "notes": {}
+          }
+        },
+        "locales": {
+          "ja": "",
+          "en": "Birthday"
+        }
+      }
+    }
+  }
+}
