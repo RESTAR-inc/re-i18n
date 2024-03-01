@@ -1,5 +1,5 @@
-import type { I18nConfig, I18nRawData } from "./types.js";
-interface ParseParams {
+import type { I18nConfig, I18nRawData } from "../types.js";
+export interface I18nParserParams {
     /**
      * The configuration for the parser.
      */
@@ -25,6 +25,5 @@ interface ParseParams {
  * Finds all files matching the pattern in the config, reads the translations for each language,
  * from corresponding JSON files, and parses the files for translation keys.
  */
-export declare function parse(params: ParseParams): Record<string, I18nRawData>;
-export {};
-//# sourceMappingURL=parser.d.ts.map
+export declare function parse(params: I18nParserParams): Record<string, I18nRawData>;
+//# sourceMappingURL=parse.d.ts.map

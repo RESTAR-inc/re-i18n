@@ -2,10 +2,28 @@ import chalk from "chalk";
 import * as csv from "csv";
 import fs from "fs";
 import path from "path";
-import { parse } from "../parser.js";
+import { parseCSVFiles } from "../files/csv.js";
+import { getNoteKey, getNotesHash } from "../parser/note.js";
+import { parse } from "../parser/parse.js";
 import type { I18nConfig, I18nCSVColumns, I18nExportData } from "../types.js";
 
-export function exportCSV(config: I18nConfig) {
+export async function exportCSV(config: I18nConfig) {
+  let notesHash: Record<string, string> = {};
+
+  try {
+    const parsedCsv = await parseCSVFiles(config);
+    notesHash = getNotesHash(parsedCsv);
+  } catch (error) {
+    console.log(chalk.yellow("No data found in the CSV files"));
+  }
+
+  const targetDir = path.resolve(config.csv.outDir);
+
+  if (!fs.existsSync(targetDir)) {
+    console.log(`Creating directory at ${chalk.bold(config.csv.outDir)}`);
+    fs.mkdirSync(targetDir, { recursive: true });
+  }
+
   const data = parse({
     config,
     onEnterDir(dir) {
@@ -29,23 +47,23 @@ export function exportCSV(config: I18nConfig) {
     }, {}),
   };
 
-  const targetDir = path.resolve(config.csv.outDir);
-  if (!fs.existsSync(targetDir)) {
-    console.log(`Creating directory at ${chalk.bold(config.csv.outDir)}`);
-    fs.mkdirSync(targetDir, { recursive: true });
-  }
-
   for (const lang of config.locales) {
     const csvData: Array<I18nCSVColumns> = [];
 
     for (const entryData of Object.values(exportData.data)) {
-      for (const [key, { locales, files }] of Object.entries(entryData)) {
+      for (const [key, rawData] of Object.entries(entryData)) {
+        const files = Object.entries(rawData.files);
+
+        files.sort(([a], [b]) => a.localeCompare(b));
+
         csvData.push({
           key,
-          translation: locales[lang],
-          note: "",
-          comment: files.map(({ comment }) => comment).join("\n"),
-          file: files.map(({ file }) => file).join("\n"),
+          translation: rawData.locales[lang],
+          note: files
+            .map(([fileName]) => notesHash[getNoteKey(lang, fileName, key)] || "")
+            .join("\n"),
+          comment: files.map(([_fileName, { comment }]) => comment).join("\n"),
+          file: files.map(([fileName]) => fileName).join("\n"),
         });
       }
     }

@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import fs from "fs";
 import path from "path";
-import { parse } from "../parser.js";
+import { parse } from "../parser/parse.js";
 import type { I18nConfig, I18nExportData } from "../types.js";
 
 export function exportJSON(config: I18nConfig) {

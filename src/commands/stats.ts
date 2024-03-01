@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import path from "path";
-import { parse } from "../parser.js";
+import { parse } from "../parser/parse.js";
 import type { I18nConfig } from "../types";
 
 interface I18nLocaleStat {
