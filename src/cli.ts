@@ -8,10 +8,11 @@ import { exportXLS } from "./commands/export-xls.js";
 import { generate } from "./commands/generate.js";
 import { importCSV } from "./commands/import-csv.js";
 import { importXLS } from "./commands/import-xls.js";
+import { lint } from "./commands/lint.js";
 import { stats } from "./commands/stats.js";
 import { loadConfig } from "./config.js";
 
-new Command("re-i18n")
+const program = new Command("re-i18n")
   .description("Re-i18n is a tool to generate i18n files from a single source of truth")
   .addArgument(
     new Argument("<command>", "Command to run").choices([
@@ -22,47 +23,54 @@ new Command("re-i18n")
       "import-csv",
       "import-xls",
       "stats",
+      "lint",
     ])
   )
-  .option("-c, --config <string>", "Load config from file", "./re-i18n.config.json")
-  .action((command, options) => {
+  .option("-c, --config <string>", "Load config from file", "./re-i18n.config.json");
+
+program
+  .action(async (command, options) => {
     try {
       const config = loadConfig(path.resolve(options.config));
       if (!config) {
-        return;
+        throw new Error("Config file not found");
       }
 
       switch (command) {
         case "generate":
-          generate(config);
+          await generate(config);
           break;
 
         case "export-csv":
-          exportCSV(config);
+          await exportCSV(config);
           break;
 
         case "export-json":
-          exportJSON(config);
+          await exportJSON(config);
           break;
 
         case "export-xls":
-          exportXLS(config);
+          await exportXLS(config);
           break;
 
         case "import-csv":
-          importCSV(config);
+          await importCSV(config);
           break;
 
         case "import-xls":
-          importXLS(config);
+          await importXLS(config);
           break;
 
         case "stats":
-          stats(config);
+          await stats(config);
+          break;
+
+        case "lint":
+          await lint(config);
           break;
       }
     } catch (error) {
-      console.log(chalk.red(error instanceof Error ? error.message : error));
+      program.error(chalk.red(error instanceof Error ? error.message : error), { exitCode: 1 });
     }
   })
   .parse(process.argv);
