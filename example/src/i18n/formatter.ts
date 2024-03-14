@@ -1,5 +1,5 @@
+import type { I18nFormatter } from "@restar-inc/re-i18n";
 import { IntlMessageFormat } from "intl-messageformat";
-import type { I18nFormatter } from "re-i18n";
 import type { Locale } from "./types";
 
 const fmt: I18nFormatter<Locale> = (locale, str, opts) => {

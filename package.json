@@ -1,7 +1,7 @@
 {
-    "name": "re-i18n",
-    "version": "0.1.0",
-    "description": "TODO",
+    "name": "@restar-inc/re-i18n",
+    "version": "1.0.0",
+    "description": "A tool to manage i18n by extracting keys from source code and generating locale files",
     "type": "module",
     "main": "lib/index.js",
     "typings": "lib/index.d.ts",
@@ -12,12 +12,13 @@
         "lib"
     ],
     "scripts": {
-        "compile": "npm run clean && tsc && chmod u+x ./lib/cli.js",
-        "type-check": "tsc --noEmit",
-        "watch": "tsc -w",
+        "build": "npm run clean && tsc && chmod u+x ./lib/cli.js",
         "clean": "rm -rf lib",
+        "format": "eslint --fix .",
         "lint": "eslint . --max-warnings 0",
-        "format": "eslint --fix ."
+        "prepare": "npm run build",
+        "type-check": "tsc --noEmit",
+        "watch": "tsc -w"
     },
     "dependencies": {
         "@babel/core": "^7.23.6",
