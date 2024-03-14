@@ -70,7 +70,9 @@ program
           break;
       }
     } catch (error) {
-      program.error(chalk.red(error instanceof Error ? error.message : error), { exitCode: 1 });
+      program.error(chalk.red(chalk.bold(error instanceof Error ? error.message : error)), {
+        exitCode: 1,
+      });
     }
   })
   .parse(process.argv);
