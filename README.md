@@ -2,10 +2,6 @@
 
 A tool to manage i18n by extracting keys from source code and generating locale files.
 
-<img alt="re-i18n generate" src="./docs/img/generate.png" />
-
-<img alt="re-i18n lint" src="./docs/img/lint.png" />
-
 ## Usage
 
 ### Locale Locator
