@@ -1,1 +1,1 @@
-{"version":3,"file":"lint.d.ts","sourceRoot":"","sources":["../../src/commands/lint.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,UAAU,EAAE,MAAM,sBAAsB,CAAC;AAEvD,wBAAsB,IAAI,CAAC,MAAM,EAAE,UAAU,iBAwB5C"}
+{"version":3,"file":"lint.d.ts","sourceRoot":"","sources":["../../src/commands/lint.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,UAAU,EAAE,MAAM,sBAAsB,CAAC;AAEvD,wBAAsB,IAAI,CAAC,MAAM,EAAE,UAAU,iBAuB5C"}

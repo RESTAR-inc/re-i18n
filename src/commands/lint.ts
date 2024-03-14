@@ -5,7 +5,6 @@ import type { I18nConfig } from "../schemas/config.js";
 
 export async function lint(config: I18nConfig) {
   const data = parse({ config });
-  // const prefix = path.resolve(config.srcDir);
 
   const keys: Array<{ path: string; key: string; reason: string }> = [];
 
