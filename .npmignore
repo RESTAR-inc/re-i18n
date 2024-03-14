@@ -1,0 +1,12 @@
+/example/
+/docs/
+/.vscode
+/.github
+/.idea
+
+.eslintignore
+.eslintrc.cjs
+.prettierignore
+.prettierrc.json
+README.md
+tsconfig.json
