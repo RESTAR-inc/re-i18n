@@ -306,3 +306,7 @@ Reads the XLS file and overwrites the i18n files with the new values.
 #### stats
 
 Displays statistics on the number of keys in each locale.
+
+#### lint
+
+Checks for missing and obsolete keys in the source code and i18n files.
