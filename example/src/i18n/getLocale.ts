@@ -1,4 +1,4 @@
-import type { I18nGetLocale } from "re-i18n";
+import type { I18nGetLocale } from "@restar-inc/re-i18n";
 import type { Locale } from "./types";
 
 const getLocale: I18nGetLocale<Locale> = (locales, defaultLocale) => {

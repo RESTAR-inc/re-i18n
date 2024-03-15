@@ -43,7 +43,7 @@ const addUser = (event: Event) => {
       <h3 class="text-lg font-bold">{{ title }}</h3>
       <p>
         {{ t("i18n サンプル アプリケーションへようこそ" /* HelloWorld title */) }}
-        {{ t("i18n lint test") }}
+        {{ t("新しいメッセージ") }}
       </p>
     </div>
 

@@ -9,7 +9,7 @@ A tool to manage i18n by extracting keys from source code and generating locale 
 Create a module that exports a function that returns the current locale. This function will be used to determine the locale of generated files. The path to this module must be specified in the `generate.localeLocatorPath` parameter of the configuration file. Depending on the configuration of your project (`appType` parameter), the implementation of the function will be different (for example, a Vue project may need to use reactivity, while a vanilla project may need to return a simple string).
 
 ```ts
-import type { UseLocaleLocator } from "re-i18n/lib/vendor/vue";
+import type { UseLocaleLocator } from "@restar-inc/re-i18n/lib/vendor/vue";
 import { computed, ref } from "vue";
 
 type Locale = "ja" | "en";
@@ -38,7 +38,7 @@ If you need to format translations, create a module that exports a function that
 
 ```ts
 import formatString from "my-amazing-formatter-lib"; // just an example
-import type { I18nFormatter } from "re-i18n";
+import type { I18nFormatter } from "@restar-inc/re-i18n";
 
 type Locale = "ja" | "en";
 

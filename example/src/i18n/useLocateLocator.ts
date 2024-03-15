@@ -1,4 +1,4 @@
-import type { UseLocaleLocator } from "re-i18n/lib/vendor/vue";
+import type { UseLocaleLocator } from "@restar-inc/re-i18n/lib/vendor/vue";
 import { computed, ref } from "vue";
 import type { Locale } from "./types";
 

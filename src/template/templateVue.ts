@@ -4,11 +4,11 @@ export const TEMPLATE = `${HEADER_NO_ESLINT}
 ${HEADER_AUTO_GENERATED}
 ${HEADER_WARNING}
 {% if formatterPath -%}
-import { createI18n } from "re-i18n/lib/vendor/vue";
+import { createI18n } from "@restar-inc/re-i18n/lib/vendor/vue";
 import formatter from "{{ formatterPath }}";
 {% else -%}
-import { formatter } from "re-i18n";
-import { createI18n } from "re-i18n/lib/vendor/vue";
+import { formatter } from "@restar-inc/re-i18n";
+import { createI18n } from "@restar-inc/re-i18n/lib/vendor/vue";
 {% endif -%}
 
 import useLocaleLocator from "{{ localeLocatorPath }}";
