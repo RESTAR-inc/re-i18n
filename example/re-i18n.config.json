@@ -13,7 +13,7 @@
     "csv": {
         "outDir": "./out/csv",
         "inputDir": "./out/csv",
-        "delimiter": ";"
+        "delimiter": ","
     },
     "xls": {
         "outDir": "./out/xls",

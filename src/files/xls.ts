@@ -23,15 +23,23 @@ export async function parseXLSFile(config: I18nConfig): Promise<I18nRawDataKeysG
     for (let i = 2; i <= sheet.rowCount; i++) {
       const row = sheet.getRow(i);
 
-      const key = row.getCell(1).text;
-      const translation = row.getCell(2).text;
-      const note = row.getCell(3).text;
-      const comment = row.getCell(4).text;
-      const file = row.getCell(5).text;
+      const keyCell = row.getCell(1);
+      const translationCell = row.getCell(2);
 
-      if (!key) {
+      // This could happen if two or more cells are merged and all the cells are empty
+      if (keyCell.value == null || translationCell.value == null) {
         continue;
       }
+
+      const noteCell = row.getCell(3);
+      const commentCell = row.getCell(4);
+      const fileCell = row.getCell(5);
+
+      const key = keyCell.text;
+      const translation = translationCell.text;
+      const note = noteCell.text;
+      const comment = commentCell.text;
+      const file = fileCell.text;
 
       const targetDir = path.dirname(file);
 

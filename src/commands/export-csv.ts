@@ -73,6 +73,8 @@ export async function exportCSV(config: I18nConfig) {
       csvData,
       {
         delimiter: config.csv.delimiter,
+        quoted: true,
+        quoted_empty: true,
         header: true,
         columns: [
           { key: "key", header: "Key (DO NOT EDIT)" },

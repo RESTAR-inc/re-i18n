@@ -1,53 +1,57 @@
-Key (DO NOT EDIT);Translation;Note;Comment (DO NOT EDIT);File (DO NOT EDIT)
-re-i18n 例;re-i18n Example;;;src/app/components/Main/Main.vue
-こんにちは世界;Hello, world;;;src/app/components/Main/Main.vue
-一番;Fst;;;src/app/components/Main/Main.vue
-三番;Snd;;;src/app/components/Main/Main.vue
-二番;Trd;;;src/app/components/Main/Main.vue
-赤い：{0}　緑：{1}　青い：{2};red: {0} green: {1} blue: {2};;;src/app/components/Main/Main.vue
-静的メッセージ　１;Static Message 1;;;src/app/components/Main/Main.vue
-静的メッセージ　２;Static Message 2;;;src/app/components/Main/Main.vue
-静的メッセージ　３;Static Message 3;;;src/app/components/Main/Main.vue
-静的メッセージ　４;Static Message 4;;;src/app/components/Main/Main.vue
-おはよう{name}さん;Good morning, {name};"
+"Key (DO NOT EDIT)","Translation","Note","Comment (DO NOT EDIT)","File (DO NOT EDIT)"
+"re-i18n 例","re-i18n Example",,,"src/app/components/Main/Main.vue"
+"redundant message",,,,
+"こんにちは世界","Hello, world",,,"src/app/components/Main/Main.vue"
+"一番","Fst",,,"src/app/components/Main/Main.vue"
+"三番","Snd",,,"src/app/components/Main/Main.vue"
+"二番","Trd",,,"src/app/components/Main/Main.vue"
+"朝会",,,,
+"赤い：{0}, 緑：{1}, 青い：{2}","red: {0}, green: {1}, blue: {2}",,,"src/app/components/Main/Main.vue"
+"赤い：{0}　緑：{1}　青い：{2}","red: {0} green: {1} blue: {2}",,,"src/app/components/Main/Main.vue"
+"静的メッセージ　１","Static Message 1",,,"src/app/components/Main/Main.vue"
+"静的メッセージ　２","Static Message 2",,,"src/app/components/Main/Main.vue"
+"静的メッセージ　３","Static Message 3",,,"src/app/components/Main/Main.vue"
+"静的メッセージ　４","Static Message 4",,,"src/app/components/Main/Main.vue"
+"おはよう{name}さん","Good morning, {name}","
 
-";"Good Morning in useGoodMorning
+","Good Morning in useGoodMorning
 Good Morning in useGreeting
-Good Morning in useGreeting";"src/lib/composables/useGoodMorning.ts
+Good Morning in useGreeting","src/lib/composables/useGoodMorning.ts
 src/lib/composables/useGreeting.ts
 src/lib/composables/useWelcome.ts"
-こんにちは{name}さん;Good day, {name};"
-";"
-";"src/lib/composables/useGreeting.ts
+"こんにちは{name}さん","Good day, {name}","
+","
+","src/lib/composables/useGreeting.ts
 src/lib/composables/useWelcome.ts"
-こんばんは{name}さん;Good evening, {name};"
-";"
-";"src/lib/composables/useGreeting.ts
+"こんばんは{name}さん","Good evening, {name}","
+","
+","src/lib/composables/useGreeting.ts
 src/lib/composables/useWelcome.ts"
-偶数;even;"
+"偶数","even","
 
-";"Label for useCounter
+","Label for useCounter
 Label for useOddEven
-Label for useWelcome";"src/lib/composables/useCounter.ts
+Label for useWelcome","src/lib/composables/useCounter.ts
 src/lib/composables/useOddEven.ts
 src/lib/composables/useWelcome.ts"
-奇数;odd;"
+"奇数","odd","
 
-";"Label for useCounter
+","Label for useCounter
 Label for useOddEven
-Label for useWelcome";"src/lib/composables/useCounter.ts
+Label for useWelcome","src/lib/composables/useCounter.ts
 src/lib/composables/useOddEven.ts
 src/lib/composables/useWelcome.ts"
-もっと見せる;See more;;;src/lib/composables/nestedComposable/useMore.ts
-名前：　{lastName} {firstName}。誕生日：　{birthday}。ポイント：　{points};Name: {lastName} {firstName}. Birthday: {birthday}. Points: {points};;;src/lib/components/UserCard/UserCard.vue
-ページタイトル;Page Title;;test comment;src/lib/components/PageTitle/PageTitle.vue
-English;;;;src/lib/components/LangSwitcher/LangSwitcher.vue
-日本語;;;;src/lib/components/LangSwitcher/LangSwitcher.vue
-i18n サンプル アプリケーションへようこそ;Welcome to the i18n sample application;;HelloWorld title;src/lib/components/HelloWorld/HelloWorld.vue
-カウンター;Counter;;Counter label;src/lib/components/HelloWorld/HelloWorld.vue
-カウントアップ;Count Application;;;src/lib/components/HelloWorld/HelloWorld.vue
-ユーザーを追加する;Add User;;;src/lib/components/HelloWorld/HelloWorld.vue
-名前;First Name;;;src/lib/components/HelloWorld/HelloWorld.vue
-奇数・偶数;Odd/Even;;Counter odd/even label;src/lib/components/HelloWorld/HelloWorld.vue
-苗字;Family Name;;;src/lib/components/HelloWorld/HelloWorld.vue
-誕生日;Birthday;;;src/lib/components/HelloWorld/HelloWorld.vue
+"もっと見せる","See more",,,"src/lib/composables/nestedComposable/useMore.ts"
+"名前：　{lastName} {firstName}。誕生日：　{birthday}。ポイント：　{points}","Name: {lastName} {firstName}. Birthday: {birthday}. Points: {points}",,,"src/lib/components/UserCard/UserCard.vue"
+"ページタイトル","Page Title",,"test comment","src/lib/components/PageTitle/PageTitle.vue"
+"English",,,,"src/lib/components/LangSwitcher/LangSwitcher.vue"
+"日本語",,,,"src/lib/components/LangSwitcher/LangSwitcher.vue"
+"i18n サンプル アプリケーションへようこそ","Welcome to the i18n sample application",,"HelloWorld title","src/lib/components/HelloWorld/HelloWorld.vue"
+"カウンター","Counter",,"Counter label","src/lib/components/HelloWorld/HelloWorld.vue"
+"カウントアップ","Count Application",,,"src/lib/components/HelloWorld/HelloWorld.vue"
+"ユーザーを追加する","Add User",,,"src/lib/components/HelloWorld/HelloWorld.vue"
+"名前","First Name",,,"src/lib/components/HelloWorld/HelloWorld.vue"
+"奇数・偶数","Odd/Even",,"Counter odd/even label","src/lib/components/HelloWorld/HelloWorld.vue"
+"新しいメッセージ",,,,"src/lib/components/HelloWorld/HelloWorld.vue"
+"苗字","Family Name",,,"src/lib/components/HelloWorld/HelloWorld.vue"
+"誕生日","Birthday",,,"src/lib/components/HelloWorld/HelloWorld.vue"
