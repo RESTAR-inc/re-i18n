@@ -58,7 +58,7 @@ export const configSchema = z.object({
     /**
      * The delimiter to be used for the CSV file.
      */
-    delimiter: z.string(),
+    delimiter: z.string().default(","),
     /**
      * The directory containing the CSV files to import.
      */

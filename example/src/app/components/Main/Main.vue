@@ -52,7 +52,7 @@ const STATIC_MESSAGE_4 = {
     </div>
 
     <div class="bg-gray-200 flex gap-2 flex-wrap items-center p-4">
-      <ReI18n msg="赤い：{0}　緑：{1}　青い：{2}">
+      <ReI18n msg="赤い：{0}, 緑：{1}, 青い：{2}">
         <div class="bg-red-400 w-10 h-10 rounded-full text-xs flex items-center justify-center">
           {{ t("一番") }}
         </div>

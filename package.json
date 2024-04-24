@@ -1,6 +1,6 @@
 {
     "name": "@restar-inc/re-i18n",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "A tool to manage i18n by extracting keys from source code and generating locale files",
     "type": "module",
     "main": "lib/index.js",
@@ -30,7 +30,7 @@
         "@vue/compiler-sfc": "^3.3.11",
         "chalk": "^5.3.0",
         "commander": "^11.1.0",
-        "csv": "^6.3.5",
+        "csv": "^6.3.8",
         "exceljs": "^4.4.0",
         "glob": "^10.3.10",
         "nunjucks": "^3.2.4",
