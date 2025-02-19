@@ -38,13 +38,10 @@ const addUser = (event: Event) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-2">
     <div class="top">
       <h3 class="text-lg font-bold">{{ title }}</h3>
-      <p>
-        {{ t("i18n サンプル アプリケーションへようこそ" /* HelloWorld title */) }}
-        {{ t("新しいメッセージ") }}
-      </p>
+      <p>{{ t("i18n サンプル アプリケーションへようこそ" /* HelloWorld title */) }}</p>
     </div>
 
     <div class="flex items-center gap-4 bg-indigo-100 p-4">
@@ -57,12 +54,12 @@ const addUser = (event: Event) => {
       <p>{{ t("奇数・偶数" /* Counter odd/even label */) }}: {{ num }}</p>
     </div>
 
-    <div class="greeting">
-      <input type="text" v-model="name" />
+    <div class="flex gap-2">
+      <input type="text" v-model="name" class="border border-gray-400 px-3 py-1" />
       <div>{{ greeting }}</div>
     </div>
 
-    <div class="users">
+    <div>
       <form @submit="addUser" class="flex gap-2">
         <input
           class="border border-gray-400 px-3 py-1"
