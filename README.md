@@ -243,8 +243,6 @@ const MSG_2 = {
 
 You can also use vendor specific features. For example, if you are using Vue, you can use the `ReI18n` component to display translation keys in source code and use VDOM nodes as parameters.
 
-> <span style="color: red">**IMPORTANT**: If you use `t` inside child nodes, reactivity will not work</span>
-
 First you need to specify the component name in the configuration file.
 
 ```json

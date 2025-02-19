@@ -1,4 +1,4 @@
-import { computed, defineComponent, type PropType } from "vue";
+import { computed, defineComponent, Fragment, h, type PropType } from "vue";
 import { normalizeKey } from "../../common.js";
 import type { I18nFormatter, I18nLocaleKeyset, I18nParams, I18nRawChunk } from "../../types.js";
 import type { UseLocaleLocator } from "./types.js";
@@ -78,24 +78,28 @@ export function createI18n<L extends string, K extends string>(
         type: String as unknown as PropType<K>,
         required: true,
       },
+      as: {
+        type: String as PropType<string>,
+        default: undefined,
+      },
     },
     setup(props, ctx) {
-      if (!ctx.slots.default) {
-        return null;
-      }
-      const children = ctx.slots.default();
-
       return () => {
-        const message = normalizeKey(props.msg as string) as K;
-        const parsed = parseMessage(message);
+        if (ctx.slots.default == null) {
+          return null;
+        }
 
-        return parsed.map((chunk) => {
-          if (chunk.type === "text") {
-            return formatter(locale.value, chunk.value);
-          }
+        const children = ctx.slots.default();
+        const key = normalizeKey(props.msg as string) as K;
+        const messages = parseMessage(key);
 
-          return children[chunk.index];
-        });
+        const childNodes = messages.map((chunk) =>
+          chunk.type === "text"
+            ? h(Fragment, [formatter(locale.value, chunk.value)])
+            : children[chunk.index]
+        );
+
+        return props.as != null ? h(props.as, ctx.attrs, childNodes) : h(Fragment, childNodes);
       };
     },
   });
