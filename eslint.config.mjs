@@ -16,7 +16,15 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-  globalIgnores(["node_modules", "lib", "tmp", "**/package-lock.json", "**/babel.config.js"]),
+  globalIgnores([
+    "**/node_modules/**",
+    "lib/**",
+    "tmp/**",
+    "**/dist/**",
+    "**/out/**",
+    "**/package-lock.json",
+    "**/babel.config.js",
+  ]),
   {
     extends: compat.extends(
       "eslint:recommended",
