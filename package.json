@@ -12,13 +12,14 @@
         "lib"
     ],
     "scripts": {
-        "build": "npm run clean && tsc && chmod u+x ./lib/cli.js",
+        "build": "npm run clean && tsc -p ./tsconfig.node.json && chmod u+x ./lib/cli.js",
         "clean": "rm -rf lib",
         "format": "eslint --fix .",
         "lint": "eslint . --max-warnings 0",
         "prepare": "npm run build",
-        "type-check": "tsc --noEmit",
-        "watch": "tsc -w"
+        "type-check": "tsc -p ./tsconfig.node.json --noEmit",
+        "watch": "tsc -p ./tsconfig.node.json -w",
+        "test": "vitest run"
     },
     "dependencies": {
         "@babel/core": "^7.26.10",
@@ -54,6 +55,7 @@
         "eslint-plugin-simple-import-sort": "^12.1.1",
         "prettier": "^3.5.3",
         "typescript": "^5.8.3",
+        "vitest": "^3.1.2",
         "vue": "^3.5.13"
     }
 }
