@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: Tests and Linters
+    name: Test and Lint Example Project
     runs-on: ubuntu-latest
 
     strategy:
@@ -24,7 +24,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
 
-    - name: Install dependencies and build
+    - name: Install dependencies and build re-i18n
       run: npm ci && npm run build
 
     - name: Install dependencies for example
@@ -33,5 +33,5 @@ jobs:
     - name: Run type check
       run: npm run type-check --prefix example
 
-    - name: Run type check
+    - name: Run i18n:lint
       run: npm run i18n:lint --prefix example

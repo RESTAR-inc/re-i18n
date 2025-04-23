@@ -33,7 +33,7 @@ jobs:
     - name: Run type check
       run: npm run type-check
 
-    - name: Run style check
+    - name: Run style lint
       run: npm run lint
 
     - name: Run test
