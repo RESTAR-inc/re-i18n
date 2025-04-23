@@ -16,7 +16,7 @@ const fmt: I18nFormatter<Locale> = (locale, str, opts) => {
     }
 
     return formatted;
-  } catch (error) {
+  } catch {
     return "";
   }
 };

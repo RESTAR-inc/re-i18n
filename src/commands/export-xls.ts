@@ -13,7 +13,7 @@ export async function exportXLS(config: I18nConfig) {
   try {
     const xlsData = await parseXLSFile(config);
     notesHash = getNotesHash(xlsData);
-  } catch (error) {
+  } catch {
     console.log(chalk.yellow("No data found in the XLS file"));
   }
 

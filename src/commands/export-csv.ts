@@ -13,7 +13,7 @@ export async function exportCSV(config: I18nConfig) {
   try {
     const parsedCsv = await parseCSVFiles(config);
     notesHash = getNotesHash(parsedCsv);
-  } catch (error) {
+  } catch {
     console.log(chalk.yellow("No data found in the CSV files"));
   }
 
