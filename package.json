@@ -12,7 +12,7 @@
         "lib"
     ],
     "scripts": {
-        "build": "npm run clean && tsc && chmod u+x ./lib/cli.js",
+        "build": "npm run clean && tsc -p ./tsconfig.node.json && chmod u+x ./lib/cli.js",
         "clean": "rm -rf lib",
         "format": "eslint --fix .",
         "lint": "eslint . --max-warnings 0",
