@@ -17,8 +17,8 @@
         "format": "eslint --fix .",
         "lint": "eslint . --max-warnings 0",
         "prepare": "npm run build",
-        "type-check": "tsc --noEmit",
-        "watch": "tsc -w",
+        "type-check": "tsc -p ./tsconfig.node.json --noEmit",
+        "watch": "tsc -p ./tsconfig.node.json -w",
         "test": "vitest run"
     },
     "dependencies": {
