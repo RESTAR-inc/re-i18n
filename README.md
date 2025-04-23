@@ -308,3 +308,19 @@ Displays statistics on the number of keys in each locale.
 #### lint
 
 Checks for missing and obsolete keys in the source code and i18n files.
+
+## Publishing
+
+To publish the package, first you need to update the version in `package.json`. Depending on the type of change, you can use `npm version <type>` to update the version. The types are:
+
+- `patch`: for small changes and bug fixes
+- `minor`: for new features and improvements
+- `major`: for breaking changes
+
+After updating the version, you can publish the package to npm with the following command:
+
+```sh
+npm publish
+```
+
+It's highly recommended to create a new release on GitHub after publishing the package. To create a new release, go to the "Releases" section of the repository and click on "Draft a new release". In the "Tag version" field, enter the version number you just published. For example, if you published version `1.2.3`, you need to create a new tag with the version number as `v1.2.3`
