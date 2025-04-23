@@ -1,6 +1,6 @@
 {
     "name": "@restar-inc/re-i18n",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "A tool to manage i18n by extracting keys from source code and generating locale files",
     "type": "module",
     "main": "lib/index.js",
