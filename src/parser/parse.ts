@@ -59,11 +59,15 @@ export function parse(params: I18nParserParams): Record<string, I18nRawData> {
           added: new Set(),
           unused: new Set(),
         },
+        existingTranslations: Object.fromEntries(
+          params.config.locales.map((locale) => [locale, {}])
+        ),
       };
 
       for (const lang of params.config.locales) {
         // read translations from JSON file and add them to the raw data
         const currentLocale = readTranslations(lang, file, params.config.dirName);
+        rawDataDict[dirName].existingTranslations[lang] = currentLocale;
 
         for (const oldKey of Object.keys(currentLocale)) {
           rawDataDict[dirName].keys[oldKey] = {
