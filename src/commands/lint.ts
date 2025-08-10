@@ -1,5 +1,4 @@
 import chalk from "chalk";
-import { isEqual, sortBy } from "lodash-es";
 import path from "path";
 import { parse } from "../parser/parse.js";
 import type { I18nConfig } from "../schemas/config.js";
@@ -19,15 +18,19 @@ export async function lint(config: I18nConfig) {
       errors.push({ key, path: dataPath, reason: "An unused key was found" });
     }
 
-    const hasOutdatedTranslations = config.locales.some(
-      (locale) =>
-        !isEqual(
-          Object.keys(rawData.existingTranslations[locale]),
-          sortBy(Object.keys(rawData.existingTranslations[locale]))
-        )
-    );
+    const hasUnsortedTranslations = config.locales.some((locale) => {
+      const keys = Object.keys(rawData.existingTranslations[locale]);
+      const sortedKeys = [...keys].sort();
 
-    if (hasOutdatedTranslations) {
+      for (let i = 0; i < keys.length; i++) {
+        if (keys[i] !== sortedKeys[i]) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    if (hasUnsortedTranslations) {
       errors.push({ path: dataPath, reason: "Unsorted locale files found." });
     }
   }
