@@ -64,6 +64,7 @@ export interface I18nRawDataStats {
 export interface I18nRawData {
   stats: I18nRawDataStats;
   keys: I18nRawDataKeys;
+  existingTranslations: Record<string, I18nKeyset<string>>;
 }
 
 export interface I18nExportData {
