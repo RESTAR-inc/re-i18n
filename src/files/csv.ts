@@ -32,7 +32,7 @@ export function parseCSVFile(
   config: I18nConfig
 ) {
   return new Promise<I18nRawDataKeysGroup>((resolve, reject) => {
-    let csvContent = "";
+    let csvContent: string;
 
     try {
       csvContent = fs.readFileSync(filePath, { encoding: "utf8" });
