@@ -82,9 +82,23 @@ const STATIC_MESSAGE_4 = {
             {{ t("三番") }}
           </div>
         </ReI18n>
+
+        <h3>With `as(tag)` property but defined as first prop</h3>
+        <ReI18n as="div" msg="赤い：{0}, 緑：{1}, 青い：{2}" class="flex gap-2 flex-wrap items-center p-4">
+          <div class="bg-blue-400 w-10 h-10 rounded-full text-xs flex items-center justify-center">
+            {{ t("三番") }}
+          </div>
+          <div class="bg-green-400 w-10 h-10 rounded-full text-xs flex items-center justify-center">
+            {{ t("二番") }}
+          </div>
+          <div class="bg-red-400 w-10 h-10 rounded-full text-xs flex items-center justify-center">
+            {{ t("一番") }}
+          </div>
+        </ReI18n>
+
       </div>
     </section>
-    
+
     <section class="flex flex-col gap-2">
       <h2 class="text-xl">Component Example</h2>
       <HelloWorld :title="t('こんにちは世界')" />

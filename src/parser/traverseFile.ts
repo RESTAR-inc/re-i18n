@@ -1,5 +1,5 @@
 import { parse as babelParse, traverse as babelTraverse } from "@babel/core";
-import type { StringLiteral } from "@babel/types";
+import type { Identifier, ObjectProperty, StringLiteral } from "@babel/types";
 import {
   isCallExpression,
   isIdentifier,
@@ -133,15 +133,19 @@ export function traverseFile(params: I18nTraverseFileParams) {
         const arg1 = node.arguments[0];
         const arg2 = node.arguments[1];
         if (isIdentifier(arg1) && arg1.name === funcNameVDOM && isObjectExpression(arg2)) {
-          const prop = arg2.properties[0];
+          const msgProp = arg2.properties.find(
+            (prop): prop is ObjectProperty & { key: Identifier } & { value: StringLiteral } => {
+              return (
+                isObjectProperty(prop) &&
+                isIdentifier(prop.key) &&
+                isStringLiteral(prop.value) &&
+                prop.key.name === "msg"
+              );
+            }
+          );
 
-          if (
-            isObjectProperty(prop) &&
-            isIdentifier(prop.key) &&
-            isStringLiteral(prop.value) &&
-            prop.key.name === "msg"
-          ) {
-            params.onEnter(prop.value);
+          if (msgProp != null) {
+            params.onEnter(msgProp.value);
           }
         }
       }
