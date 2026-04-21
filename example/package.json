@@ -18,7 +18,7 @@
     "i18n:lint": "re-i18n lint"
   },
   "dependencies": {
-    "intl-messageformat": "^11.1.2",
+    "intl-messageformat": "^11.2.1",
     "vue": "^3.5.29"
   },
   "devDependencies": {
